@@ -1,5 +1,12 @@
 const path = require('path');
-module.exports = {
+const webpack = require('webpack');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const env = process.env.NODE_ENV || 'development';
+
+const webpackConfig = {
+    target: 'web',
     entry: ['./src/app.js'],
     output: {
         path: path.resolve('dist'),
@@ -11,9 +18,28 @@ module.exports = {
             'node_modules',
         ],
         extensions: ['.js', '.jsx'],
+        alias: {
+            '../../theme.config$': path.join(__dirname, 'semantic-theme/theme.config')
+        }
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(env),
+            },
+        }),
+        new HtmlWebPackPlugin({
+            template: './src/index.html',
+            filename: './index.html',
+            alwaysWriteToDisk: true
+        }),
+        new ExtractTextPlugin({
+            filename: '[name].[contenthash].css',
+        })
+    ],
     devServer: {
-        contentBase: './dist'
+        contentBase: './dist',
+        watchContentBase: true
     },
     module: {
         rules: [
@@ -23,7 +49,45 @@ module.exports = {
                 use: {
                     loader: 'babel-loader'
                 }
+            },
+            {
+                test: /\.html$/,
+                use: {
+                    loader: 'html-loader'
+                }
+            },
+            {
+                test: /\.less$/,
+                use: ExtractTextPlugin.extract({
+                    use: ['css-loader', 'less-loader']
+                })
+            },
+            {
+                test: /\.jpe?g$|\.gif$|\.png$|\.ttf$|\.eot$|\.svg$/,
+                use: 'file-loader?name=[name].[ext]?[hash]'
+            },
+            {
+                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'url-loader?limit=10000&mimetype=application/fontwoff'
             }
         ]
     }
 };
+
+if (env === 'production') {
+    webpackConfig.plugins.push(
+        new webpack.LoaderOptionsPlugin({
+            minimize: true,
+            debug: false,
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                unused: true,
+                dead_code: true,
+                warnings: false,
+            },
+        })
+    )
+}
+
+module.exports = webpackConfig;
