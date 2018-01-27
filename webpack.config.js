@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -35,6 +36,9 @@ const webpackConfig = {
         }),
         new ExtractTextPlugin({
             filename: '[name].[contenthash].css',
+        }),
+        new Dotenv({
+            path: './.env'
         })
     ],
     devServer: {
