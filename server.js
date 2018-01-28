@@ -1,8 +1,10 @@
 require('dotenv').config();
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
+const ffmpeg = require('fluent-ffmpeg');
 
 const app = express();
 
@@ -42,10 +44,25 @@ let type = upload.single('audio');
 
 app.post('/api/upload', type, (req, res) => {
     console.log(req.file);
-    console.log(req.body);
-    res.send({
-        message: 'file uploaded successfully'
-    })
+    let filename = req.file.filename;
+    let ext = path.extname(filename);
+    let name = path.basename(filename, ext);
+    let sourcePath = req.file.destination + '/' + filename;
+    ffmpeg(sourcePath)
+        .audioCodec('libmp3lame')
+        .save(req.file.destination + '/' + name + '.mp3')
+        .on('error', err => {
+            console.error(err);
+            res.status(500).send({
+                error: 'error converting file'
+            });
+        })
+        .on('end', () => {
+            fs.unlink(sourcePath); // Delete file
+            res.send({
+                message: 'file uploaded successfully'
+            })
+        });
 });
 
 app.use((err, req, res, next) => {

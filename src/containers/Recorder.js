@@ -5,11 +5,9 @@ import { Button, Icon, Divider } from 'semantic-ui-react';
 import * as recorderActions from "../actions";
 
 const BROWSER_SUPPORTED = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-const LOCAL_FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'webm';
-const LOCAL_CODEC = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'webm';
+const FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'webm';
 
 let mediaRecorder, chunks = [], blob;
-let AudioPlayer = document.createElement('audio');
 
 class Recorder extends React.Component {
     state = {
@@ -19,26 +17,25 @@ class Recorder extends React.Component {
     startRecord = () => {
         this.setState({ recording: true });
         this.props.actions.recorderStart();
-        delete AudioPlayer.src;
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
-                mediaRecorder = new MediaRecorder(stream);
+                let audioCtx = new AudioContext();
+                let source = audioCtx.createMediaStreamSource(stream);
+                let splitter = audioCtx.createChannelSplitter();
+                let merger = audioCtx.createChannelMerger();
+                let dest = audioCtx.createMediaStreamDestination();
+                source.connect(splitter);
+                splitter.connect(merger, 0, 0);
+                splitter.connect(merger, 0, 1);
+                merger.connect(dest);
+                mediaRecorder = new MediaRecorder(dest.stream);
                 mediaRecorder.start();
                 mediaRecorder.onstop = e => {
-                    AudioPlayer.setAttribute('controls', '');
-                    AudioPlayer.controls = true;
-                    
-                    blob = new Blob(chunks, { 'type' : 'audio/' + LOCAL_CODEC + '; codecs=opus' });
+                    blob = new Blob(chunks, { 'type' : 'audio/' + FILE_TYPE + '; codecs=opus' });
                     chunks = [];
-                    let blobUrl = URL.createObjectURL(blob);
-                    AudioPlayer.src = blobUrl;
-                    this.setState({ blobUrl });
-                    document.getElementById('player').appendChild(AudioPlayer);
+                    this.setState({ blobUrl: URL.createObjectURL(blob) });
                 };
-                
-                mediaRecorder.ondataavailable = function(e) {
-                    chunks.push(e.data);
-                }
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
             })
             .catch(err => {
                 console.log('Error:', err);
@@ -51,7 +48,7 @@ class Recorder extends React.Component {
     };
     upload = () => {
         let fd = new FormData();
-        fd.append('audio', blob, 'upload.' + LOCAL_FILE_TYPE);
+        fd.append('audio', blob, 'upload.' + FILE_TYPE);
         fetch(process.env.API_HOST + ':' + process.env.API_PORT + '/api/upload', {
             method: 'post',
             body: fd
@@ -74,7 +71,8 @@ class Recorder extends React.Component {
                     <Icon name={ recording ? 'square' : 'circle' } />
                     { recording ? 'Stop' : 'Record' }
                 </Button>
-                <div id="player">
+                <div>
+                    {blobUrl ? <audio id="player" src={ blobUrl } controls /> : false}
                 </div>
                 <Divider />
                 {blobUrl ? <Button.Group vertical >
@@ -84,7 +82,7 @@ class Recorder extends React.Component {
                         Upload
                     </Button>
                     <Button as='a' icon labelPosition='left'
-                            onClick={ this.download } download={ 'audio.' + LOCAL_FILE_TYPE } href={ blobUrl }>
+                            onClick={ this.download } download={ 'audio.' + FILE_TYPE } href={ blobUrl }>
                         <Icon name='download' />
                         Download
                     </Button>
