@@ -42,3 +42,4 @@ jspm_packages
 .env.test.local
 .env.production.local
 .idea
+/reference

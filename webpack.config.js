@@ -8,7 +8,7 @@ const env = process.env.NODE_ENV || 'development';
 
 const webpackConfig = {
     target: 'web',
-    entry: ['./src/app.js'],
+    entry: ['./src/index.js'],
     output: {
         path: path.resolve('dist'),
         filename: 'js/[name].js'
@@ -45,6 +45,7 @@ const webpackConfig = {
         contentBase: './dist',
         watchContentBase: true
     },
+    devtool: 'eval-source-map',
     module: {
         rules: [
             {
@@ -91,7 +92,8 @@ if (env === 'production') {
                 warnings: false,
             },
         })
-    )
+    );
+    delete webpackConfig.devtool;
 }
 
 module.exports = webpackConfig;
