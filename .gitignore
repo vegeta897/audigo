@@ -33,6 +33,7 @@ jspm_packages
 # Production
 /build
 /dist
+/public/uploads
 
 # Misc
 .DS_Store

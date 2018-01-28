@@ -1,1 +1,2 @@
 export const RECORDER_START = 'RECORDER_START';
+export const RECORDER_STOP = 'RECORDER_STOP';

@@ -41,10 +41,6 @@ const webpackConfig = {
             path: './.env'
         })
     ],
-    devServer: {
-        contentBase: './dist',
-        watchContentBase: true
-    },
     devtool: 'eval-source-map',
     module: {
         rules: [
