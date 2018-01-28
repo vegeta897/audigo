@@ -1,4 +1,4 @@
-import { RECORDER_START, RECORDER_STOP } from "../actions/TYPES";
+import { RECORDER_START, RECORDER_STOP } from "../actions";
 
 const recorderReducer = (state = 'none', action) => {
     switch(action.type) {

@@ -22,17 +22,35 @@ app.route('/api/test/:name').get((req, res) => {
 });
 
 let storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, __dirname + '/public/uploads');
-    },
+    destination: './public/uploads',
     filename: (req, file, cb) => {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
-let upload = multer({ storage });
+let upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        let fileType = path.extname(file.originalname);
+        if(['.webm', '.ogg'].includes(fileType)) cb(null, true);
+        else cb('Invalid file type, expected .webm or .ogg, got ' + fileType);
+    },
+    limits: {
+        fileSize: 50 * 1024 * 1024 // 50mb max
+    }
+});
 let type = upload.single('audio');
 
 app.post('/api/upload', type, (req, res) => {
-    console.log(req.body);
     console.log(req.file);
+    console.log(req.body);
+    res.send({
+        message: 'file uploaded successfully'
+    })
+});
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).send({
+        error: err
+    });
 });

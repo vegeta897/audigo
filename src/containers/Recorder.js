@@ -55,11 +55,11 @@ class Recorder extends React.Component {
         fetch(process.env.API_HOST + ':' + process.env.API_PORT + '/api/upload', {
             method: 'post',
             body: fd
-        }).then(response => response.json().then(json => {
-            if(!response.ok) return Promise.reject(json);
+        }).then(res => res.json().then(json => {
+            if(!res.ok) return Promise.reject(json);
             console.log(json);
             return json;
-        }));
+        }).catch(console.error));
     };
     download = () => {
         
