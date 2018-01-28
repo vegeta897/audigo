@@ -6,6 +6,14 @@ const cors = require('cors');
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
 
+ffmpeg.getAvailableEncoders((err, encoders) => {
+    if(err) return console.error(err);
+    if(!encoders.libmp3lame) {
+        console.error('libmp3lame encoder not found!');
+        process.exit(1);
+    }
+});
+
 const app = express();
 
 app.use(cors({
@@ -14,13 +22,7 @@ app.use(cors({
 }));
 
 let listener = app.listen(process.env.API_PORT, () => {
-    console.log('Listening on port ' + listener.address().port);
-});
-
-app.route('/api/test/:name').get((req, res) => {
-    res.send({
-        message: 'hello ' + req.params['name'] 
-    })
+    console.log('Server running on port ' + listener.address().port);
 });
 
 let storage = multer.diskStorage({
@@ -43,14 +45,15 @@ let upload = multer({
 let type = upload.single('audio');
 
 app.post('/api/upload', type, (req, res) => {
-    console.log(req.file);
+    let filePath = req.file.path;
     let filename = req.file.filename;
     let ext = path.extname(filename);
     let name = path.basename(filename, ext);
-    let sourcePath = req.file.destination + '/' + filename;
-    ffmpeg(sourcePath)
+    let outputPath = req.file.destination + '/' + name + '.mp3';
+    console.log('saving', name + '.mp3');
+    ffmpeg(filePath)
         .audioCodec('libmp3lame')
-        .save(req.file.destination + '/' + name + '.mp3')
+        .save(outputPath)
         .on('error', err => {
             console.error(err);
             res.status(500).send({
@@ -58,7 +61,8 @@ app.post('/api/upload', type, (req, res) => {
             });
         })
         .on('end', () => {
-            fs.unlink(sourcePath); // Delete file
+            console.log('output', Math.round(fs.statSync(outputPath).size / 1000), 'kb');
+            fs.unlink(filePath); // Delete file
             res.send({
                 message: 'file uploaded successfully'
             })

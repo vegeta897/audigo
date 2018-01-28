@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Button, Icon, Divider } from 'semantic-ui-react';
 import * as recorderActions from "../actions";
 
+const API = process.env.API_HOST + ':' + process.env.API_PORT + '/api/';
 const BROWSER_SUPPORTED = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
 const FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'webm';
 
@@ -49,14 +50,12 @@ class Recorder extends React.Component {
     upload = () => {
         let fd = new FormData();
         fd.append('audio', blob, 'upload.' + FILE_TYPE);
-        fetch(process.env.API_HOST + ':' + process.env.API_PORT + '/api/upload', {
-            method: 'post',
-            body: fd
-        }).then(res => res.json().then(json => {
-            if(!res.ok) return Promise.reject(json);
-            console.log(json);
-            return json;
-        }).catch(console.error));
+        fetch(API + 'upload', { method: 'post', body: fd })
+            .then(res => res.json())
+            .catch(console.error)
+            .then(json => {
+                console.log(json);
+            });
     };
     download = () => {
         
