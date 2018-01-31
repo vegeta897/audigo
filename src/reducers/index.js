@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
-import recorder from './recorderReducer';
+import { recorderReducer, stageReducer, uploadReducer } from './studioReducers';
 
 export default combineReducers({
-    recorder
+    recorder: recorderReducer,
+    stage: stageReducer,
+    upload: uploadReducer
 });

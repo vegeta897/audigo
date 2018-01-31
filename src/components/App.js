@@ -1,9 +1,9 @@
 import React from 'react';
-import Recorder from './../containers/Recorder';
+import Studio from '../containers/Studio';
 
 const App = () => (
     <div>
-        <Recorder/>
+        <Studio/>
     </div>
 );
 
