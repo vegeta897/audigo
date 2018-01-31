@@ -3,7 +3,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Segment, Button, Icon, Divider, Message } from 'semantic-ui-react';
-import { studioActions } from "../actions";
+import { studioActions, viewActions } from "../actions";
 import * as Recorder from '../recorder';
 
 class Studio extends React.Component {
@@ -63,6 +63,7 @@ class Studio extends React.Component {
                         Download
                     </Button>
                 </div>}
+                <Button onClick={ () => this.props.getAudio(13) }>test</Button>
             </Segment>
         );
     }
@@ -76,4 +77,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, dispatch => bindActionCreators(studioActions, dispatch))(Studio);
+export default connect(mapStateToProps, dispatch => bindActionCreators({...studioActions, ...viewActions}, dispatch))(Studio);

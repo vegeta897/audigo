@@ -39,6 +39,11 @@ knex.schema
 
 const app = express();
 
+// app.use((err, req, res, next) => {
+//     console.error(err);
+//     res.status(500).send({ error: err });
+// });
+
 app.use(cors({
     origin: process.env.ORIGIN,
     optionsSuccessStatus: 200
@@ -72,13 +77,8 @@ let upload = multer({
 });
 let type = upload.single('audio');
 
-app.post('/api/upload', type, (req, res) => {
-    if(!req.file) {
-        res.status(500).send({
-            error: 'missing file'
-        });
-        return;
-    }
+app.post('/api/upload', type, (req, res) => { // Upload a file
+    if(!req.file) return res.status(500).send({ error: 'missing file' });
     let filePath = req.file.path;
     let filename = req.file.filename;
     let ext = path.extname(filename);
@@ -95,9 +95,7 @@ app.post('/api/upload', type, (req, res) => {
         .save(outputPath)
         .on('error', err => {
             console.error(err);
-            res.status(500).send({
-                error: 'error converting file'
-            });
+            res.status(500).send({ error: 'error converting file' });
         })
         .on('end', (stdout, sterr) => {
             fs.unlink(filePath); // Delete file
@@ -117,16 +115,28 @@ function onFileReady(res, id, outputPath) {
                     duration: Math.round(outputInfo.streams[0].duration * 1000)
                 })
                 .catch(console.error);
-            res.send({
-                message: 'file uploaded successfully'
-            });
+            res.send({ message: 'file uploaded successfully' });
         })
         .catch(console.error);
 }
 
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).send({
-        error: err
-    });
+app.post('/api/get/:id', (req, res) => { // Get a file
+    let { id } = req.params;
+    knex('uploads')
+        .where('id', '=', id)
+        .select({
+            'created': 'created_at',
+            'updated': 'updated_at',
+            'filename': 'original_filename',
+            'duration': 'duration',
+            'filesize': 'file_size'
+        })
+        .then(data => {
+            if(!data[0]) return res.status(404).send({ error: 'invalid id' });
+            let file = fs.createReadStream('./public/uploads/' + id + STORE_TYPE);
+            res.set(data[0]);
+            res.set('Content-Type', 'audio/mpeg');
+            res.set('Access-Control-Expose-Headers', Object.keys(data[0]).join(','));
+            file.pipe(res);
+        })
 });
