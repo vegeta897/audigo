@@ -2,7 +2,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Segment, Button, Icon, Divider, Loader } from 'semantic-ui-react';
+import { Segment, Button, Icon, Divider, Message } from 'semantic-ui-react';
 import { studioActions } from "../actions";
 import * as Recorder from '../recorder';
 
@@ -43,11 +43,17 @@ class Studio extends React.Component {
                 {stage.fileUrl && <div>
                     {!uploaded && <Button fluid size='massive' color={'green'} icon labelPosition='left'
                                           onClick={ this.uploadAudio(Recorder.getFile(), stage.fileType) }
-                                          disabled={ uploading }>
+                                          disabled={ uploading } loading={ uploading }>
                         <Icon name='upload' />
-                        <Loader active={ uploading } />
                         Upload
                     </Button>}
+                    {uploaded && <Message icon positive>
+                        <Icon name='check' />
+                        <Message.Content>
+                            <Message.Header>Success</Message.Header>
+                            Your file was uploaded!
+                        </Message.Content>
+                    </Message>}
                     <Divider />
                     <audio id="player" src={ stage.fileUrl } controls controlsList='nodownload' 
                            style={{ display: 'block', width: '100%', marginBottom: '1em' }} />

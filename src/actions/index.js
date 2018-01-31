@@ -45,8 +45,8 @@ export const uploadAudio = (file, fileType) => dispatch => {
             return json;
         })
         .then(json => {
-            // setTimeout(dispatch, 2000, uploadStatus('success')); // Simulate load time
             console.log(json);
+            // setTimeout(dispatch, 2000, uploadStatus('success')); // Simulate load time
             dispatch(uploadStatus('success'));
         })
         .catch(err => {
