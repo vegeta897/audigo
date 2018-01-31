@@ -2,7 +2,7 @@
 // Based on https://github.com/hackingbeauty/react-mic/blob/master/src/libs/MicrophoneRecorder.js
 
 export const BROWSER_SUPPORTED = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-const FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'webm';
+const FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'weba';
 const AUDIO_CTX = new AudioContext();
 
 let stream, chunks = [], file, fileUrl, mediaRecorder, _onFile;
@@ -12,7 +12,7 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _s
 export const attachInput = input => {
     input.addEventListener('change', e => {
         file = e.target.files[0];
-        _onFile('file', 'unknown', URL.createObjectURL(file), file.name.split('.').slice(-1)[0])
+        _onFile('file', 'unknown', URL.createObjectURL(file), file.name)
     })
 };
 
@@ -31,7 +31,7 @@ export const start = () => {
         file = new Blob(chunks, { type: 'audio/' + FILE_TYPE + '; codecs=opus' });
         chunks = [];
         fileUrl = URL.createObjectURL(file);
-        _onFile('microphone', Date.now() - startTime, fileUrl, FILE_TYPE);
+        _onFile('microphone', Date.now() - startTime, fileUrl, 'recording.' + FILE_TYPE);
     };
 };
 

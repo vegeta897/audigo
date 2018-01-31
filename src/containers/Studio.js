@@ -20,7 +20,7 @@ class Studio extends React.Component {
             case 'resume': Recorder.resume(); break;
         }
     }
-    uploadAudio = (file, fileType) => () => this.props.uploadAudio(file, fileType);
+    uploadAudio = (file, fileName) => () => this.props.uploadAudio(file, fileName);
     render() {
         const { recorder, stage, recorderStart, recorderStop, upload } = this.props;
         const recording = recorder === 'start' || recorder === 'resume';
@@ -42,7 +42,7 @@ class Studio extends React.Component {
                 </div>}
                 {stage.fileUrl && <div>
                     {!uploaded && <Button fluid size='massive' color={'green'} icon labelPosition='left'
-                                          onClick={ this.uploadAudio(Recorder.getFile(), stage.fileType) }
+                                          onClick={ this.uploadAudio(Recorder.getFile(), stage.fileName) }
                                           disabled={ uploading } loading={ uploading }>
                         <Icon name='upload' />
                         Upload

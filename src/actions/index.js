@@ -23,8 +23,8 @@ export const recorderResume = () => {
     return { type: RECORDER_RESUME };
 };
 
-export const stageNew = (source, duration, fileUrl, fileType) => {
-    return { type: STAGE_NEW, source, duration, fileUrl, fileType: fileType.toLowerCase() };
+export const stageNew = (source, duration, fileUrl, fileName) => {
+    return { type: STAGE_NEW, source, duration, fileUrl, fileName };
 };
 
 export const uploadStatus = (status) => {
@@ -34,18 +34,18 @@ export const uploadStatus = (status) => {
     }
 };
 
-export const uploadAudio = (file, fileType) => dispatch => {
+export const uploadAudio = (file, fileName) => dispatch => {
     dispatch(uploadStatus('uploading'));
     let fd = new FormData();
-    fd.append('audio', file, 'upload.' + fileType);
+    fd.append('audio', file, fileName);
     fetch(API + 'upload', { method: 'post', body: fd })
         .then(res => res.json())
-        .then(json => {
-            if(json.error) throw Error(json.error);
-            return json;
+        .then(res => {
+            if(res.error) throw Error(res.error);
+            return res;
         })
-        .then(json => {
-            console.log(json);
+        .then(res => {
+            console.log(res);
             // setTimeout(dispatch, 2000, uploadStatus('success')); // Simulate load time
             dispatch(uploadStatus('success'));
         })

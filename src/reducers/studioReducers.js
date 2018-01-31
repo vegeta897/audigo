@@ -26,7 +26,7 @@ const INIT_STAGE = {
     source: null,
     duration: null,
     fileUrl: null,
-    fileType: null
+    fileName: null
 };
 
 export const stageReducer = (state = INIT_STAGE, action) => {
@@ -36,7 +36,7 @@ export const stageReducer = (state = INIT_STAGE, action) => {
                 source: action.source,
                 duration: action.duration,
                 fileUrl: action.fileUrl,
-                fileType: action.fileType
+                fileName: action.fileName
             };
         default:
             return state;
