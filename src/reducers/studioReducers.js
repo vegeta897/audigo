@@ -25,7 +25,7 @@ export const recorderReducer = (state = 'none', action) => {
 const INIT_STAGE = {
     source: null,
     duration: null,
-    blobUrl: null,
+    fileUrl: null,
     fileType: null
 };
 
@@ -35,7 +35,7 @@ export const stageReducer = (state = INIT_STAGE, action) => {
             return {
                 source: action.source,
                 duration: action.duration,
-                blobUrl: action.blobUrl,
+                fileUrl: action.fileUrl,
                 fileType: action.fileType
             };
         default:

@@ -5,9 +5,16 @@ export const BROWSER_SUPPORTED = navigator.mediaDevices && navigator.mediaDevice
 const FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'webm';
 const AUDIO_CTX = new AudioContext();
 
-let stream, chunks = [], blob, blobUrl, mediaRecorder, _onStop;
+let stream, chunks = [], file, fileUrl, mediaRecorder, _onFile;
 
 navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _stream);
+
+export const attachInput = input => {
+    input.addEventListener('change', e => {
+        file = e.target.files[0];
+        _onFile('file', 'unknown', URL.createObjectURL(file), file.name.split('.').slice(-1)[0])
+    })
+};
 
 export const start = () => {
     let startTime = Date.now();
@@ -21,15 +28,15 @@ export const start = () => {
     mediaRecorder.start();
     mediaRecorder.ondataavailable = e => chunks.push(e.data);
     mediaRecorder.onstop = e => {
-        blob = new Blob(chunks, { type: 'audio/' + FILE_TYPE + '; codecs=opus' });
+        file = new Blob(chunks, { type: 'audio/' + FILE_TYPE + '; codecs=opus' });
         chunks = [];
-        blobUrl = URL.createObjectURL(blob);
-        _onStop('microphone', Date.now() - startTime, blobUrl, FILE_TYPE);
+        fileUrl = URL.createObjectURL(file);
+        _onFile('microphone', Date.now() - startTime, fileUrl, FILE_TYPE);
     };
 };
 
 export const pause = () => mediaRecorder && mediaRecorder.pause();
 export const resume = () => mediaRecorder && mediaRecorder.resume();
 export const stop = () => mediaRecorder && mediaRecorder.stop();
-export const onStop = (cb) => _onStop = cb;
-export const getBlob = () => blob;
+export const onFile = (cb) => _onFile = cb;
+export const getFile = () => file;

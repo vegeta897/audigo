@@ -14,6 +14,9 @@ ffmpeg.getAvailableEncoders((err, encoders) => {
     }
 });
 
+const VALID_TYPES = ['.webm', '.weba', '.aac', '.ogg', '.mp3', '.wav', '.opus', '.m4a'];
+const STORE_TYPE = '.mp3';
+
 const app = express();
 
 app.use(cors({
@@ -35,8 +38,8 @@ let upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
         let fileType = path.extname(file.originalname);
-        if(['.webm', '.ogg'].includes(fileType)) cb(null, true);
-        else cb('Invalid file type, expected .webm or .ogg, got ' + fileType);
+        if(VALID_TYPES.includes(fileType)) cb(null, true);
+        else cb('Invalid file type ' + fileType);
     },
     limits: {
         fileSize: 50 * 1024 * 1024 // 50mb max
@@ -45,12 +48,25 @@ let upload = multer({
 let type = upload.single('audio');
 
 app.post('/api/upload', type, (req, res) => {
+    if(!req.file) {
+        res.status(500).send({
+            error: 'missing file'
+        });
+        return;
+    }
     let filePath = req.file.path;
     let filename = req.file.filename;
     let ext = path.extname(filename);
     let name = path.basename(filename, ext);
-    let outputPath = req.file.destination + '/' + name + '.mp3';
-    console.log('saving', name + '.mp3');
+    let outputPath = req.file.destination + '/' + name + STORE_TYPE;
+    console.log('saving', name + STORE_TYPE);
+    if(ext === STORE_TYPE) { // Already correct format
+        fs.rename(filePath, outputPath);
+        res.send({
+            message: 'file uploaded successfully'
+        });
+        return;
+    }
     ffmpeg(filePath)
         .audioCodec('libmp3lame')
         .save(outputPath)
@@ -61,11 +77,11 @@ app.post('/api/upload', type, (req, res) => {
             });
         })
         .on('end', () => {
-            console.log('output', Math.round(fs.statSync(outputPath).size / 1000), 'kb');
+            console.log('converted to', Math.round(fs.statSync(outputPath).size / 1000), 'kb', STORE_TYPE);
             fs.unlink(filePath); // Delete file
             res.send({
                 message: 'file uploaded successfully'
-            })
+            });
         });
 });
 
