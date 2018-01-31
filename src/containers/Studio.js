@@ -2,7 +2,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Button, Icon, Divider, Loader } from 'semantic-ui-react';
+import { Segment, Button, Icon, Divider, Loader } from 'semantic-ui-react';
 import { studioActions } from "../actions";
 import * as Recorder from '../recorder';
 
@@ -27,18 +27,16 @@ class Studio extends React.Component {
         const uploaded = upload === 'success';
         if(!Recorder.BROWSER_SUPPORTED) return <div>Your browser doesn't support audio recording!</div>;
         return (
-            <div id='recorder'>
-                <Button color={ recording ? 'red' : 'orange' } icon labelPosition='left'
+            <Segment stacked id='recorder'>
+                {!stage.blobUrl && <Button color={ recording ? 'red' : 'orange' } icon labelPosition='left'
                         onClick={ recording ? recorderStop : recorderStart }>
                     <Icon name={ recording ? 'square' : 'circle' } />
                     { recording ? 'Stop' : 'Record' }
-                </Button>
-                <div>
-                    {stage.blobUrl ? <audio id="player" src={ stage.blobUrl } controls /> : false}
-                </div>
-                <Divider />
-                {stage.blobUrl ? <Button.Group vertical >
-                    {uploaded ? false : <Button color={'green'} icon labelPosition='left'
+                </Button>}
+                {stage.blobUrl && <audio id="player" src={ stage.blobUrl } controls style={{ display: 'block', width: '100%' }} />}
+                {stage.blobUrl && <Divider />}
+                {stage.blobUrl && <Button.Group vertical>
+                    {!uploaded && <Button color={'green'} icon labelPosition='left'
                             onClick={ this.uploadAudio(Recorder.getBlob(), stage.fileType) }
                             disabled={ uploading }>
                         <Icon name='upload' />
@@ -50,8 +48,8 @@ class Studio extends React.Component {
                         <Icon name='download' />
                         Download
                     </Button>
-                </Button.Group> : false}
-            </div>
+                </Button.Group>}
+            </Segment>
         );
     }
 }
