@@ -55,6 +55,7 @@ export const getAudio = id => dispatch => {
     API.get(id)
         .then(res => {
             console.log(res);
+            res.customHeaders.url = URL.createObjectURL(res.res);
             dispatch(getStatus('success', res.customHeaders));
         })
         .catch(err => {

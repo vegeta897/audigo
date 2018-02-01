@@ -22,7 +22,7 @@ class Studio extends React.Component {
     }
     uploadAudio = (file, fileName) => () => this.props.uploadAudio(file, fileName);
     render() {
-        const { recorder, stage, recorderStart, recorderStop, upload } = this.props;
+        const { recorder, stage, recorderStart, recorderStop, upload, play } = this.props;
         const recording = recorder === 'start' || recorder === 'resume';
         const uploading = upload === 'uploading';
         const uploaded = upload === 'success';
@@ -57,13 +57,20 @@ class Studio extends React.Component {
                     <Divider />
                     <audio id="player" src={ stage.fileUrl } controls controlsList='nodownload' 
                            style={{ display: 'block', width: '100%', marginBottom: '1em' }} />
-                    <Button as='a' icon labelPosition='left' onClick={ this.download }
-                            download={ 'audio.' + stage.fileType } href={ stage.fileUrl }>
+                    <Button as='a' icon labelPosition='left'
+                            download={ stage.fileName } href={ stage.fileUrl }>
                         <Icon name='download' />
                         Download
                     </Button>
                 </div>}
-                <Button onClick={ () => this.props.getAudio(13) }>test</Button>
+                <Button onClick={ () => this.props.getAudio(1) }>test</Button>
+                <audio id="player2" src={ play.audio.url } controls controlsList='nodownload'
+                       style={{ display: 'block', width: '100%', marginBottom: '1em' }} />
+                <Button as='a' icon labelPosition='left'
+                        download={ play.audio.file_name } href={ play.audio.url }>
+                    <Icon name='download' />
+                    Download
+                </Button>
             </Segment>
         );
     }
@@ -73,7 +80,8 @@ function mapStateToProps(state, props) {
     return {
         recorder: state.recorder,
         stage: state.stage,
-        upload: state.upload
+        upload: state.upload,
+        play: state.play
     }
 }
 

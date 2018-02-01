@@ -1,23 +1,19 @@
 const API = process.env.API_HOST + ':' + process.env.API_PORT + '/api/';
 
 function handleFetch(endpoint, options, type, customHeaders) {
+    let data = {};
     return fetch(API + endpoint, options)
         .then(res => {
-            let data = { res };
-            try {
-                switch(type) {
-                    case 'json': res.json();
-                    case 'blob': res.blob();
-                }
-                if(res.error) data.error = res.error;
-                if(customHeaders) data.customHeaders = getCustomHeaders(res.headers, customHeaders)
-            } catch(err) {
-                throw Error(err)
-            }
-            return data;
+            // for(let pair of res.headers.entries()) console.log(...pair);
+            if(customHeaders) data.customHeaders = getCustomHeaders(res.headers, customHeaders);
+            let contentType = res.headers.get('content-type');
+            if(contentType && contentType.includes('application/json')) return res.json();
+            if(type === 'blob') return res.blob();
+            return res.text();
         })
-        .then(data => {
-            if(data.error) throw Error(data.error);
+        .then(res => {
+            if(res.error) throw res.error;
+            data.res = res;
             return data;
         });    
 }
@@ -37,6 +33,6 @@ export const upload = (file, fileName) => {
 };
 
 export const get = id => {
-    return handleFetch('get/' + id, { method: 'post' }, 'blob',
-        ['created', 'updated', 'filename', 'duration', 'filesize']);
+    return handleFetch('get/' + id, { method: 'get' }, 'blob',
+        ['created', 'updated', 'file_name', 'duration', 'file_size']);
 };

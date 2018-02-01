@@ -4,13 +4,13 @@ import {
 
 const INIT_PLAY = {
     status: 'none',
-    audio: null
+    audio: {}
 };
 
 export const playReducer = (state = INIT_PLAY, action) => {
     switch(action.type) {
         case GET_STATUS:
-            if(action.status === 'error') return { status: action.status, ...state };
+            if(action.status !== 'success') return { ...state, status: action.status };
             return {
                 status: action.status,
                 audio: action.audio

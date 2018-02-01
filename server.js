@@ -31,7 +31,8 @@ knex.schema
     .createTableIfNotExists('uploads', tbl => {
         tbl.increments().primary();
         tbl.timestamps(true, true);
-        tbl.string('original_filename');
+        tbl.string('original_name');
+        tbl.string('original_ext');
         tbl.integer('duration');
         tbl.integer('file_size');
     })
@@ -56,7 +57,9 @@ let listener = app.listen(process.env.API_PORT, () => {
 let storage = multer.diskStorage({
     destination: './public/uploads',
     filename: (req, file, cb) => {
-        knex('uploads').insert({ original_filename: file.originalname })
+        let ext = path.extname(file.originalname);
+        let name = path.basename(file.originalname, ext);
+        knex('uploads').insert({ original_name: name, original_ext: ext })
             .returning('id')
             .then(data => {
                 cb(null, data[0] + path.extname(file.originalname));
@@ -114,29 +117,37 @@ function onFileReady(res, id, outputPath) {
                     file_size: fileSize,
                     duration: Math.round(outputInfo.streams[0].duration * 1000)
                 })
+                .then(() => {
+                    res.send({ message: 'file uploaded successfully', id });
+                })
                 .catch(console.error);
-            res.send({ message: 'file uploaded successfully' });
         })
         .catch(console.error);
 }
 
-app.post('/api/get/:id', (req, res) => { // Get a file
+app.get('/api/get/:id', (req, res) => { // Get a file
     let { id } = req.params;
     knex('uploads')
         .where('id', '=', id)
         .select({
             'created': 'created_at',
             'updated': 'updated_at',
-            'filename': 'original_filename',
+            'original_name': 'original_name',
             'duration': 'duration',
-            'filesize': 'file_size'
+            'file_size': 'file_size'
         })
         .then(data => {
             if(!data[0]) return res.status(404).send({ error: 'invalid id' });
-            let file = fs.createReadStream('./public/uploads/' + id + STORE_TYPE);
-            res.set(data[0]);
-            res.set('Content-Type', 'audio/mpeg');
-            res.set('Access-Control-Expose-Headers', Object.keys(data[0]).join(','));
-            file.pipe(res);
+            let audio = {
+                created: data[0].created,
+                updated: data[0].updated,
+                duration: data[0].duration,
+                file_size: data[0].file_size,
+                file_name: data[0].original_name + STORE_TYPE
+            };
+            res.set(audio);
+            res.set('Access-Control-Expose-Headers', Object.keys(audio).join(','));
+            res.download('./public/uploads/' + id + STORE_TYPE);
         })
+        .catch(console.error);
 });

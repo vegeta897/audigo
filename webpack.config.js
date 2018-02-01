@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
@@ -11,7 +12,8 @@ const webpackConfig = {
     entry: ['./src/index.js'],
     output: {
         path: path.resolve('dist'),
-        filename: 'js/[name].js'
+        filename: 'js/[name].js',
+        publicPath: process.env.BASENAME + '/'
     },
     resolve: {
         modules: [
@@ -42,6 +44,10 @@ const webpackConfig = {
         })
     ],
     devtool: 'eval-source-map',
+    devServer: { 
+        historyApiFallback: true,
+        publicPath: process.env.BASENAME + '/'
+    },
     module: {
         rules: [
             {
@@ -90,6 +96,16 @@ if (env === 'production') {
         })
     );
     delete webpackConfig.devtool;
+    delete webpackConfig.devServer;
+    require('fs').writeFileSync(path.resolve('dist') + '/.htaccess',
+        `<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase ${process.env.BASENAME}/
+    RewriteRule ^index\\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . ${process.env.BASENAME}/index.html [L]
+</IfModule>`);
 }
 
 module.exports = webpackConfig;
