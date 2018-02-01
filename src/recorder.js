@@ -7,7 +7,9 @@ const AUDIO_CTX = new AudioContext();
 
 let stream, chunks = [], file, fileUrl, mediaRecorder, _onFile;
 
-navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _stream);
+export const init = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _stream);
+};
 
 export const attachInput = input => {
     input.addEventListener('change', e => {
@@ -17,6 +19,7 @@ export const attachInput = input => {
 };
 
 export const start = () => {
+    if(!stream) return console.error('recorder tried to start without init!');
     let startTime = Date.now();
     let source = AUDIO_CTX.createMediaStreamSource(stream);
     let merger = AUDIO_CTX.createChannelMerger();

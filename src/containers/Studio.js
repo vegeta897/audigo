@@ -1,13 +1,15 @@
 // Recording, previewing, uploading clips
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Segment, Button, Icon, Divider, Message } from 'semantic-ui-react';
-import { studioActions, viewActions } from "../actions";
+import { studioActions } from '../actions';
 import * as Recorder from '../recorder';
 
 class Studio extends React.Component {
     componentDidMount() {
+        Recorder.init();
         Recorder.onFile(this.props.stageNew);
         Recorder.attachInput(document.getElementById('uploader'), this.props.stageNew);
     }
@@ -22,13 +24,14 @@ class Studio extends React.Component {
     }
     uploadAudio = (file, fileName) => () => this.props.uploadAudio(file, fileName);
     render() {
-        const { recorder, stage, recorderStart, recorderStop, upload, play } = this.props;
+        const { recorder, stage, recorderStart, recorderStop, upload } = this.props;
         const recording = recorder === 'start' || recorder === 'resume';
-        const uploading = upload === 'uploading';
-        const uploaded = upload === 'success';
+        const uploading = upload.status === 'uploading';
+        const uploaded = upload.status === 'success';
         if(!Recorder.BROWSER_SUPPORTED) return <div>Your browser doesn't support audio recording!</div>;
         return (
-            <Segment stacked id='recorder'>
+            <Segment id='recorder'>
+                {uploaded && <Redirect to={'/play/' + upload.id}/>}
                 {!stage.fileUrl && <div>
                     <Button fluid size='massive' color={ recording ? 'red' : 'orange' } icon labelPosition='left'
                             onClick={ recording ? recorderStop : recorderStart }>
@@ -55,7 +58,7 @@ class Studio extends React.Component {
                         </Message.Content>
                     </Message>}
                     <Divider />
-                    <audio id="player" src={ stage.fileUrl } controls controlsList='nodownload' 
+                    <audio src={ stage.fileUrl } controls controlsList='nodownload' autoPlay
                            style={{ display: 'block', width: '100%', marginBottom: '1em' }} />
                     <Button as='a' icon labelPosition='left'
                             download={ stage.fileName } href={ stage.fileUrl }>
@@ -63,14 +66,6 @@ class Studio extends React.Component {
                         Download
                     </Button>
                 </div>}
-                <Button onClick={ () => this.props.getAudio(1) }>test</Button>
-                <audio id="player2" src={ play.audio.url } controls controlsList='nodownload'
-                       style={{ display: 'block', width: '100%', marginBottom: '1em' }} />
-                <Button as='a' icon labelPosition='left'
-                        download={ play.audio.file_name } href={ play.audio.url }>
-                    <Icon name='download' />
-                    Download
-                </Button>
             </Segment>
         );
     }
@@ -80,9 +75,8 @@ function mapStateToProps(state, props) {
     return {
         recorder: state.recorder,
         stage: state.stage,
-        upload: state.upload,
-        play: state.play
+        upload: state.upload
     }
 }
 
-export default connect(mapStateToProps, dispatch => bindActionCreators({...studioActions, ...viewActions}, dispatch))(Studio);
+export default connect(mapStateToProps, dispatch => bindActionCreators({...studioActions}, dispatch))(Studio);

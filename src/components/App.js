@@ -1,11 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Studio from '../containers/Studio';
+import Play from '../containers/Play';
 import { Grid, Header, Icon } from 'semantic-ui-react';
-
-const Play = ({ match }) => (
-    <h3>ID: {match.params.id}</h3>
-);
 
 const App = () => (
     <Router basename={process.env.BASENAME}><div>
@@ -16,7 +13,7 @@ const App = () => (
           }
         `}</style>
         <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
-            <Grid.Column style={{ maxWidth: 450 }}>
+            <Grid.Column style={{ maxWidth: 480, margin: '0 12px' }}>
                 <Header as='h1' icon>
                     <Icon name='microphone' color='orange' />
                     Audigo

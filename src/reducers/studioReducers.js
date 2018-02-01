@@ -43,13 +43,14 @@ export const stageReducer = (state = INIT_STAGE, action) => {
     }
 };
 
-export const uploadReducer = (state = 'none', action) => {
+export const uploadReducer = (state = { status: 'none' }, action) => {
     switch(action.type) {
         case UPLOAD_STATUS:
-            return action.status;
+            return {
+                status: action.status,
+                id: action.id
+            };
         default:
             return state;
     }
 };
-
-export default uploadReducer;

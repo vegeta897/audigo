@@ -28,8 +28,8 @@ export const stageNew = (source, duration, fileUrl, fileName) => {
     return { type: STAGE_NEW, source, duration, fileUrl, fileName };
 };
 
-export const uploadStatus = (status) => {
-    return { type: UPLOAD_STATUS, status }
+export const uploadStatus = (status, id) => {
+    return { type: UPLOAD_STATUS, status, id }
 };
 
 export const uploadAudio = (file, fileName) => dispatch => {
@@ -38,7 +38,7 @@ export const uploadAudio = (file, fileName) => dispatch => {
         .then(res => {
             console.log(res);
             // setTimeout(dispatch, 2000, uploadStatus('success')); // Simulate load time
-            dispatch(uploadStatus('success'));
+            dispatch(uploadStatus('success', res.res.id));
         })
         .catch(err => {
             console.error(err);
