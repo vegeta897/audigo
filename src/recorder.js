@@ -8,7 +8,7 @@ const AUDIO_CTX = new AudioContext();
 let stream, chunks = [], file, fileUrl, mediaRecorder, _onFile;
 
 export const init = () => {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _stream);
+    if(!stream) navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _stream);
 };
 
 export const attachInput = input => {

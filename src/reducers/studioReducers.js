@@ -4,6 +4,7 @@ import {
     RECORDER_PAUSE,
     RECORDER_RESUME,
     STAGE_NEW,
+    STAGE_CLEAR,
     UPLOAD_STATUS
 } from "../actions";
 
@@ -36,8 +37,13 @@ export const stageReducer = (state = INIT_STAGE, action) => {
                 source: action.source,
                 duration: action.duration,
                 fileUrl: action.fileUrl,
-                fileName: action.fileName
+                fileName: action.fileName,
+                title: action.source === 'upload' ? 
+                    action.fileName.split('.').slice(0, -1).join(' ').replace(/[-_]/g,' ') 
+                    : new Date().toISOString().substr(0, 19).replace(/T/,' ')
             };
+        case STAGE_CLEAR:
+            return INIT_STAGE;
         default:
             return state;
     }

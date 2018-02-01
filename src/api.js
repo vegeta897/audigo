@@ -26,13 +26,14 @@ function getCustomHeaders(headers, list) {
     return obj;
 }
 
-export const upload = (file, fileName) => {
+export const upload = (file, fileName, title) => {
     let fd = new FormData();
     fd.append('audio', file, fileName);
+    fd.append('title', title);
     return handleFetch('upload', { method: 'post', body: fd }, 'json');
 };
 
 export const get = id => {
     return handleFetch('get/' + id, { method: 'get' }, 'blob',
-        ['created', 'updated', 'file_name', 'duration', 'file_size']);
+        ['created', 'updated', 'title', 'file_name', 'duration', 'file_size']);
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Studio from '../containers/Studio';
 import Play from '../containers/Play';
 import { Grid, Header, Icon } from 'semantic-ui-react';
@@ -18,8 +18,11 @@ const App = () => (
                     <Icon name='microphone' color='orange' />
                     Audigo
                 </Header>
-                <Route exact path='/' component={Studio}/>
-                <Route path={'/play/:id'} component={Play}/>
+                <Switch>
+                    <Route exact path='/' component={Studio}/>
+                    <Route path={'/play/:id'} component={Play}/>
+                    <Redirect to='/'/>
+                </Switch>
             </Grid.Column>
         </Grid>
     </div></Router>

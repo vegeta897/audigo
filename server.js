@@ -31,6 +31,7 @@ knex.schema
     .createTableIfNotExists('uploads', tbl => {
         tbl.increments().primary();
         tbl.timestamps(true, true);
+        tbl.string('title');
         tbl.string('original_name');
         tbl.string('original_ext');
         tbl.integer('duration');
@@ -90,7 +91,7 @@ app.post('/api/upload', type, (req, res) => { // Upload a file
     console.log('saving', id + STORE_TYPE);
     if(ext === STORE_TYPE) { // Already correct format
         fs.renameSync(filePath, outputPath);
-        onFileReady(res, id, outputPath);
+        onFileReady(res, req, id, outputPath);
         return;
     }
     ffmpeg(filePath)
@@ -102,11 +103,11 @@ app.post('/api/upload', type, (req, res) => { // Upload a file
         })
         .on('end', (stdout, sterr) => {
             fs.unlink(filePath); // Delete file
-            onFileReady(res, id, outputPath);
+            onFileReady(res, req, id, outputPath);
         });
 });
 
-function onFileReady(res, id, outputPath) {
+function onFileReady(res, req, id, outputPath) {
     let fileSize = Math.round(fs.statSync(outputPath).size / 1024);
     ffprobe(outputPath, { path: ffmpegPath })
         .then(outputInfo => {
@@ -114,6 +115,7 @@ function onFileReady(res, id, outputPath) {
             knex('uploads')
                 .where('id', '=', id)
                 .update({
+                    title: req.body.title,
                     file_size: fileSize,
                     duration: Math.round(outputInfo.streams[0].duration * 1000)
                 })
@@ -132,6 +134,7 @@ app.get('/api/get/:id', (req, res) => { // Get a file
         .select({
             'created': 'created_at',
             'updated': 'updated_at',
+            'title': 'title',
             'original_name': 'original_name',
             'duration': 'duration',
             'file_size': 'file_size'
@@ -141,6 +144,7 @@ app.get('/api/get/:id', (req, res) => { // Get a file
             let audio = {
                 created: data[0].created,
                 updated: data[0].updated,
+                title: data[0].title,
                 duration: data[0].duration,
                 file_size: data[0].file_size,
                 file_name: data[0].original_name + STORE_TYPE
