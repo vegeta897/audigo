@@ -4,33 +4,37 @@ import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed } from 'redux-saga-thunk';
 import { fromResource } from 'store/selectors';
-import { resourceDetailReadRequest } from 'store/actions';
+import { resourceListReadRequest } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
-import { Player } from 'components';
+import { ClipList } from 'components';
 
-class PlayerContainer extends Component {
+class ClipListContainer extends Component {
     static propTypes = {
-        detail: PropTypes.object,
-        id: PropTypes.string.isRequired,
+        list: PropTypes.array.isRequired,
+        limit: PropTypes.number,
         loading: PropTypes.bool,
         failed: PropTypes.bool,
-        readDetail: PropTypes.func.isRequired,
+        readList: PropTypes.func.isRequired,
         hasServerState: PropTypes.bool,
         setServerState: PropTypes.func.isRequired,
         cleanServerState: PropTypes.func.isRequired,
     };
 
+    static defaultProps = {
+        limit: 20
+    };
+
     componentWillMount() {
         const {
-            readDetail, hasServerState, setServerState, cleanServerState
+            readList, hasServerState, setServerState, cleanServerState
         } = this.props;
 
         if(!hasServerState) {
             if(isServer) {
-                readDetail().then(setServerState, setServerState);
+                readList().then(setServerState, setServerState);
             } else {
-                readDetail();
+                readList();
             }
         } else if(isBrowser) {
             cleanServerState();
@@ -38,19 +42,19 @@ class PlayerContainer extends Component {
     }
 
     render() {
-        const { detail, loading, failed } = this.props;
-        return <Player {...{ detail, loading, failed }} />
+        const { list, loading, failed } = this.props;
+        return <ClipList {...{ list, loading, failed }} />
     }
 }
 
 const mapStateToProps = state => ({
-    detail: fromResource.getDetail(state, 'clips'),
+    list: fromResource.getList(state, 'clips'),
     loading: isPending(state, 'clipsRead'),
     failed: hasFailed(state, 'clipsRead')
 });
 
-const mapDispatchToProps = (dispatch, { id }) => ({
-    readDetail: () => dispatch(resourceDetailReadRequest('clips', id))
+const mapDispatchToProps = (dispatch, { limit }) => ({
+    readList: () => dispatch(resourceListReadRequest('clips', { _limit: limit }))
 });
 
 const withServerState = fetchState(
@@ -63,4 +67,4 @@ const withServerState = fetchState(
     })
 );
 
-export default withServerState(connect(mapStateToProps, mapDispatchToProps)(PlayerContainer));
+export default withServerState(connect(mapStateToProps, mapDispatchToProps)(ClipListContainer));

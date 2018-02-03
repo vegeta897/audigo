@@ -44,10 +44,17 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 
 const app = express();
 
+let clips = [
+    {
+        id: 1,
+        title: 'finger drumming'
+    }
+];
+
 // Get list of clips
 app.get('/api/clips', (req, res) => {
     console.log('GET /api/clips');
-    res.send({ list: [{ id: 1 }] });
+    res.send(clips);
     // res.download(path.resolve(process.cwd(), 'dist/public/icon.png'));
 });
 
@@ -55,7 +62,8 @@ app.get('/api/clips', (req, res) => {
 app.get('/api/clips/:id', (req, res) => {
     let { id } = req.params;
     console.log('GET /api/clips/'+id);
-    res.send({ id, title: 'hey!', url: 'http://localhost:3000/download/' + id + '.mp3' });
+    let clip = clips[id-1];
+    res.send({ ...clip, url: 'http://localhost:3000/download/' + id + '.mp3' });
 });
 
 // Serve clip downloads

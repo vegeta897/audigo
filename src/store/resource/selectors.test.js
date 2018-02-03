@@ -3,7 +3,7 @@ import * as selectors from './selectors';
 const altState = {
     resources: {
         list: [1, 2, 3],
-        detail: 1
+        detail: { id: 1, title: 'test' }
     }
 };
 
@@ -22,6 +22,13 @@ test('getResourceState', () => {
     expect(selectors.getResourceState()).toBe(selectors.initialResourceState);
     expect(selectors.getResourceState(undefined, 'resources')).toBe(selectors.initialResourceState);
     expect(selectors.getResourceState(altState, 'resources')).toBe(altState.resources);
+});
+
+test('getList', () => {
+    expect(selectors.getList()).toBe(selectors.initialResourceState.list);
+    expect(selectors.getList({})).toBe(selectors.initialResourceState.list);
+    expect(selectors.getList(undefined, 'resources')).toBe(selectors.initialResourceState.list);
+    expect(selectors.getList(altState, 'resources')).toBe(altState.resources.list);
 });
 
 test('getDetail', () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { Player } from 'containers';
 
 const PlayPage = ({match/*, location, history, staticContext*/}) => {
@@ -19,10 +18,6 @@ const PlayPage = ({match/*, location, history, staticContext*/}) => {
     */
     return (
         <div>
-            <Helmet>
-                <title>{match.params.id}</title>
-                <meta property='og:description' content={match.params.id} data-react-helmet='true' />
-            </Helmet>
             <Player id={match.params.id} />
         </div>
     );

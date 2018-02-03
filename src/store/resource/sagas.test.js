@@ -17,6 +17,27 @@ const thunk = '123';
 const resource = 'resources';
 const meta = { thunk, resource };
 
+describe('readResourceList', () => {
+    const payload = { params: { _limit: 1 } };
+
+    it('calls success', () => {
+        const detail = [1, 2, 3];
+        const generator = sagas.readResourceList(api, payload, meta);
+        expect(generator.next().value)
+            .toEqual(call([api, api.get], `/${resource}`, payload));
+        expect(generator.next(detail).value)
+            .toEqual(put(actions.resourceListReadSuccess(resource, detail, payload, thunk)));
+    });
+
+    it('calls failure', () => {
+        const generator = sagas.readResourceList(api, payload, meta);
+        expect(generator.next().value)
+            .toEqual(call([api, api.get], `/${resource}`, payload));
+        expect(generator.throw('test').value)
+            .toEqual(put(actions.resourceListReadFailure(resource, 'test', payload, thunk)));
+    });
+});
+
 describe('readResourceDetail', () => {
     const payload = { id: 1 };
 
@@ -26,7 +47,7 @@ describe('readResourceDetail', () => {
         expect(generator.next().value)
             .toEqual(call([api, api.get], `/${resource}/1`));
         expect(generator.next(detail).value)
-            .toEqual(put(actions.resourceDetailReadSuccess(resource, detail, payload, thunk)))
+            .toEqual(put(actions.resourceDetailReadSuccess(resource, detail, payload, thunk)));
     });
 
     it('calls failure', () => {
@@ -34,8 +55,15 @@ describe('readResourceDetail', () => {
         expect(generator.next().value)
             .toEqual(call([api, api.get], `/${resource}/1`));
         expect(generator.throw('test').value)
-            .toEqual(put(actions.resourceDetailReadFailure(resource, 'test', payload, thunk)))
+            .toEqual(put(actions.resourceDetailReadFailure(resource, 'test', payload, thunk)));
     })
+});
+
+test('watchResourceListReadRequest', () => {
+    const payload = { params: { limit: 1 } };
+    const generator = sagas.watchResourceListReadRequest(api, { payload, meta });
+    expect(generator.next().value)
+        .toEqual(call(sagas.readResourceList, api, payload, meta));
 });
 
 test('watchResourceDetailReadRequest', () => {

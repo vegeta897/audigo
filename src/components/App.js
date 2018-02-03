@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import { injectGlobal, ThemeProvider } from 'styled-components';
 import Helmet from 'react-helmet';
 
-import { HomePage, PlayPage } from 'components';
+import { HomePage, PlayPage, ClipsPage } from 'components';
 
 // https://github.com/diegohaz/arc/wiki/Styling
 import theme from './themes/default';
@@ -33,6 +33,7 @@ const App = () => {
             <ThemeProvider theme={theme}>
                 <Switch>
                     <Route path='/' component={HomePage} exact/>
+                    <Route path='/clips' component={ClipsPage} exact/>
                     <Route path='/play/:id' component={PlayPage} exact/>
                 </Switch>
             </ThemeProvider>

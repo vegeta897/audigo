@@ -1,14 +1,13 @@
-// https://github.com/diegohaz/arc/wiki/Testing-redux-modules
-// https://github.com/diegohaz/arc/wiki/Example-redux-modules#resource
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import delay from 'delay';
 import reducer from './reducer';
 import sagas from './sagas';
 import {
+    resourceListReadRequest,
     resourceDetailReadRequest
 } from './actions';
-import { getDetail } from './selectors';
+import { getList, getDetail } from './selectors';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -26,6 +25,19 @@ const getStore = (initialState) => {
 };
 
 describe('resource', () => {
+    test('resourceListReadRequest', async () => {
+        const { getState, dispatch } = getStore();
+
+        expect(getList(getState(), 'resources')).toEqual([]);
+
+        dispatch(resourceListReadRequest('resources'));
+        await delay();
+        expect(getList(getState(), 'resources')).toEqual([1, 2, 3]);
+
+        dispatch(resourceListReadRequest('resources'));
+        await delay();
+        expect(getList(getState(), 'resources')).toEqual([1, 2, 3]);
+    });
 
     test('resourceDetailReadRequest', async () => {
         const { getState, dispatch } = getStore();
