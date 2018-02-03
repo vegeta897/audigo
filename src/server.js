@@ -44,15 +44,27 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 
 const app = express();
 
-app.get('/api/clips/:id', (req, res) => {
-    let { id } = req.params;
-    console.log('GET /api/clips/'+id);
-    res.send({ id, title: 'hey!' });
+// Get list of clips
+app.get('/api/clips', (req, res) => {
+    console.log('GET /api/clips');
+    res.send({ list: [{ id: 1 }] });
     // res.download(path.resolve(process.cwd(), 'dist/public/icon.png'));
 });
 
+// Get clip detail
+app.get('/api/clips/:id', (req, res) => {
+    let { id } = req.params;
+    console.log('GET /api/clips/'+id);
+    res.send({ id, title: 'hey!', url: 'http://localhost:3000/download/' + id + '.mp3' });
+});
+
+// Serve clip downloads
+app.use('/download', express.static(path.resolve(process.cwd(), 'server/clips')));
+
+// Serve static assets
 app.use(basename, express.static(path.resolve(process.cwd(), 'dist/public')));
 
+// Serve rendered index.html
 app.use((req, res, next) => {
     const location = req.url;
     const store = configureStore({}, { api: api.create() });
@@ -76,6 +88,7 @@ app.use((req, res, next) => {
     }).catch(next);
 });
 
+// Serve error page
 app.use((err, req, res, next) => {
     const sheet = new ServerStyleSheet();
     const content = renderToStaticMarkup(sheet.collectStyles(<Error/>));
