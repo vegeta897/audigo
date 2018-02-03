@@ -5,7 +5,7 @@ test('resourceDetailReadRequest', () => {
         .toEqual(expect.objectContaining({
             type: actions.RESOURCE_DETAIL_READ_REQUEST,
             payload: {
-                needle: 1,
+                id: 1,
             },
             meta: expect.objectContaining({
                 resource: 'resources',

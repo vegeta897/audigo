@@ -44,10 +44,11 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 
 const app = express();
 
-app.get('/api/get/:id', (req, res) => {
+app.get('/api/clips/:id', (req, res) => {
     let { id } = req.params;
-    console.log('get id',id);
-    res.download(path.resolve(process.cwd(), 'dist/public/icon.png'));
+    console.log('GET /api/clips/'+id);
+    res.send({ id, title: 'hey!' });
+    // res.download(path.resolve(process.cwd(), 'dist/public/icon.png'));
 });
 
 app.use(basename, express.static(path.resolve(process.cwd(), 'dist/public')));

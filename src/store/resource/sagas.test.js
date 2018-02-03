@@ -18,7 +18,7 @@ const resource = 'resources';
 const meta = { thunk, resource };
 
 describe('readResourceDetail', () => {
-    const payload = { needle: 1 };
+    const payload = { id: 1 };
 
     it('calls success', () => {
         const detail = 'foo';
@@ -39,7 +39,7 @@ describe('readResourceDetail', () => {
 });
 
 test('watchResourceDetailReadRequest', () => {
-    const payload = { needle: 1 };
+    const payload = { id: 1 };
     const generator = sagas.watchResourceDetailReadRequest(api, { payload, meta });
     expect(generator.next().value)
         .toEqual(call(sagas.readResourceDetail, api, payload, meta))

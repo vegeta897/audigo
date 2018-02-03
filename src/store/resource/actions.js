@@ -2,9 +2,9 @@ export const RESOURCE_DETAIL_READ_REQUEST = 'RESOURCE_DETAIL_READ_REQUEST';
 export const RESOURCE_DETAIL_READ_SUCCESS = 'RESOURCE_DETAIL_READ_SUCCESS';
 export const RESOURCE_DETAIL_READ_FAILURE = 'RESOURCE_DETAIL_READ_FAILURE';
 
-export const resourceDetailReadRequest = (resource, needle) => ({
+export const resourceDetailReadRequest = (resource, id) => ({
     type: RESOURCE_DETAIL_READ_REQUEST,
-    payload: { needle },
+    payload: { id },
     meta: {
         resource,
         thunk: `${resource}DetailRead`

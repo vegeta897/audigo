@@ -9,7 +9,7 @@ const config = {
         port: process.env.PORT || 3000,
         isBrowser: typeof window !== 'undefined',
         isServer: typeof window === 'undefined',
-        apiUrl: 'http://localhost/api',
+        apiUrl: 'http://localhost:3000/api',
     },
     test: {},
     development: {},

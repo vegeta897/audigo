@@ -1,6 +1,6 @@
-// https://github.com/diegohaz/arc/wiki/Atomic-Design
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { Player } from 'containers';
 
 const PlayPage = ({match/*, location, history, staticContext*/}) => {
     /*  Params: {
@@ -20,12 +20,10 @@ const PlayPage = ({match/*, location, history, staticContext*/}) => {
     return (
         <div>
             <Helmet>
-                <title>{ `${match.params.id} - Audigo` }</title>
+                <title>{match.params.id}</title>
                 <meta property='og:description' content={match.params.id} data-react-helmet='true' />
             </Helmet>
-            <p>
-                You're playing {match.params.id}!
-            </p>
+            <Player id={match.params.id} />
         </div>
     );
 };
