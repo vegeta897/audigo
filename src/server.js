@@ -44,6 +44,12 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 
 const app = express();
 
+app.get('/api/get/:id', (req, res) => {
+    let { id } = req.params;
+    console.log('get id',id);
+    res.download(path.resolve(process.cwd(), 'dist/public/icon.png'));
+});
+
 app.use(basename, express.static(path.resolve(process.cwd(), 'dist/public')));
 
 app.use((req, res, next) => {
