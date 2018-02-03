@@ -1,25 +1,36 @@
-import React from 'react';
-import { renderRoutes } from 'react-router-config';
-import { Grid, Header, Icon } from 'semantic-ui-react';
+import React from 'react'
+import { Switch, Route } from 'react-router-dom'
+import { injectGlobal, ThemeProvider } from 'styled-components'
+import Helmet from 'react-helmet'
 
-const App = (props) => (
-    <div>
-        <style>{`
-          body > div,
-          body > div > div {
-            height: 100%;
-          }
-        `}</style>
-        <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
-            <Grid.Column style={{ maxWidth: 480, margin: '0 12px' }}>
-                <Header as='h1' icon>
-                    <Icon name='microphone' color='orange' />
-                    Audigo
-                </Header>
-                {renderRoutes(props.route.routes)}
-            </Grid.Column>
-        </Grid>
-    </div>
-);
+import { HomePage } from 'components'
 
-export default App;
+// https://github.com/diegohaz/arc/wiki/Styling
+import theme from './themes/default'
+
+injectGlobal`
+  body {
+    margin: 0;
+  }
+`
+
+const App = () => {
+    return (
+        <div>
+            <Helmet titleTemplate="ARc - %s">
+                <title>Atomic React</title>
+                <meta name="description" content="React starter kit based on Atomic Design with React Router v4, Webpack, Redux, Server Side Rendering and more."/>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <meta property="og:site_name" content="ARc"/>
+                <meta property="og:image" content="https://arc.js.org/thumbnail.png"/>
+                <meta property="og:image:type" content="image/png"/>
+                <meta property="og:image:width" content="1200"/>
+                <meta property="og:image:height" content="630"/>
+                <link rel="icon" href="https://arc.js.org/icon.png"/>
+            </Helmet> <ThemeProvider theme={theme}> <Switch> <Route path="/" component={HomePage} exact/> </Switch>
+        </ThemeProvider>
+        </div>
+    )
+}
+
+export default App
