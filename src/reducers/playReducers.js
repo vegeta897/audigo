@@ -1,6 +1,6 @@
 import {
     GET_STATUS
-} from "../actions";
+} from '../actions';
 
 const INIT_PLAY = {
     status: 'none',

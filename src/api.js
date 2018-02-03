@@ -1,4 +1,6 @@
-const API = process.env.API_HOST + ':' + process.env.API_PORT + '/api/';
+import 'isomorphic-fetch';
+
+let API = process.env.BROWSER ? '/api/' : 'http://localhost:4444/api/';
 
 function handleFetch(endpoint, options, type, customHeaders) {
     let data = {};
@@ -8,7 +10,7 @@ function handleFetch(endpoint, options, type, customHeaders) {
             if(customHeaders) data.customHeaders = getCustomHeaders(res.headers, customHeaders);
             let contentType = res.headers.get('content-type');
             if(contentType && contentType.includes('application/json')) return res.json();
-            if(type === 'blob') return res.blob();
+            if(type === 'blob' && process.env.BROWSER) return res.blob();
             return res.text();
         })
         .then(res => {
@@ -20,8 +22,14 @@ function handleFetch(endpoint, options, type, customHeaders) {
 
 function getCustomHeaders(headers, list) {
     let obj = {};
-    for(let pair of headers.entries()) {
-        if(list.includes(pair[0])) obj[pair[0]] = pair[1];
+    if(process.env.BROWSER) {
+        for(let pair of headers.entries()) {
+            if(list.includes(pair[0])) obj[pair[0]] = pair[1];
+        }
+    } else {
+        for(let key in headers) {
+            if(list.includes[key]) obj[key] = headers[key];
+        }
     }
     return obj;
 }

@@ -6,7 +6,7 @@ import {
     STAGE_NEW,
     STAGE_CLEAR,
     UPLOAD_STATUS
-} from "../actions";
+} from '../actions';
 
 export const recorderReducer = (state = 'none', action) => {
     switch(action.type) {
@@ -38,7 +38,7 @@ export const stageReducer = (state = INIT_STAGE, action) => {
                 duration: action.duration,
                 fileUrl: action.fileUrl,
                 fileName: action.fileName,
-                title: action.source === 'upload' ? 
+                title: action.source === 'file' ? 
                     action.fileName.split('.').slice(0, -1).join(' ').replace(/[-_]/g,' ') 
                     : new Date().toISOString().substr(0, 19).replace(/T/,' ')
             };

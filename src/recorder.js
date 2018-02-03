@@ -1,13 +1,14 @@
 // Records live microphone data
 // Based on https://github.com/hackingbeauty/react-mic/blob/master/src/libs/MicrophoneRecorder.js
 
-export const BROWSER_SUPPORTED = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-const FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'weba';
-const AUDIO_CTX = new AudioContext();
-
+let FILE_TYPE, AUDIO_CTX;
 let stream, chunks = [], file, fileUrl, mediaRecorder, _onFile;
 
 export const init = () => {
+    if(!process.env.BROWSER) return;
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    FILE_TYPE = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'weba';
+    AUDIO_CTX = new AudioContext();
     if(!stream) navigator.mediaDevices.getUserMedia({ audio: true }).then(_stream => stream = _stream);
 };
 

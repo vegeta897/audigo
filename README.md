@@ -6,7 +6,7 @@ Simple audio recording + upload + sharing web app
 ## Requirements
 * Node 6.4.0 or newer
 * [ffmpeg](http://www.ffmpeg.org/) with libmp3lame codec
-* Apache host with rewrite support
+* Nginx with reverse proxy
 
 ## Installation
 
@@ -20,6 +20,8 @@ API_PORT=4444 # Node server port
 ORIGIN=http://localhost:8080 # Web host
 BASENAME= # Web host subdirectory (e.g. /audigo)
 ```
+
+Create a folder called `dist` in root
 
 Start the server:
 

@@ -1,12 +1,23 @@
-require('dotenv').config();
-const path = require('path');
-const fs = require('fs');
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const ffmpeg = require('fluent-ffmpeg');
-const ffprobe = require('ffprobe');
-const ffmpegPath = require('ffprobe-static').path;
+import { config as dotenv } from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import express from 'express';
+import multer from 'multer';
+import ffmpeg from 'fluent-ffmpeg';
+import ffprobe from 'ffprobe';
+import { path as ffmpegPath } from 'ffprobe-static';
+import React from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom';
+import { matchRoutes, renderRoutes } from 'react-router-config';
+import routes from './src/routes';
+import rootReducer from './src/reducers';
+import Template from './template';
+
+dotenv();
 
 ffmpeg.getAvailableEncoders((err, encoders) => {
     if(err) return console.error(err);
@@ -41,17 +52,7 @@ knex.schema
 
 const app = express();
 
-// app.use((err, req, res, next) => {
-//     console.error(err);
-//     res.status(500).send({ error: err });
-// });
-
-app.use(cors({
-    origin: process.env.ORIGIN,
-    optionsSuccessStatus: 200
-}));
-
-let listener = app.listen(process.env.API_PORT, () => {
+let listener = app.listen(process.env.PORT, () => {
     console.log('Server running on port ' + listener.address().port);
 });
 
@@ -79,9 +80,8 @@ let upload = multer({
         fileSize: 100 * 1024 * 1024 // 100mb max
     }
 });
-let type = upload.single('audio');
 
-app.post('/api/upload', type, (req, res) => { // Upload a file
+app.post('/api/upload', upload.single('audio'), (req, res) => { // Upload a file
     if(!req.file) return res.status(500).send({ error: 'missing file' });
     let filePath = req.file.path;
     let filename = req.file.filename;
@@ -102,7 +102,7 @@ app.post('/api/upload', type, (req, res) => { // Upload a file
             res.status(500).send({ error: 'error converting file' });
         })
         .on('end', (stdout, sterr) => {
-            fs.unlink(filePath); // Delete file
+            fs.unlink(filePath, () => {}); // Delete file
             onFileReady(res, req, id, outputPath);
         });
 });
@@ -155,3 +155,42 @@ app.get('/api/get/:id', (req, res) => { // Get a file
         })
         .catch(console.error);
 });
+
+app.use(express.static('dist'));
+// app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'dist', 'index.html')));
+const router = express.Router();
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+router.get('*', (req, res) => {
+    let context = {};
+    const content = renderToString(
+        <Provider store={store}>
+            <StaticRouter location={req.url} context={ context }>
+                {renderRoutes(routes)}
+            </StaticRouter>
+        </Provider>
+    );
+    console.log(content);
+    res.send('hi');
+    // const branch = matchRoutes(routes, req.url);
+    // const promises = branch.map(({ route }) => {
+    //     let fetchData = route.component.fetchData;
+    //     return fetchData instanceof Function ? fetchData(store, 1) : Promise.resolve(null);
+    // });
+    // return Promise.all(promises).then((data) => {
+    //     let context = {};
+    //     console.log(store.getState());
+    //     const content = renderToString(
+    //         <Provider store={store}>
+    //             <StaticRouter location={req.url} context={ context }>
+    //                 {renderRoutes(routes)}
+    //             </StaticRouter>
+    //         </Provider>
+    //     );
+    //     res.status(200).send(Template({ content: content }));
+    //     // res.render('./src/index.html', {title: 'Express', data: store.getState(), content });
+    // }).catch(err => console.log('Error!', err));
+});
+
+app.use(router);

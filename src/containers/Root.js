@@ -1,11 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { BrowserRouter } from 'react-router-dom';
+import { renderRoutes } from 'react-router-config';
 import { Provider } from 'react-redux';
-import App from '../components/App';
+import routes from 'routes';
 
 const Root = ({store}) => (
     <Provider store={store}>
-        <App />
+        <BrowserRouter>
+            {renderRoutes(routes)}
+        </BrowserRouter>
     </Provider>
 );
 

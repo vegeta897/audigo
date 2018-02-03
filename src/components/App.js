@@ -1,11 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import Studio from '../containers/Studio';
-import Play from '../containers/Play';
+import { renderRoutes } from 'react-router-config';
 import { Grid, Header, Icon } from 'semantic-ui-react';
 
-const App = () => (
-    <Router basename={process.env.BASENAME}><div>
+const App = (props) => (
+    <div>
         <style>{`
           body > div,
           body > div > div {
@@ -18,14 +16,10 @@ const App = () => (
                     <Icon name='microphone' color='orange' />
                     Audigo
                 </Header>
-                <Switch>
-                    <Route exact path='/' component={Studio}/>
-                    <Route path={'/play/:id'} component={Play}/>
-                    <Redirect to='/'/>
-                </Switch>
+                {renderRoutes(props.route.routes)}
             </Grid.Column>
         </Grid>
-    </div></Router>
+    </div>
 );
 
 export default App;

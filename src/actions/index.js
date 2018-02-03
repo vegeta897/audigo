@@ -1,4 +1,4 @@
-import * as API from './../api';
+import * as API from '../api';
 
 export const RECORDER_START = 'RECORDER_START';
 export const RECORDER_STOP = 'RECORDER_STOP';
@@ -42,7 +42,7 @@ export const uploadAudio = (file, fileName, title) => (dispatch, getState) => {
     dispatch(uploadStatus('uploading'));
     API.upload(file, fileName, title)
         .then(res => {
-            console.log(res);
+            // console.log(res);
             dispatch(uploadStatus('success', res.res.id));
         })
         .catch(err => {
@@ -59,8 +59,8 @@ export const getAudio = id => (dispatch, getState) => {
     dispatch(getStatus('getting'));
     API.get(id)
         .then(res => {
-            console.log(res);
-            res.customHeaders.url = URL.createObjectURL(res.res);
+            // console.log(res);
+            res.customHeaders.url = process.env.BROWSER ? URL.createObjectURL(res.res) : '';
             dispatch(getStatus('success', res.customHeaders));
         })
         .catch(err => {

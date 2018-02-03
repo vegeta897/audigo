@@ -1,6 +1,7 @@
 // Recording, previewing, uploading clips
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Segment, Button, Icon, Divider, Form, Input } from 'semantic-ui-react';
@@ -30,12 +31,12 @@ class Studio extends React.Component {
                 case 'resume': Recorder.resume(); break;
             }
         }
+        if(nextProps.upload.status === 'success') {
+            this.stageClear();
+        }
     }
     stageClear = () => this.props.stageClear();
-    uploadAudio = (file, fileName, title) => () => {
-        this.stageClear();
-        this.props.uploadAudio(file, fileName, title);
-    };
+    uploadAudio = (file, fileName, title) => () => this.props.uploadAudio(file, fileName, title);
     changeTitle = e => this.setState({ title: e.target.value });
     render() {
         const { recorder, stage, recorderStart, recorderStop, upload } = this.props;
