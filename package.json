@@ -1,8 +1,18 @@
 {
-  "name": "arc",
+  "name": "audigo",
   "version": "0.1.0",
+  "description": "Simple audio recording + upload + sharing web app",
   "private": true,
   "main": "dist/server",
+  "author": "Devin Spikowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vegeta897/audigo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vegeta897/audigo.git"
+  },
   "scripts": {
     "start": "node .",
     "env:dev": "cross-env NODE_ENV=development",

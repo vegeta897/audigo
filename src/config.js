@@ -9,7 +9,7 @@ const config = {
         port: process.env.PORT || 3000,
         isBrowser: typeof window !== 'undefined',
         isServer: typeof window === 'undefined',
-        apiUrl: 'https://jsonplaceholder.typicode.com',
+        apiUrl: 'http://localhost/api',
     },
     test: {},
     development: {},

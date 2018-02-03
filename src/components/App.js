@@ -1,18 +1,18 @@
-import React from 'react'
-import { Switch, Route } from 'react-router-dom'
-import { injectGlobal, ThemeProvider } from 'styled-components'
-import Helmet from 'react-helmet'
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import { injectGlobal, ThemeProvider } from 'styled-components';
+import Helmet from 'react-helmet';
 
-import { HomePage } from 'components'
+import { HomePage } from 'components';
 
 // https://github.com/diegohaz/arc/wiki/Styling
-import theme from './themes/default'
+import theme from './themes/default';
 
 injectGlobal`
   body {
     margin: 0;
   }
-`
+`;
 
 const App = () => {
     return (
@@ -27,10 +27,14 @@ const App = () => {
                 <meta property="og:image:width" content="1200"/>
                 <meta property="og:image:height" content="630"/>
                 <link rel="icon" href="https://arc.js.org/icon.png"/>
-            </Helmet> <ThemeProvider theme={theme}> <Switch> <Route path="/" component={HomePage} exact/> </Switch>
-        </ThemeProvider>
+            </Helmet>
+            <ThemeProvider theme={theme}>
+                <Switch>
+                    <Route path="/" component={HomePage} exact/>
+                </Switch>
+            </ThemeProvider>
         </div>
-    )
-}
+    );
+};
 
-export default App
+export default App;
