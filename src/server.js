@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
 import { renderToString } from 'react-router-server';
 
-import { port, host, basename } from 'config';
+import { port, host, basename, downloadUrl } from 'config';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import App from 'components/App';
@@ -55,7 +55,6 @@ let clips = [
 app.get('/api/clips', (req, res) => {
     console.log('GET /api/clips');
     res.send(clips);
-    // res.download(path.resolve(process.cwd(), 'dist/public/icon.png'));
 });
 
 // Get clip detail
@@ -63,7 +62,7 @@ app.get('/api/clips/:id', (req, res) => {
     let { id } = req.params;
     console.log('GET /api/clips/'+id);
     let clip = clips[id-1];
-    res.send({ ...clip, url: 'http://localhost:3000/download/' + id + '.mp3' });
+    res.send({ ...clip, url: `${downloadUrl}/${id}.mp3` });
 });
 
 // Serve clip downloads
