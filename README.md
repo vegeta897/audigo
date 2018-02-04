@@ -1,5 +1,4 @@
 # Audigo
-
 Simple audio recording + upload + sharing web app  
 🎤 ☁️ 🔊 👪
 
@@ -9,20 +8,17 @@ Simple audio recording + upload + sharing web app
 * (for deployment) SSL + nginx with reverse proxy
 
 ## Installation
-
 ```cmd
 npm install audigo
 ```
 
 ### Environment Variables
-
 | Variable   | Default                                         |
 |------------|-------------------------------------------------|
 | `HOST`     | `localhost`                                     |
 | `PORT`     | `3000` for development<br>`8080` for production |
 
 ### Reverse Proxy
-
 ```
     location / {
         proxy_pass http://localhost:8080;
@@ -35,25 +31,24 @@ npm install audigo
 ```
 
 ## Run
-
 Build the source `npm run build` and start the server `npm start`
 
 ## Development
-
 Start the dev server `npm run dev` and open `http://localhost:3000`
 
-## Technologies
+[Roadmap](https://github.com/vegeta897/audigo/wiki/Roadmap)
 
+## Technologies
 * Built with [ARc](https://arc.js.org/)
-  * React
-    * react-router
-    * react-helmet
-  * Redux
-    * redux-saga-thunk
-  * Express
-  * SSR
-  * Webpack
-    * webpack-dev-server
+    * React
+        * react-router
+        * react-helmet
+    * Redux
+        * redux-saga-thunk
+    * Express
+    * SSR
+    * Webpack
+        * webpack-dev-server
 * Knex
 * Multer
 * FFmpeg
