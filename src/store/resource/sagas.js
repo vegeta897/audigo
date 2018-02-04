@@ -27,6 +27,7 @@ export function* watchResourceDetailReadRequest(api, { payload, meta }) {
     yield call(readResourceDetail, api, payload, meta);
 }
 
+// Watch for these actions, call api when intercepted
 export default function* ({ api }) {
     yield takeEvery(actions.RESOURCE_LIST_READ_REQUEST, watchResourceListReadRequest, api);
     yield takeEvery(actions.RESOURCE_DETAIL_READ_REQUEST, watchResourceDetailReadRequest, api);

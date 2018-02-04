@@ -1,10 +1,10 @@
-// https://github.com/diegohaz/arc/wiki/Atomic-Design
-import React from 'react'
+import React from 'react';
+import { Studio }from 'containers';
 
 const HomePage = () => {
     return (
-        <div>Hello World</div>
-    )
+        <Studio />
+    );
 };
 
-export default HomePage
+export default HomePage;

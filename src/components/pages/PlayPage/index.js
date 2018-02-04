@@ -17,9 +17,7 @@ const PlayPage = ({match/*, location, history, staticContext*/}) => {
             staticContext: {}
     */
     return (
-        <div>
-            <Player id={match.params.id} />
-        </div>
+        <Player id={match.params.id} />
     );
 };
 

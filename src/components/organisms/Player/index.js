@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
+import { Audio } from 'components';
 
 const Player = ({ detail, loading, failed, ...props }) => {
     return (
@@ -14,7 +15,7 @@ const Player = ({ detail, loading, failed, ...props }) => {
                         <meta property='og:description' content={detail.title} data-react-helmet='true' />
                     </Helmet>
                     <h2>{detail.title}</h2>
-                    <audio src={detail.url} controls controlsList='nodownload' autoPlay />
+                    <Audio src={detail.url} autoPlay />
                 </div>
             }
         </div>

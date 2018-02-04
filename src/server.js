@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import 'babel-polyfill';
 import path from 'path';
 import express from 'express';
@@ -52,8 +51,6 @@ let clips = [
         title: 'finger drumming'
     }
 ];
-
-console.log(apiPath + '/clips');
 
 // Get list of clips
 app.get(apiPath + '/clips', (req, res) => {

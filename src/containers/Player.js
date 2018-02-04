@@ -45,8 +45,8 @@ class PlayerContainer extends Component {
 
 const mapStateToProps = state => ({
     detail: fromResource.getDetail(state, 'clips'),
-    loading: isPending(state, 'clipsRead'),
-    failed: hasFailed(state, 'clipsRead')
+    loading: isPending(state, 'clipsDetailRead'),
+    failed: hasFailed(state, 'clipsDetailRead')
 });
 
 const mapDispatchToProps = (dispatch, { id }) => ({

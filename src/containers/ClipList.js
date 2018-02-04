@@ -49,8 +49,8 @@ class ClipListContainer extends Component {
 
 const mapStateToProps = state => ({
     list: fromResource.getList(state, 'clips'),
-    loading: isPending(state, 'clipsRead'),
-    failed: hasFailed(state, 'clipsRead')
+    loading: isPending(state, 'clipsListRead'),
+    failed: hasFailed(state, 'clipsListRead')
 });
 
 const mapDispatchToProps = (dispatch, { limit }) => ({

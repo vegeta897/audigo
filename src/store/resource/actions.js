@@ -11,17 +11,18 @@ export const resourceListReadRequest = (resource, params) => ({
     }
 });
 
+// Called by saga
 export const resourceListReadSuccess = (resource, list, request, thunk) => ({
     type: RESOURCE_LIST_READ_SUCCESS,
     payload: list,
     meta: {
         request,
         thunk,
-        resource,
-        entities: resource
+        resource
     }
 });
 
+// Called by saga
 export const resourceListReadFailure = (resource, error, request, thunk) => ({
     type: RESOURCE_LIST_READ_FAILURE,
     error: true,
@@ -46,17 +47,18 @@ export const resourceDetailReadRequest = (resource, id) => ({
     }
 });
 
+// Called by saga
 export const resourceDetailReadSuccess = (resource, detail, request, thunk) => ({
     type: RESOURCE_DETAIL_READ_SUCCESS,
     payload: detail,
     meta: {
         request,
         thunk,
-        resource,
-        entities: resource
+        resource
     }
 });
 
+// Called by saga
 export const resourceDetailReadFailure = (resource, error, request, thunk) => ({
     type: RESOURCE_DETAIL_READ_FAILURE,
     error: true,

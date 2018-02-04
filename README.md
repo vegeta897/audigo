@@ -18,7 +18,6 @@ npm install audigo
 
 | Variable   | Default                                         |
 |------------|-------------------------------------------------|
-| `NODE_ENV` | `development`                                   |
 | `HOST`     | `localhost`                                     |
 | `PORT`     | `3000` for development<br>`8080` for production |
 

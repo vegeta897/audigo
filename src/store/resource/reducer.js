@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import { isBrowser, isServer } from 'config';
 import { initialState, getResourceState, getList, getDetail } from './selectors';
 import {
     RESOURCE_LIST_READ_REQUEST,
@@ -11,7 +12,7 @@ export default (state = initialState, { type, payload, meta }) => {
     const resource = get(meta, 'resource');
 
     if(!resource) {
-        return state
+        return state;
     }
 
     switch(type) {
@@ -49,6 +50,6 @@ export default (state = initialState, { type, payload, meta }) => {
                 }
             };
         default:
-            return state
+            return state;
     }
-}
+};
