@@ -5,7 +5,7 @@ Simple audio recording + upload + sharing web app
 
 ## Requirements
 * Node 6.4.0 or newer
-* [ffmpeg](http://www.ffmpeg.org/) with libmp3lame codec
+* [FFmpeg](http://www.ffmpeg.org/) with libmp3lame codec
 * (for deployment) SSL + nginx with reverse proxy
 
 ## Installation
@@ -42,6 +42,18 @@ Build the source `npm run build` and start the server `npm start`
 
 Start the dev server `npm run dev` and open `http://localhost:3000`
 
-## Credits
+## Technologies
 
-Built with [ARc](https://arc.js.org/)
+* Built with [ARc](https://arc.js.org/)
+  * React
+    * react-router
+    * react-helmet
+  * Redux
+    * redux-saga-thunk
+  * Express
+  * SSR
+  * Webpack
+    * webpack-dev-server
+* Knex
+* Multer
+* FFmpeg
