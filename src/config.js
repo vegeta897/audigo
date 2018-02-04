@@ -1,30 +1,27 @@
 const merge = require('lodash/merge');
 
+const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOST = process.env.HOST || 'localhost';
-const PROD_HOST = process.env.HOST || 'audigo.in';
-const PORT = process.env.PORT || 3000;
-const PROD_PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || NODE_ENV === 'development' ? 3000 : 8080;
+const PROTOCOL = NODE_ENV === 'development' ? 'http://' : 'https://';
+const API_PATH = '/api';
 
 const config = {
     all: {
-        env: process.env.NODE_ENV || 'development',
-        isDev: process.env.NODE_ENV !== 'production',
+        env: NODE_ENV,
+        isDev: NODE_ENV !== 'production',
         basename: process.env.PUBLIC_PATH,
+        protocol: PROTOCOL,
         host: HOST,
         port: PORT,
         isBrowser: typeof window !== 'undefined',
         isServer: typeof window === 'undefined',
-        apiUrl: `http://${HOST}:${PORT}/api`,
-        downloadUrl: `http://${HOST}:${PORT}/download`
+        apiPath: API_PATH,
+        apiUrl: `${PROTOCOL + HOST}:${PORT}${API_PATH}`
     },
     test: {},
     development: {},
-    production: {
-        host: PROD_HOST,
-        port: PROD_PORT,
-        apiUrl: `https://${PROD_HOST}/api`,
-        downloadUrl: `https://${PROD_HOST}/download`
-    }
+    production: {}
 };
 
 module.exports = merge(config.all, config[config.all.env]);

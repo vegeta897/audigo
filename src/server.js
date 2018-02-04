@@ -10,12 +10,14 @@ import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
 import { renderToString } from 'react-router-server';
 
-import { port, host, basename, downloadUrl } from 'config';
+import { protocol, host, port, basename, apiPath } from 'config';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import App from 'components/App';
 import Html from 'components/Html';
 import Error from 'components/Error';
+
+const downloadUrl = protocol + host + ':' + port + '/download';
 
 const renderApp = ({ store, context, location, sheet }) => {
     const app = sheet.collectStyles((
@@ -51,14 +53,16 @@ let clips = [
     }
 ];
 
+console.log(apiPath + '/clips');
+
 // Get list of clips
-app.get('/api/clips', (req, res) => {
+app.get(apiPath + '/clips', (req, res) => {
     console.log('GET /api/clips');
     res.send(clips);
 });
 
 // Get clip detail
-app.get('/api/clips/:id', (req, res) => {
+app.get(apiPath + '/clips/:id', (req, res) => {
     let { id } = req.params;
     console.log('GET /api/clips/'+id);
     let clip = clips[id-1];
@@ -109,6 +113,6 @@ app.listen(port, (error) => {
     if(error) {
         console.error(error);
     } else {
-        console.info(`Server is running at ${boldBlue(`http://${host}:${port}${basename}/`)}`);
+        console.info(`Server is running at ${boldBlue(`${protocol+host}:${port}${basename}/`)}`);
     }
 });
