@@ -2,7 +2,7 @@
 .idea
 .happypack
 dist
-server
+server/*
 *.log
 node_modules
 coverage
