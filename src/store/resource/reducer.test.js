@@ -86,3 +86,12 @@ describe('RESOURCE_DETAIL_READ_SUCCESS', () => {
         )).toEqual(state({ detail: 2 }));
     });
 });
+
+describe('unknown action', () => {
+    it('returns the state', () => {
+        expect(reducer(
+            state(),
+            action('unknown action')
+        )).toEqual(state())
+    });
+});

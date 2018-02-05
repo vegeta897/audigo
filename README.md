@@ -4,6 +4,7 @@ Simple audio recording + upload + sharing web app
 
 ## Requirements
 * Node 6.4.0 or newer
+* PostgreSQL 9.5.10 or newer
 * [FFmpeg](http://www.ffmpeg.org/) with libmp3lame codec
 * (for deployment) SSL + nginx with reverse proxy
 
@@ -11,12 +12,18 @@ Simple audio recording + upload + sharing web app
 ```cmd
 npm install audigo
 ```
+Create a PostgreSQL database called `audigo`
 
 ### Environment Variables
-| Variable   | Default                                         |
-|------------|-------------------------------------------------|
-| `HOST`     | `localhost`                                     |
-| `PORT`     | `3000` for development<br>`8080` for production |
+| Variable     | Default value                                   |
+|--------------|-------------------------------------------------|
+| `HOST`       | `localhost`                                     |
+| `PORT`       | `3000` for development<br>`8080` for production |
+| `PGHOST`     | `localhost`                                     |
+| `PGUSER`     | `USER` env variable                             |
+| `PGDATABASE` | `USER` env variable                             |
+| `PGPASSWORD` | `null`                                          |
+| `PGPORT`     | `5432`                                          |
 
 ### Reverse Proxy
 ```

@@ -75,5 +75,6 @@ test('watchResourceDetailReadRequest', () => {
 
 test('saga', () => {
     const generator = saga({ api });
+    expect(generator.next().value).toEqual(takeEvery(actions.RESOURCE_LIST_READ_REQUEST, sagas.watchResourceListReadRequest, api));
     expect(generator.next().value).toEqual(takeEvery(actions.RESOURCE_DETAIL_READ_REQUEST, sagas.watchResourceDetailReadRequest, api));
 });

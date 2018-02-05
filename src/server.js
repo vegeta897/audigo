@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import path from 'path';
+import PgStore from 'express-brute-pg';
 import express from 'express';
 import ExpressBrute from 'express-brute';
 import React from 'react';
@@ -11,6 +12,7 @@ import { StaticRouter } from 'react-router';
 import { renderToString } from 'react-router-server';
 
 import { protocol, host, port, basename, apiPath, isDev } from 'config';
+import db from 'db';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import App from 'components/App';
@@ -58,12 +60,13 @@ let clips = [
     }
 ];
 
-let bruteStore = new ExpressBrute.MemoryStore(); // TODO: Use brute-knex in production
-let bruteforce = new ExpressBrute(bruteStore, {
-    freeRetries: isDev ? 100 :  5,
-    lifetime: isDev ? 10 : 6 * 60 * 60
+let bruteStore = new PgStore({ pool: db.pool });
+let brute = new ExpressBrute(bruteStore, {
+    freeRetries: isDev ? 100 : 3
 });
-app.use(bruteforce.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
+app.use(brute.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
+
+// TODO: Whitelist server's own requests to API
 
 // TODO: More security https://github.com/helmetjs/helmet
 
@@ -78,7 +81,7 @@ app.get(apiPath + '/clips', (req, res) => {
 // Get clip detail
 app.get(apiPath + '/clips/:id', (req, res) => {
     let { id } = req.params;
-    console.log('GET /api/clips/'+id);
+    console.log('GET /api/clips/' + id);
     let clip = clips[id - 1];
     if(!clip) return res.status(404).send('Clip not found');
     res.send({ ...clip, url: `${downloadUrl}/${clip.id}.mp3` });
@@ -123,11 +126,13 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-app.listen(port, (error) => {
-    const boldBlue = text => `\u001b[1m\u001b[34m${text}\u001b[39m\u001b[22m`;
-    if(error) {
-        console.error(error);
-    } else {
-        console.info(`Server is running at ${boldBlue(`${protocol+host}:${port}${basename}/`)}`);
-    }
+db.init().then(() => {
+    app.listen(port, err => {
+        const boldBlue = text => `\u001b[1m\u001b[34m${text}\u001b[39m\u001b[22m`;
+        if(err) {
+            console.error(err);
+        } else {
+            console.info(`Server is running at ${boldBlue(`${protocol + host}:${port}${basename}/`)}`);
+        }
+    })
 });

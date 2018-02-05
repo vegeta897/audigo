@@ -4,7 +4,7 @@ import { ClipList } from 'containers';
 
 const ClipsPage = ({ location }) => {
     const query = parse(location.search);
-    const limit = query.limit || 20;
+    const limit = parseInt(query.limit) || 20;
     return (
         <div>
             <ClipList limit={limit} />
