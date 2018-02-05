@@ -54,7 +54,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, { limit }) => ({
-    readList: () => dispatch(resourceListReadRequest('clips', { _limit: limit }))
+    readList: () => dispatch(resourceListReadRequest('clips', { limit }))
 });
 
 const withServerState = fetchState(

@@ -18,7 +18,7 @@ const resource = 'resources';
 const meta = { thunk, resource };
 
 describe('readResourceList', () => {
-    const payload = { params: { _limit: 1 } };
+    const payload = { params: { limit: 1 } };
 
     it('calls success', () => {
         const detail = [1, 2, 3];

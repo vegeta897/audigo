@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import path from 'path';
 import express from 'express';
+import ExpressBrute from 'express-brute';
 import React from 'react';
 import serialize from 'serialize-javascript';
 import { ServerStyleSheet } from 'styled-components';
@@ -9,14 +10,15 @@ import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
 import { renderToString } from 'react-router-server';
 
-import { protocol, host, port, basename, apiPath } from 'config';
+import { protocol, host, port, basename, apiPath, isDev } from 'config';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import App from 'components/App';
 import Html from 'components/Html';
 import Error from 'components/Error';
 
-const downloadUrl = protocol + host + ':' + port + '/download';
+const downloadPath = '/download';
+const downloadUrl = protocol + host + ':' + port + downloadPath;
 
 const renderApp = ({ store, context, location, sheet }) => {
     const app = sheet.collectStyles((
@@ -49,25 +51,41 @@ let clips = [
     {
         id: 1,
         title: 'finger drumming'
+    },
+    {
+        id: 2,
+        title: 'test'
     }
 ];
+
+let bruteStore = new ExpressBrute.MemoryStore(); // TODO: Use brute-knex in production
+let bruteforce = new ExpressBrute(bruteStore, {
+    freeRetries: isDev ? 100 :  5,
+    lifetime: isDev ? 10 : 6 * 60 * 60
+});
+app.use(bruteforce.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
+
+// TODO: More security https://github.com/helmetjs/helmet
 
 // Get list of clips
 app.get(apiPath + '/clips', (req, res) => {
     console.log('GET /api/clips');
-    res.send(clips);
+    let { limit } = req.query;
+    limit = parseInt(limit) > 0 ? parseInt(limit) : 20;
+    res.send(clips.slice(0, limit));
 });
 
 // Get clip detail
 app.get(apiPath + '/clips/:id', (req, res) => {
     let { id } = req.params;
     console.log('GET /api/clips/'+id);
-    let clip = clips[id-1];
-    res.send({ ...clip, url: `${downloadUrl}/${id}.mp3` });
+    let clip = clips[id - 1];
+    if(!clip) return res.status(404).send('Clip not found');
+    res.send({ ...clip, url: `${downloadUrl}/${clip.id}.mp3` });
 });
 
 // Serve clip downloads
-app.use('/download', express.static(path.resolve(process.cwd(), 'server/clips')));
+app.use(downloadPath, express.static(path.resolve(process.cwd(), 'server/clips')));
 
 // Serve static assets
 app.use(basename, express.static(path.resolve(process.cwd(), 'dist/public')));

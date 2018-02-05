@@ -21,7 +21,7 @@ export default (state = initialState, { type, payload, meta }) => {
                 ...state,
                 [resource]: {
                     ...getResourceState(state, resource),
-                    list: getList(initialState, resource)
+                    list: getList(initialState, resource) // Don't show previously loaded list while loading
                 }
             };
         case RESOURCE_LIST_READ_SUCCESS:
@@ -38,7 +38,7 @@ export default (state = initialState, { type, payload, meta }) => {
                 ...state,
                 [resource]: {
                     ...getResourceState(state, resource),
-                    detail: getDetail(initialState, resource)
+                    detail: getDetail(initialState, resource) // Don't show previously loaded clip while loading
                 }
             };
         case RESOURCE_DETAIL_READ_SUCCESS:

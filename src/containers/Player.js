@@ -23,17 +23,27 @@ class PlayerContainer extends Component {
 
     componentWillMount() {
         const {
-            readDetail, hasServerState, setServerState, cleanServerState
+            id, readDetail, hasServerState, setServerState, cleanServerState
         } = this.props;
 
         if(!hasServerState) {
             if(isServer) {
-                readDetail().then(setServerState, setServerState);
+                readDetail(id).then(setServerState, setServerState);
             } else {
-                readDetail();
+                readDetail(id);
             }
         } else if(isBrowser) {
             cleanServerState();
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // If the route has not changed (/play/1 to /play/2) the component will not re-mount
+        // Maybe that route change will never happen, but I'm keeping this here to show how to handle it
+        let { id: oldID } = this.props;
+        let { id: newID } = nextProps;
+        if(newID !== oldID) {
+            this.props.readDetail(newID);
         }
     }
 
@@ -49,8 +59,8 @@ const mapStateToProps = state => ({
     failed: hasFailed(state, 'clipsDetailRead')
 });
 
-const mapDispatchToProps = (dispatch, { id }) => ({
-    readDetail: () => dispatch(resourceDetailReadRequest('clips', id))
+const mapDispatchToProps = dispatch => ({
+    readDetail: id => dispatch(resourceDetailReadRequest('clips', id))
 });
 
 const withServerState = fetchState(
