@@ -39,13 +39,13 @@ describe('readResourceList', () => {
 });
 
 describe('readResourceDetail', () => {
-    const payload = { id: 1 };
+    const payload = { params: { id: 1 } };
 
     it('calls success', () => {
         const detail = 'foo';
         const generator = sagas.readResourceDetail(api, payload, meta);
         expect(generator.next().value)
-            .toEqual(call([api, api.get], `/${resource}/1`));
+            .toEqual(call([api, api.get], `/${resource}`, payload));
         expect(generator.next(detail).value)
             .toEqual(put(actions.resourceDetailReadSuccess(resource, detail, payload, thunk)));
     });
@@ -53,7 +53,7 @@ describe('readResourceDetail', () => {
     it('calls failure', () => {
         const generator = sagas.readResourceDetail(api, payload, meta);
         expect(generator.next().value)
-            .toEqual(call([api, api.get], `/${resource}/1`));
+            .toEqual(call([api, api.get], `/${resource}`, payload));
         expect(generator.throw('test').value)
             .toEqual(put(actions.resourceDetailReadFailure(resource, 'test', payload, thunk)));
     })
@@ -67,7 +67,7 @@ test('watchResourceListReadRequest', () => {
 });
 
 test('watchResourceDetailReadRequest', () => {
-    const payload = { id: 1 };
+    const payload = { params: { id: 1 } };
     const generator = sagas.watchResourceDetailReadRequest(api, { payload, meta });
     expect(generator.next().value)
         .toEqual(call(sagas.readResourceDetail, api, payload, meta))

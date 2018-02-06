@@ -97,6 +97,7 @@
     "express-brute": "^1.0.1",
     "express-brute-pg": "^2.0.0",
     "fs-extra": "^5.0.0",
+    "helmet": "^3.10.0",
     "history": "^4.6.1",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.4",

@@ -3,6 +3,7 @@ import path from 'path';
 import PgStore from 'express-brute-pg';
 import express from 'express';
 import ExpressBrute from 'express-brute';
+import helmet from 'helmet';
 import React from 'react';
 import serialize from 'serialize-javascript';
 import { ServerStyleSheet } from 'styled-components';
@@ -12,15 +13,13 @@ import { StaticRouter } from 'react-router';
 import { renderToString } from 'react-router-server';
 
 import { protocol, host, port, basename, apiPath, isDev } from 'config';
-import db from 'db';
+import db from 'server/db';
+import { downloadPath, bindExpress } from 'server/endpoints';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import App from 'components/App';
 import Html from 'components/Html';
 import Error from 'components/Error';
-
-const downloadPath = '/download';
-const downloadUrl = protocol + host + ':' + port + downloadPath;
 
 const renderApp = ({ store, context, location, sheet }) => {
     const app = sheet.collectStyles((
@@ -48,44 +47,19 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 };
 
 const app = express();
-
-let clips = [
-    {
-        id: 1,
-        title: 'finger drumming'
-    },
-    {
-        id: 2,
-        title: 'test'
-    }
-];
+app.use(helmet());
 
 let bruteStore = new PgStore({ pool: db.pool });
 let brute = new ExpressBrute(bruteStore, {
-    freeRetries: isDev ? 100 : 3
+    freeRetries: isDev ? 100 : 3,
+    lifetime: isDev? 60 : 1
 });
 app.use(brute.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
 
 // TODO: Whitelist server's own requests to API
 
-// TODO: More security https://github.com/helmetjs/helmet
-
-// Get list of clips
-app.get(apiPath + '/clips', (req, res) => {
-    console.log('GET /api/clips');
-    let { limit } = req.query;
-    limit = parseInt(limit) > 0 ? parseInt(limit) : 20;
-    res.send(clips.slice(0, limit));
-});
-
-// Get clip detail
-app.get(apiPath + '/clips/:id', (req, res) => {
-    let { id } = req.params;
-    console.log('GET /api/clips/' + id);
-    let clip = clips[id - 1];
-    if(!clip) return res.status(404).send('Clip not found');
-    res.send({ ...clip, url: `${downloadUrl}/${clip.id}.mp3` });
-});
+// Bind to api endpoints
+bindExpress(app);
 
 // Serve clip downloads
 app.use(downloadPath, express.static(path.resolve(process.cwd(), 'storage/clips')));
@@ -99,7 +73,6 @@ app.use((req, res, next) => {
     const store = configureStore({}, { api: api.create() });
     const context = {};
     const sheet = new ServerStyleSheet();
-
     renderApp({
         store, context, location, sheet,
     }).then(({ state: serverState, html: content }) => {

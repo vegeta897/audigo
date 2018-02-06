@@ -10,12 +10,12 @@ export function* readResourceList(api, { params }, { resource, thunk }) {
     }
 }
 
-export function* readResourceDetail(api, { id }, { resource, thunk }) {
+export function* readResourceDetail(api, { params }, { resource, thunk }) {
     try {
-        const detail = yield call([api, api.get], `/${resource}/${id}`);
-        yield put(actions.resourceDetailReadSuccess(resource, detail, { id }, thunk));
+        const detail = yield call([api, api.get], `/${resource}`, { params });
+        yield put(actions.resourceDetailReadSuccess(resource, detail, { params }, thunk));
     } catch(e) {
-        yield put(actions.resourceDetailReadFailure(resource, e, { id }, thunk));
+        yield put(actions.resourceDetailReadFailure(resource, e, { params }, thunk));
     }
 }
 

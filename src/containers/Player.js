@@ -60,7 +60,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    readDetail: id => dispatch(resourceDetailReadRequest('clips', id))
+    readDetail: id => dispatch(resourceDetailReadRequest('clips', { id }))
 });
 
 const withServerState = fetchState(

@@ -2,7 +2,8 @@
 import 'isomorphic-fetch';
 import { stringify } from 'query-string';
 import merge from 'lodash/merge';
-import { apiUrl } from 'config';
+import { apiUrl, isServer } from 'config';
+import { apiPaths } from 'server/endpoints';
 
 export const checkStatus = (response) => {
     if(response.ok) {
@@ -29,6 +30,17 @@ export const parseSettings = ({ method = 'get', data, locale, ...otherSettings }
     return settings;
 };
 
+export const serverRequest = (endpoint, { params } = {}) => {
+    return new Promise(resolve => {
+        resolve(apiPaths.get(endpoint).server(params));
+    });
+};
+
+export const clientRequest = (endpoint, { params, ...settings } = {}) =>
+    fetch(parseEndpoint(endpoint, params), parseSettings(settings))
+        .then(checkStatus)
+        .then(parseJSON);
+
 export const parseEndpoint = (endpoint, params) => {
     const url = endpoint.indexOf('http') === 0 ? endpoint : apiUrl + endpoint;
     const querystring = params ? `?${stringify(params)}` : '';
@@ -37,10 +49,9 @@ export const parseEndpoint = (endpoint, params) => {
 
 const api = {};
 
-api.request = (endpoint, { params, ...settings } = {}) =>
-    fetch(parseEndpoint(endpoint, params), parseSettings(settings))
-        .then(checkStatus)
-        .then(parseJSON);
+api.request = (...args) => {
+    return (isServer ? serverRequest : clientRequest)(...args);
+};
 
 ['delete', 'get'].forEach((method) => {
     api[method] = (endpoint, settings) => api.request(endpoint, { method, ...settings });
