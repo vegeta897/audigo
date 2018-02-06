@@ -18,7 +18,7 @@
     "start": "node .",
     "env:dev": "cross-env NODE_ENV=development",
     "env:prod": "cross-env NODE_ENV=production",
-    "test": "jest",
+    "test": "jest && coveralls < coverage/lcov.info",
     "coverage": "npm test -- --coverage",
     "postcoverage": "opn coverage/lcov-report/index.html",
     "lint": "eslint src private webpack.config.js",
@@ -31,6 +31,7 @@
     "build": "npm run env:prod -- webpack"
   },
   "jest": {
+    "collectCoverage": true,
     "moduleDirectories": [
       "src",
       "node_modules"
@@ -62,6 +63,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "copyfiles": "^1.0.0",
+    "coveralls": "^3.0.0",
     "cross-env": "^5.0.0",
     "delay": "^2.0.0",
     "enzyme": "^3.1.0",
