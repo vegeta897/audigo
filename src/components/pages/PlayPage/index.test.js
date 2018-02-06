@@ -15,6 +15,6 @@ it('renders props when passed in', () => {
 });
 
 it('renders id when passed in', () => {
-    const wrapper = wrap({ match: { params: { id: 1 }} });
-    expect(wrapper.find({ id: 1 })).toHaveLength(1);
+    const wrapper = wrap({ match: { params: { id: '1' }} });
+    expect(wrapper.find({ id: '1' })).toHaveLength(1);
 });

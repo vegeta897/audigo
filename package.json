@@ -22,7 +22,7 @@
     "coverage": "npm test -- --coverage",
     "postcoverage": "opn coverage/lcov-report/index.html",
     "lint": "eslint src private webpack.config.js",
-    "storybook": "start-storybook -p 9001 -c private/storybook",
+    "storybook": "start-storybook -p 9002 -c private/storybook",
     "predev": "npm run prebuild",
     "dev": "npm run env:dev -- webpack-dev-server",
     "build:clean": "rimraf \"dist/!(.git*|Procfile)**\"",
