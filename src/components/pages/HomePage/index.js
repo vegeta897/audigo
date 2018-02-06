@@ -1,9 +1,9 @@
 import React from 'react';
 import { Studio }from 'containers';
 
-const HomePage = () => {
+const HomePage = ({ ...props }) => {
     return (
-        <Studio />
+        <Studio {...props} />
     );
 };
 

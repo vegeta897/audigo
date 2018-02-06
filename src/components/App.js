@@ -17,8 +17,8 @@ injectGlobal`
 const App = () => {
     return (
         <div>
-            <Helmet titleTemplate='%s - Audigo'>
-                <title>Atomic React</title>
+            <Helmet>
+                <title>Audigo</title>
                 <meta name='description' content='record + upload + share'/>
                 <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
                 <meta property='og:site_name' content='Audigo'/>

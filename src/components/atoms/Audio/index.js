@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const Audio = ({ ...props }) => {
     return (
-        <audio {...props} controls controlsList='nodownload'  />
+        <audio {...props} controls controlsList='nodownload' />
     );
 };
 

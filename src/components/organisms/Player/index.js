@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 const Player = ({ detail, loading, failed, ...props }) => {
     return (
         <div {...props}>
-            {!detail && loading && <p>Loading...</p>/* This should never render on the browser */}
+            {!detail && loading && <p>Loading...</p>}
             {failed && <p>Failed to load clip, sorry!</p>}
             {detail &&
                 <div>
-                    <Helmet>
+                    <Helmet titleTemplate='%s - Audigo'>
                         <title>{detail.title}</title>
                         <meta property='og:title' content={detail.title} />
                     </Helmet>

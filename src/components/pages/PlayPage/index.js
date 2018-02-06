@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Player } from 'containers';
+import ClipsPage from '../ClipsPage';
 
-const PlayPage = ({match/*, location, history, staticContext*/}) => {
+const PlayPage = ({match/*, location, history, staticContext*/, ...props}) => {
     /*  Params: {
             match: {
                 path: '/play/:id',
@@ -17,8 +19,14 @@ const PlayPage = ({match/*, location, history, staticContext*/}) => {
             staticContext: {}
     */
     return (
-        <Player id={match.params.id} />
+        <Player id={match.params.id} {...props} />
     );
+};
+
+ClipsPage.propTypes = {
+    match: PropTypes.shape({
+        params: PropTypes.object.isRequired
+    })
 };
 
 export default PlayPage;

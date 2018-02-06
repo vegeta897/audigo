@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import recorder from '../../../services/recorder'; // TODO: Remove this
 
-const Studio = ({ startRecording, stopRecording, info, recording, started, startFailed, stopped, stopFailed }) => {
+const Studio = ({ startRecording, stopRecording, info, recording, started, startFailed, stopped, stopFailed, ...props }) => {
     return (
-        <div>
+        <div {...props}>
             In the stu-jo
             {stopped || <button onClick={started ? stopRecording : startRecording}>
                 {started ? 'Stop' : 'Start'}
