@@ -88,7 +88,7 @@ app.get(apiPath + '/clips/:id', (req, res) => {
 });
 
 // Serve clip downloads
-app.use(downloadPath, express.static(path.resolve(process.cwd(), 'server/clips')));
+app.use(downloadPath, express.static(path.resolve(process.cwd(), 'storage/clips')));
 
 // Serve static assets
 app.use(basename, express.static(path.resolve(process.cwd(), 'dist/public')));
