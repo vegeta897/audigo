@@ -2,6 +2,8 @@
 Simple audio recording + upload + sharing web app  
 🎤 ☁️ 🔊 👪
 
+[![Build Status](https://travis-ci.org/vegeta897/audigo.svg?branch=arc-rewrite)](https://travis-ci.org/vegeta897/audigo) [![Coverage Status](https://coveralls.io/repos/github/vegeta897/audigo/badge.svg?branch=arc-rewrite)](https://coveralls.io/github/vegeta897/audigo?branch=arc-rewrite)
+
 ## Requirements
 * Node 6.4.0 or newer
 * PostgreSQL 9.5.10 or newer
