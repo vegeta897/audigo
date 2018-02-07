@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import ClipListItem from '.';
 
-const wrap = (props = {}) => shallow(<ClipListItem id={1} title='Test Title 1' {...props} />);
+const wrap = (props = {}) => shallow(<ClipListItem id={'1'} title='Test Title 1' {...props} />);
 
 it('renders props when passed in', () => {
     const wrapper = wrap({ foo: 'foo' });
@@ -21,6 +21,6 @@ it('contains link', () => {
 });
 
 it('renders link to play route', () => {
-    const wrapper = wrap({ id: 1 });
+    const wrapper = wrap({ id: '1' });
     expect(wrapper.find({ to: '/play/1' })).toHaveLength(1);
 });

@@ -34,6 +34,7 @@ const App = () => {
                 <Switch>
                     <Route path='/clips' component={ClipsPage} exact/>
                     <Route path='/play/:id' component={PlayPage} exact/>
+                    <Route path='/p=:id' component={PlayPage} exact/>
                     <Route component={HomePage} /> /* TODO: 404 page */
                 </Switch>
             </ThemeProvider>

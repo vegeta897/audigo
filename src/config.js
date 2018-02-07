@@ -17,7 +17,12 @@ const config = {
         isBrowser: typeof window !== 'undefined',
         isServer: typeof window === 'undefined',
         apiPath: API_PATH,
-        apiUrl: `${PROTOCOL + HOST}:${PORT}${API_PATH}`
+        apiUrl: `${PROTOCOL + HOST}:${PORT}${API_PATH}`,
+        dbHost: process.env.PGHOST || 'localhost',
+        dbPort: process.env.PGPORT || 5432,
+        dbUser: process.env.PGUSER || process.env.USER || 'postgres',
+        dbName: process.env.PGDATABASE || process.env.USER || 'audigo',
+        dbPass: process.env.PGPASSWORD
     },
     test: {},
     development: {},

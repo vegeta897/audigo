@@ -1,8 +1,8 @@
 import 'babel-polyfill';
 import path from 'path';
-import PgStore from 'express-brute-pg';
 import express from 'express';
 import ExpressBrute from 'express-brute';
+import BruteKnex from 'brute-knex';
 import helmet from 'helmet';
 import React from 'react';
 import serialize from 'serialize-javascript';
@@ -14,7 +14,7 @@ import { renderToString } from 'react-router-server';
 
 import { protocol, host, port, basename, apiPath, isDev } from 'config';
 import db from 'server/db';
-import { downloadPath, bindExpress } from 'server/endpoints';
+import { downloadPath, bindExpress } from 'server/models';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import App from 'components/App';
@@ -48,15 +48,6 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 
 const app = express();
 app.use(helmet());
-
-let bruteStore = new PgStore({ pool: db.pool });
-let brute = new ExpressBrute(bruteStore, {
-    freeRetries: isDev ? 100 : 3,
-    lifetime: isDev? 60 : 1
-});
-app.use(brute.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
-
-// TODO: Whitelist server's own requests to API
 
 // Bind to api endpoints
 bindExpress(app);
@@ -100,6 +91,14 @@ app.use((err, req, res, next) => {
 });
 
 db.init().then(() => {
+
+    let bruteStore = new BruteKnex({ knex: db.knex });
+    let brute = new ExpressBrute(bruteStore, {
+        freeRetries: isDev ? 100 : 3,
+        lifetime: isDev? 60 : 1
+    });
+    app.use(brute.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
+
     app.listen(port, err => {
         const boldBlue = text => `\u001b[1m\u001b[34m${text}\u001b[39m\u001b[22m`;
         if(err) {

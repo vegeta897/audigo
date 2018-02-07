@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Player } from 'containers';
 import ClipsPage from '../ClipsPage';
 
-const PlayPage = ({match/*, location, history, staticContext*/, ...props}) => {
+const PlayPage = ({match/*, location, history*/, ...props}) => {
     /*  Params: {
             match: {
                 path: '/play/:id',

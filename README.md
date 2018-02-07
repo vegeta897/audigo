@@ -22,10 +22,10 @@ Create a PostgreSQL database called `audigo`
 | `HOST`       | `localhost`                                     |
 | `PORT`       | `3000` for development<br>`8080` for production |
 | `PGHOST`     | `localhost`                                     |
-| `PGUSER`     | `USER` env variable                             |
-| `PGDATABASE` | `USER` env variable                             |
-| `PGPASSWORD` | `null`                                          |
 | `PGPORT`     | `5432`                                          |
+| `PGUSER`     | `USER` env variable or `postgres`               |
+| `PGDATABASE` | `USER` env variable or `audigo`                 |
+| `PGPASSWORD` | `null`                                          |
 
 ### Reverse Proxy
 ```

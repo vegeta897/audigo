@@ -3,7 +3,7 @@ import 'isomorphic-fetch';
 import { stringify } from 'query-string';
 import merge from 'lodash/merge';
 import { apiUrl, isServer } from 'config';
-import { apiPaths } from 'server/endpoints';
+import { models } from 'server/models';
 
 export const checkStatus = (response) => {
     if(response.ok) {
@@ -30,11 +30,7 @@ export const parseSettings = ({ method = 'get', data, locale, ...otherSettings }
     return settings;
 };
 
-export const serverRequest = (endpoint, { params } = {}) => {
-    return new Promise(resolve => {
-        resolve(apiPaths.get(endpoint).server(params));
-    });
-};
+export const serverRequest = (endpoint, { params } = {}) => models.get(endpoint)(params);
 
 export const clientRequest = (endpoint, { params, ...settings } = {}) =>
     fetch(parseEndpoint(endpoint, params), parseSettings(settings))

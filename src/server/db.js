@@ -1,46 +1,31 @@
-const { Pool } = require('pg');
+import Knex from 'knex';
+import { dbHost, dbPort, dbUser, dbName, dbPass } from 'config';
 
-const pool = new Pool();
-const db = { pool };
+const knex = new Knex({
+    client: 'pg',
+    connection: `host=${dbHost} port=${dbPort} user=${dbUser} dbname=${dbName} password=${dbPass}`
+});
 
-db.query = (text, params, callback) => pool.query(text, params, callback);
-db.getClient = callback => pool.connect() // https://node-postgres.com/guides/project-structure
-    .then((err, client, done) => {
-        const query = client.query.bind(client);
-        // monkey patch the query method to keep track of the last query executed
-        client.query = (...args) => {
-            client.lastQuery = args;
-            query(...args);
-        };
-        // set a timeout of 5 seconds, after which we will log this client's last query
-        const timeout = setTimeout(() => {
-            console.error('A client has been checked out for more than 5 seconds!');
-            console.error(`The last executed query on this client was: ${client.lastQuery}`);
-        }, 5000);
-        const release = (err) => {
-            // call the actual 'done' method, returning this client to the pool
-            done(err);
-            // clear our timeout
-            clearTimeout(timeout);
-            // set the query method back to its old un-monkey-patched version
-            client.query = query;
-        };
-        callback(err, client, release);
+const db = { knex };
+
+db.init = () => knex.schema
+    .hasTable('clips').then(exists => {
+        return exists || knex.schema.createTable('clips', table => {
+            table.increments();
+            table.string('uid', 5);
+            table.unique('uid');
+            table.string('title', 100);
+            table.string('description', 2000);
+            table.string('original_file_name');
+            table.string('original_file_type', 8);
+            table.integer('duration').unsigned();
+            table.integer('file_size').unsigned();
+            table.timestamps();
+            table.dateTime('recorded_at');
+            table.integer('uploader').unsigned();
+            table.index(['uploader']);
+            table.binary('icon');
+        });
     });
-
-db.init = () => db.query(initSql).catch(console.log);
-
-const initSql = `
-    CREATE TABLE IF NOT EXISTS clips (
-        id int PRIMARY KEY
-    );
-    CREATE TABLE IF NOT EXISTS brute (
-        id text PRIMARY KEY,
-        count int,
-        first_request timestamptz,
-        last_request timestamptz,
-        expires timestamptz
-    );
-`;
 
 export default db;
