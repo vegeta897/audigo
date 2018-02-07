@@ -2,7 +2,7 @@
 Simple audio recording + upload + sharing web app  
 🎤 ☁️ 🔊 👪
 
-[![Build Status](https://travis-ci.org/vegeta897/audigo.svg?branch=arc-rewrite)](https://travis-ci.org/vegeta897/audigo) [![Coverage Status](https://coveralls.io/repos/github/vegeta897/audigo/badge.svg?branch=arc-rewrite)](https://coveralls.io/github/vegeta897/audigo?branch=arc-rewrite)
+[![Build Status](https://img.shields.io/travis/vegeta897/audigo/arc-rewrite.svg)](https://travis-ci.org/vegeta897/audigo) [![Coverage Status](https://img.shields.io/coveralls/github/vegeta897/audigo/arc-rewrite.svg)](https://coveralls.io/github/vegeta897/audigo?branch=arc-rewrite)
 
 ## Requirements
 * Node 6.4.0 or newer
