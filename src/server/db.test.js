@@ -4,7 +4,7 @@ describe('init', () => {
     it('builds the schema', () => {
         expect.assertions(1);
         return db.init().then(data => {
-            expect(data[0].constructor.name).toBe('Result');
+            expect(data[0]).toBeTruthy();
         });
     });
 });
