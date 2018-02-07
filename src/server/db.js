@@ -3,7 +3,13 @@ import { dbHost, dbPort, dbUser, dbName, dbPass } from 'config';
 
 const knex = new Knex({
     client: 'pg',
-    connection: `host=${dbHost} port=${dbPort} user=${dbUser} dbname=${dbName} password=${dbPass}`
+    connection: {
+        host: dbHost,
+        port: dbPort,
+        user: dbUser,
+        password: dbPass,
+        database: dbName
+    }
 });
 
 const db = { knex };

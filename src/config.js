@@ -24,7 +24,9 @@ const config = {
         dbName: process.env.PGDATABASE || process.env.USER || 'audigo',
         dbPass: process.env.PGPASSWORD
     },
-    test: {},
+    test: {
+        dbName: 'audigo_test'
+    },
     development: {},
     production: {}
 };

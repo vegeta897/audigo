@@ -1,9 +1,12 @@
 import React from 'react';
 import { Studio }from 'containers';
+import { PageTemplate } from 'components';
 
 const HomePage = ({ ...props }) => {
     return (
-        <Studio {...props} />
+        <PageTemplate {...props}>
+            <Studio />
+        </PageTemplate>
     );
 };
 

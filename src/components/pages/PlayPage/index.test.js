@@ -4,11 +4,6 @@ import PlayPage from '.';
 
 const wrap = (props = {}) => shallow(<PlayPage match={{ params: {} }} {...props} />);
 
-it('renders children when passed in', () => {
-    const wrapper = wrap({ children: 'test' });
-    expect(wrapper.contains('test')).toBe(true);
-});
-
 it('renders props when passed in', () => {
     const wrapper = wrap({ foo: 'foo' });
     expect(wrapper.find({ foo: 'foo' })).toHaveLength(1);

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import recorder from '../../../services/recorder'; // TODO: Remove this
+import { Audio } from 'components';
 
 const Studio = ({ startRecording, stopRecording, info, recording, started, startFailed, stopped, stopFailed, ...props }) => {
     return (
@@ -10,12 +9,7 @@ const Studio = ({ startRecording, stopRecording, info, recording, started, start
             {stopped || <button onClick={started ? stopRecording : startRecording}>
                 {started ? 'Stop' : 'Start'}
             </button>}
-            {!started || stopped ||
-                <div>
-                    <button onClick={() => recorder.pause()}>Pause</button>
-                    <button onClick={() => recorder.resume()}>Resume</button>
-                </div>
-            }
+            {!stopped || <Audio src={recording.fileUrl} autoPlay />}
         </div>
     );
 };

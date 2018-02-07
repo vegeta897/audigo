@@ -4,6 +4,10 @@ jest.mock('config', () => ({
     apiUrl: 'https://api.foo.com',
 }))
 
+jest.mock('server/db', () => ({
+    init: () => {},
+}))
+
 describe('checkStatus', () => {
     it('returns response when it is ok', () => {
         const response = { ok: true }
