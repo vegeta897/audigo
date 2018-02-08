@@ -1,4 +1,4 @@
-import api, { checkStatus, parseJSON, parseSettings, parseEndpoint } from '.'
+import api, { checkStatus, parseJSON, parseSettings, parseEndpoint, serverRequest } from '.'
 
 jest.mock('config', () => ({
     apiUrl: 'https://api.foo.com',
@@ -6,6 +6,12 @@ jest.mock('config', () => ({
 
 jest.mock('server/db', () => ({
     init: () => {},
+}))
+
+jest.mock('server/models', () => ({
+    models: {
+        get: endpoint => params => ({ endpoint, params })
+    }
 }))
 
 describe('checkStatus', () => {
@@ -78,7 +84,7 @@ describe('api', () => {
         }))
     })
 
-    test('request', async () => {
+    test('request (client)', async () => {
         expect(global.fetch).not.toBeCalled()
         await api.request('/foo')
         expect(global.fetch).toHaveBeenCalledWith(
@@ -87,6 +93,12 @@ describe('api', () => {
                 method: 'get',
             })
         )
+    })
+
+    test('request (server)', async () => {
+        expect(global.fetch).not.toBeCalled()
+        expect(serverRequest('/foo', { params: { id: 'bar' } }))
+            .toEqual({ endpoint: '/foo', params: { id: 'bar' } })
     })
 
     ;['delete', 'get', 'post', 'put', 'patch'].forEach((method) => {
