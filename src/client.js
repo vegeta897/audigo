@@ -1,5 +1,17 @@
 import 'react-hot-loader/patch';
-import 'babel-polyfill';
+// import 'babel-polyfill'; // Don't use this whole thing
+// Add below imports as necessary
+import 'regenerator-runtime/runtime'; // For redux
+// import 'core-js/es6/array';
+// import 'core-js/es6/function';
+// import 'core-js/es6/map';
+// import 'core-js/es6/math';
+// import 'core-js/es6/number';
+// import 'core-js/es6/object';
+// import 'core-js/es6/promise';
+// import 'core-js/es6/regexp';
+// import 'core-js/es6/string';
+// import 'core-js/fn/array/includes';
 import React from 'react';
 import { hydrate } from 'react-dom';
 import { Provider } from 'react-redux';

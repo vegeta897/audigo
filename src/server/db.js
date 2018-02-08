@@ -14,7 +14,7 @@ const knex = new Knex({
 
 const db = { knex };
 
-db.init = () => knex.schema
+db.init = () => knex.schema // TODO: Create actual migrations
     .hasTable('clips').then(exists => {
         return exists || knex.schema.createTable('clips', table => {
             table.increments();

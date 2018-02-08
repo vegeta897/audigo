@@ -9,6 +9,7 @@ const AssetsByTypePlugin = require('webpack-assets-by-type-plugin')
 const ChildConfigPlugin = require('webpack-child-config-plugin')
 const SpawnPlugin = require('webpack-spawn-plugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const Visualizer = require('webpack-visualizer-plugin')
 
 const {
     addPlugins, createConfig, entryPoint, env, setOutput,
@@ -130,8 +131,10 @@ const client = createConfig([
     env('production', [
         splitVendor(),
         addPlugins([
+            new webpack.IgnorePlugin(/^server\/models$/),
             new LodashModuleReplacementPlugin,
             new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+            new Visualizer({ filename: '../webpack-stats.html' })
         ]),
     ]),
 ])

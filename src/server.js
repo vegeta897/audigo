@@ -90,8 +90,7 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-db.init().then((data) => {
-    console.log(data);
+db.init().then(() => {
     let bruteStore = new BruteKnex({ knex: db.knex });
     let brute = new ExpressBrute(bruteStore, {
         freeRetries: isDev ? 100 : 3,
