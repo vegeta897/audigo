@@ -1,22 +1,24 @@
-import { models, bindExpress, downloadPath } from './models';
-import { protocol, host, port, apiPath } from '../config';
-const downloadUrl = protocol + host + ':' + port + downloadPath;
+import { models, bindExpress } from './models';
+import { apiPath } from '../config';
 
-jest.mock('server/db', () => ({
-    init: () => {},
-    knex: ({
-        select: (...cols) => ({
-            from: (table) => ({
-                where: (col, val) => new Promise((resolve, reject) => {
-                    resolve(val === 'abc' ? [{ id: 'abc' }] : []);
-                }),
-                limit: limit => new Promise((resolve, reject) => {
-                    resolve([{},{},{}].splice(0, limit))
+jest.mock('server/db', () => {
+    let clip = { id: 'abc', title: 'foo' };
+    return {
+        init: () => {},
+        knex: ({
+            select: (...cols) => ({
+                from: (table) => ({
+                    where: (col, val) => new Promise((resolve, reject) => {
+                        resolve(val === 'abc' ? [clip] : []);
+                    }),
+                    limit: limit => new Promise((resolve, reject) => {
+                        resolve([clip, clip, clip].splice(0, limit))
+                    })
                 })
             })
         })
-    })
-}));
+    }
+});
 
 describe('bindExpress', () => {
     it('creates endpoints', () => {
@@ -34,21 +36,18 @@ describe('bindExpress', () => {
 
 describe('models /clips', () => {
     it('gets a clip by id', () => {
-        expect(models.get('/clips')( { id: 'abc' } )).resolves.toEqual({
-            id: 'abc',
-            url: `${downloadUrl}/abc.mp3`
-        });
+        return expect(models.get('/clips').get('get')({ id: 'abc' })).resolves.toMatchObject({ id: 'abc' });
     });
 
     it('throws an error for missing clip id', () => {
-        expect(models.get('/clips')( { id: 'def' } )).rejects.toThrow('clip not found');
+        return expect(models.get('/clips').get('get')( { id: 'def' } )).rejects.toThrow('clip not found');
     });
 
     it('gets clip list', () => {
-        expect(models.get('/clips')({})).resolves.toEqual([{},{},{}]);
+        return expect(models.get('/clips').get('get')({})).resolves.toHaveLength(3);
     });
 
     it('gets clip list with limit', () => {
-        expect(models.get('/clips')({ limit: 1 })).resolves.toEqual([{}]);
+        return expect(models.get('/clips').get('get')({ limit: 1 })).resolves.toHaveLength(1);
     });
 });

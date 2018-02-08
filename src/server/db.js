@@ -35,6 +35,9 @@ db.init = () => knex.schema // TODO: Create actual migrations
     })
     .then((initResult) => {
         return { initResult, db };
+    })
+    .catch(err => {
+        console.log('database error!', err);
     });
 
 export default db;

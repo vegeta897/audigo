@@ -10,7 +10,9 @@ jest.mock('server/db', () => ({
 
 jest.mock('server/models', () => ({
     models: {
-        get: endpoint => params => ({ endpoint, params })
+        get: endpoint => ({
+            get: method => params => ({ endpoint, params, method })
+        })
     }
 }));
 
@@ -97,8 +99,8 @@ describe('api', () => {
 
     test('request (server)', async () => {
         expect(global.fetch).not.toBeCalled();
-        expect(serverRequest('/foo', { params: { id: 'bar' } }))
-            .toEqual({ endpoint: '/foo', params: { id: 'bar' } });
+        expect(serverRequest('/foo', { params: { id: 'bar' }, method: 'get' }))
+            .toEqual({ endpoint: '/foo', params: { id: 'bar' }, method: 'get' });
     });
 
     ['delete', 'get', 'post', 'put', 'patch'].forEach((method) => {
