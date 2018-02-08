@@ -1,31 +1,31 @@
 // https://github.com/diegohaz/arc/wiki/Webpack
-const path = require('path')
-const devServer = require('@webpack-blocks/dev-server2')
-const splitVendor = require('webpack-blocks-split-vendor')
-const happypack = require('webpack-blocks-happypack')
-const serverSourceMap = require('webpack-blocks-server-source-map')
-const nodeExternals = require('webpack-node-externals')
-const AssetsByTypePlugin = require('webpack-assets-by-type-plugin')
-const ChildConfigPlugin = require('webpack-child-config-plugin')
-const SpawnPlugin = require('webpack-spawn-plugin')
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
-const Visualizer = require('webpack-visualizer-plugin')
+const path = require('path');
+const devServer = require('@webpack-blocks/dev-server2');
+const splitVendor = require('webpack-blocks-split-vendor');
+const happypack = require('webpack-blocks-happypack');
+const serverSourceMap = require('webpack-blocks-server-source-map');
+const nodeExternals = require('webpack-node-externals');
+const AssetsByTypePlugin = require('webpack-assets-by-type-plugin');
+const ChildConfigPlugin = require('webpack-child-config-plugin');
+const SpawnPlugin = require('webpack-spawn-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const Visualizer = require('webpack-visualizer-plugin');
 
 const {
     addPlugins, createConfig, entryPoint, env, setOutput,
     sourceMaps, defineConstants, webpack, group,
-} = require('@webpack-blocks/webpack2')
+} = require('@webpack-blocks/webpack2');
 
-const host = process.env.HOST || 'localhost'
-const port = (+process.env.PORT + 1) || 3001
-const sourceDir = process.env.SOURCE || 'src'
-const publicPath = `/${process.env.PUBLIC_PATH || ''}/`.replace('//', '/')
-const sourcePath = path.join(process.cwd(), sourceDir)
-const outputPath = path.join(process.cwd(), 'dist/public')
-const assetsPath = path.join(process.cwd(), 'dist/assets.json')
-const clientEntryPath = path.join(sourcePath, 'client.js')
-const serverEntryPath = path.join(sourcePath, 'server.js')
-const devDomain = `http://${host}:${port}/`
+const host = process.env.HOST || 'localhost';
+const port = (+process.env.PORT + 1) || 3001;
+const sourceDir = process.env.SOURCE || 'src';
+const publicPath = `/${process.env.PUBLIC_PATH || ''}/`.replace('//', '/');
+const sourcePath = path.join(process.cwd(), sourceDir);
+const outputPath = path.join(process.cwd(), 'dist/public');
+const assetsPath = path.join(process.cwd(), 'dist/assets.json');
+const clientEntryPath = path.join(sourcePath, 'client.js');
+const serverEntryPath = path.join(sourcePath, 'server.js');
+const devDomain = `http://${host}:${port}/`;
 
 const babel = () => () => ({
     module: {
@@ -33,7 +33,7 @@ const babel = () => () => ({
             { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader' },
         ],
     },
-})
+});
 
 const assets = () => () => ({
     module: {
@@ -41,13 +41,13 @@ const assets = () => () => ({
             { test: /\.(png|jpe?g|svg|woff2?|ttf|eot)$/, loader: 'url-loader?limit=8000' },
         ],
     },
-})
+});
 
 const resolveModules = modules => () => ({
     resolve: {
         modules: [].concat(modules, ['node_modules']),
     },
-})
+});
 
 const base = () => group([
     setOutput({
@@ -73,7 +73,7 @@ const base = () => group([
             publicPath: devDomain,
         }),
     ]),
-])
+]);
 
 const server = createConfig([
     base(),
@@ -103,7 +103,7 @@ const server = createConfig([
             watch: true,
         }),
     ]),
-])
+]);
 
 const client = createConfig([
     base(),
@@ -137,6 +137,6 @@ const client = createConfig([
             new Visualizer({ filename: '../webpack-stats.html' })
         ]),
     ]),
-])
+]);
 
-module.exports = client
+module.exports = client;
