@@ -30,7 +30,8 @@ export const parseSettings = ({ method = 'get', data, locale, ...otherSettings }
     return settings;
 };
 
-export const serverRequest = (endpoint, { params } = {}) => models.get(endpoint)(params);
+export const serverRequest = (endpoint, { params, ...settings } = {}) =>
+    models.get(endpoint).get(settings.method)(params);
 
 export const clientRequest = (endpoint, { params, ...settings } = {}) =>
     fetch(parseEndpoint(endpoint, params), parseSettings(settings))

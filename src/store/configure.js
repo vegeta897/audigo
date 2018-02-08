@@ -18,7 +18,7 @@ const configureStore = (initialState, services = {}) => {
             ...middlewares,
             sagaMiddleware
         ),
-        devtools()
+        devtools({ latency: 0 })
     ];
 
     const store = createStore(reducer, initialState, compose(...enhancers));
