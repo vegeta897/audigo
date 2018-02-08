@@ -3,6 +3,7 @@ import { protocol, host, port, apiPath } from '../config';
 const downloadUrl = protocol + host + ':' + port + downloadPath;
 
 jest.mock('server/db', () => ({
+    init: () => {},
     knex: ({
         select: (...cols) => ({
             from: (table) => ({

@@ -3,8 +3,8 @@ import db from './db';
 describe('init', () => {
     it('builds the schema', () => {
         expect.assertions(1);
-        return db.init().then(data => {
-            expect(data[0]).toBeTruthy();
+        return db.init().then(({ initResult }) => {
+            expect(initResult[0]).toBeTruthy();
         });
     });
 });

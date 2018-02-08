@@ -39,4 +39,5 @@ export const bindExpress = app => {
         .then(data => res.send(data))
         .catch(err => res.status(err.status).send(err.message))
     ));
+    return db.init();
 };

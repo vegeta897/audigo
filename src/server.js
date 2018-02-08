@@ -13,7 +13,6 @@ import { StaticRouter } from 'react-router';
 import { renderToString } from 'react-router-server';
 
 import { protocol, host, port, basename, apiPath, isDev } from 'config';
-import db from 'server/db';
 import { downloadPath, bindExpress } from 'server/models';
 import configureStore from 'store/configure';
 import api from 'services/api';
@@ -49,8 +48,24 @@ const renderHtml = ({ serverState, initialState, content, sheet }) => {
 const app = express();
 app.use(helmet());
 
-// Bind to api endpoints
-bindExpress(app);
+// Bind to api endpoints and init
+bindExpress(app).then(({ db }) => {
+    let bruteStore = new BruteKnex({ knex: db.knex });
+    let brute = new ExpressBrute(bruteStore, {
+        freeRetries: isDev ? 100 : 3,
+        lifetime: isDev? 60 : 1
+    });
+    app.use(brute.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
+
+    app.listen(port, err => {
+        const boldBlue = text => `\u001b[1m\u001b[34m${text}\u001b[39m\u001b[22m`;
+        if(err) {
+            console.error(err);
+        } else {
+            console.info(`Server is running at ${boldBlue(`${protocol + host}:${port}${basename}/`)}`);
+        }
+    })
+});
 
 // Serve clip downloads
 app.use(downloadPath, express.static(path.resolve(process.cwd(), 'storage/clips')));
@@ -88,22 +103,4 @@ app.use((err, req, res, next) => {
     res.status(500).send(renderHtml({ content, sheet }));
     console.error(err);
     next(err);
-});
-
-db.init().then(() => {
-    let bruteStore = new BruteKnex({ knex: db.knex });
-    let brute = new ExpressBrute(bruteStore, {
-        freeRetries: isDev ? 100 : 3,
-        lifetime: isDev? 60 : 1
-    });
-    app.use(brute.prevent); // TODO: https://github.com/AdamPflug/express-brute#a-more-complex-example
-
-    app.listen(port, err => {
-        const boldBlue = text => `\u001b[1m\u001b[34m${text}\u001b[39m\u001b[22m`;
-        if(err) {
-            console.error(err);
-        } else {
-            console.info(`Server is running at ${boldBlue(`${protocol + host}:${port}${basename}/`)}`);
-        }
-    })
 });

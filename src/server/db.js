@@ -32,6 +32,9 @@ db.init = () => knex.schema // TODO: Create actual migrations
             table.index(['uploader']);
             table.binary('icon');
         });
+    })
+    .then((initResult) => {
+        return { initResult, db };
     });
 
 export default db;
