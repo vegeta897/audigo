@@ -14,9 +14,9 @@ class DataError extends Error {
     }
 }
 
-export const models = new Map();
+export const endpoints = new Map();
 
-models.set('/clips', new Map([
+endpoints.set('/clips', new Map([
     ['get', ({ id, limit }) => {
         if(id) {
             return db.knex.select({ id: 'uid' }, 'title', 'description').from('clips').where('uid', id)
@@ -43,8 +43,10 @@ models.set('/clips', new Map([
     }]
 ]));
 
+export const request = (endpoint, method, params) => endpoints.get(endpoint).get(method)(params);
+
 export const bindExpress = app => {
-    models.forEach((endpoint, path) => {
+    endpoints.forEach((endpoint, path) => {
         endpoint.forEach((cb, method) => {
             app[method](apiPath + path, (req, res) => cb(req.query)
                 .then(data => res.send(data))

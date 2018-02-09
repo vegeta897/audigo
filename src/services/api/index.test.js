@@ -1,19 +1,11 @@
-import api, { checkStatus, parseJSON, parseSettings, parseEndpoint, serverRequest } from '.';
+import api, { checkStatus, parseJSON, parseSettings, parseEndpoint } from '.';
+const config = require.requireActual('config');
+const models = require.requireActual('server/models');
 
-jest.mock('config', () => ({
-    apiUrl: 'https://api.foo.com',
-}));
+config.apiUrl = 'https://api.foo.com';
 
 jest.mock('server/db', () => ({
-    init: () => {},
-}));
-
-jest.mock('server/models', () => ({
-    models: {
-        get: endpoint => ({
-            get: method => params => ({ endpoint, params, method })
-        })
-    }
+    init: jest.fn(),
 }));
 
 describe('checkStatus', () => {
@@ -79,113 +71,141 @@ describe('parseEndpoint', () => {
 });
 
 describe('api', () => {
-    beforeEach(() => {
-        global.fetch = jest.fn(() => Promise.resolve({
-            ok: true,
-            json: jest.fn(),
-        }))
-    });
 
-    test('request (client)', async () => {
-        expect(global.fetch).not.toBeCalled();
-        await api.request('/foo');
-        expect(global.fetch).toHaveBeenCalledWith(
-            'https://api.foo.com/foo',
-            expect.objectContaining({
-                method: 'get',
-            })
-        );
-    });
+    describe('server', () => {
+        beforeEach(() => {
+            config.isServer = true;
+            models.request = jest.fn();
+        });
 
-    test('request (server)', async () => {
-        expect(global.fetch).not.toBeCalled();
-        expect(serverRequest('/foo', { params: { id: 'bar' }, method: 'get' }))
-            .toEqual({ endpoint: '/foo', params: { id: 'bar' }, method: 'get' });
-    });
+        test('request', () => {
+            expect(models.request).not.toBeCalled();
+            api.request('/foo', { params: { id: 'bar' }, method: 'get' });
+            expect(models.request).toHaveBeenCalledWith(
+                '/foo',
+                'get',
+                expect.objectContaining({
+                    id: 'bar'
+                })
+            );
+        });
 
-    ['delete', 'get', 'post', 'put', 'patch'].forEach((method) => {
-        test(method, async () => {
-            expect(global.fetch).not.toBeCalled();
-            await api[method]('/foo');
-            expect(global.fetch).toHaveBeenCalledWith(
-                'https://api.foo.com/foo',
-                expect.objectContaining({ method })
+        test('request with no params', () => {
+            expect(models.request).not.toBeCalled();
+            api.request('/foo', { method: 'get' });
+            expect(models.request).toHaveBeenCalledWith(
+                '/foo',
+                'get',
+                expect.objectContaining({})
             );
         });
     });
 
-    describe('create', () => {
+    describe('client', () => {
         beforeEach(() => {
-            api.request = jest.fn();
+            config.isServer = false;
+            global.fetch = jest.fn(() => Promise.resolve({
+                ok: true,
+                json: jest.fn(),
+            }));
         });
 
-        it('creates without arguments', () => {
-            api.create();
+        test('request', async () => {
+            expect(global.fetch).not.toBeCalled();
+            await api.request('/foo');
+            expect(global.fetch).toHaveBeenCalledWith(
+                'https://api.foo.com/foo',
+                expect.objectContaining({
+                    method: 'get'
+                })
+            );
         });
 
-        it('has settings', () => {
-            expect(api.create({ foo: 'bar' }).settings).toEqual({ foo: 'bar' });
-        });
-
-        test('setToken', () => {
-            const obj = api.create({ headers: { foo: 'bar' } });
-            obj.setToken('token');
-            expect(obj.settings).toEqual({
-                headers: {
-                    foo: 'bar',
-                    Authorization: 'Bearer token',
-                },
+        ['delete', 'get', 'post', 'put', 'patch'].forEach((method) => {
+            test(method, async () => {
+                expect(global.fetch).not.toBeCalled();
+                await api[method]('/foo');
+                expect(global.fetch).toHaveBeenCalledWith(
+                    'https://api.foo.com/foo',
+                    expect.objectContaining({ method })
+                );
             });
         });
 
-        test('unsetToken', () => {
-            const obj = api.create({
-                headers: {
-                    foo: 'bar',
-                    Authorization: 'Bearer token',
-                },
+        describe('create', () => {
+            beforeEach(() => {
+                api.request = jest.fn();
             });
-            obj.unsetToken();
-            expect(obj.settings).toEqual({ headers: { foo: 'bar' } });
-        });
 
-        test('request', () => {
-            const obj = api.create({ foo: 'bar' });
-            expect(api.request).not.toBeCalled();
-            obj.request('/foo', { baz: 'qux' });
-            expect(api.request).toHaveBeenCalledWith('/foo', {
-                foo: 'bar',
-                baz: 'qux',
+            it('creates without arguments', () => {
+                api.create();
             });
-        });
 
-        ['get', 'delete'].forEach((method) => {
-            test(method, () => {
-                const obj = api.create({ foo: 'bar' });
-                expect(api.request).not.toBeCalled();
-                obj[method]('/foo', { baz: 'qux' });
-                expect(api.request).toHaveBeenCalledWith('/foo', {
-                    foo: 'bar',
-                    baz: 'qux',
-                    method,
+            it('has settings', () => {
+                expect(api.create({ foo: 'bar' }).settings).toEqual({ foo: 'bar' });
+            });
+
+            test('setToken', () => {
+                const obj = api.create({ headers: { foo: 'bar' } });
+                obj.setToken('token');
+                expect(obj.settings).toEqual({
+                    headers: {
+                        foo: 'bar',
+                        Authorization: 'Bearer token',
+                    },
                 });
             });
-        });
 
-        ['post', 'put', 'patch'].forEach((method) => {
-            test(method, () => {
+            test('unsetToken', () => {
+                const obj = api.create({
+                    headers: {
+                        foo: 'bar',
+                        Authorization: 'Bearer token',
+                    },
+                });
+                obj.unsetToken();
+                expect(obj.settings).toEqual({ headers: { foo: 'bar' } });
+            });
+
+            test('request', () => {
                 const obj = api.create({ foo: 'bar' });
                 expect(api.request).not.toBeCalled();
-                obj[method]('/foo', { field: 'value' }, { baz: 'qux' });
+                obj.request('/foo', { baz: 'qux' });
                 expect(api.request).toHaveBeenCalledWith('/foo', {
                     foo: 'bar',
                     baz: 'qux',
-                    data: {
-                        field: 'value',
-                    },
-                    method,
+                });
+            });
+
+            ['get', 'delete'].forEach((method) => {
+                test(method, () => {
+                    const obj = api.create({ foo: 'bar' });
+                    expect(api.request).not.toBeCalled();
+                    obj[method]('/foo', { baz: 'qux' });
+                    expect(api.request).toHaveBeenCalledWith('/foo', {
+                        foo: 'bar',
+                        baz: 'qux',
+                        method,
+                    });
+                });
+            });
+
+            ['post', 'put', 'patch'].forEach((method) => {
+                test(method, () => {
+                    const obj = api.create({ foo: 'bar' });
+                    expect(api.request).not.toBeCalled();
+                    obj[method]('/foo', { field: 'value' }, { baz: 'qux' });
+                    expect(api.request).toHaveBeenCalledWith('/foo', {
+                        foo: 'bar',
+                        baz: 'qux',
+                        data: {
+                            field: 'value',
+                        },
+                        method,
+                    });
                 });
             });
         });
     });
+
 });

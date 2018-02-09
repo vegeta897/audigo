@@ -1,4 +1,4 @@
-import { models, bindExpress } from './models';
+import { endpoints, request, bindExpress } from './models';
 import { apiPath } from '../config';
 
 jest.mock('server/db', () => {
@@ -24,9 +24,9 @@ describe('bindExpress', () => {
     it('creates endpoints', () => {
         let get = jest.fn();
         bindExpress({ get });
-        expect(get.mock.calls.length).toBe(models.size);
+        expect(get.mock.calls.length).toBe(endpoints.size);
         let i = 0;
-        models.forEach((val, key) => {
+        endpoints.forEach((val, key) => {
             expect(get.mock.calls[i][0]).toBe(apiPath + key);
             expect(get.mock.calls[i][1]).toBeInstanceOf(Function);
             i++;
@@ -36,18 +36,18 @@ describe('bindExpress', () => {
 
 describe('models /clips', () => {
     it('gets a clip by id', () => {
-        return expect(models.get('/clips').get('get')({ id: 'abc' })).resolves.toMatchObject({ id: 'abc' });
+        return expect(request('/clips', 'get', { id: 'abc' })).resolves.toMatchObject({ id: 'abc' });
     });
 
     it('throws an error for missing clip id', () => {
-        return expect(models.get('/clips').get('get')( { id: 'def' } )).rejects.toThrow('clip not found');
+        return expect(request('/clips', 'get', { id: 'def' })).rejects.toThrow('clip not found');
     });
 
     it('gets clip list', () => {
-        return expect(models.get('/clips').get('get')({})).resolves.toHaveLength(3);
+        return expect(request('/clips', 'get', {})).resolves.toHaveLength(3);
     });
 
     it('gets clip list with limit', () => {
-        return expect(models.get('/clips').get('get')({ limit: 1 })).resolves.toHaveLength(1);
+        return expect(request('/clips', 'get', { limit: 1 })).resolves.toHaveLength(1);
     });
 });

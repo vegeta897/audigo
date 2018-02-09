@@ -6,4 +6,4 @@ storage/*
 *.log
 node_modules
 coverage
-webpack/webpack-assets.json
+dev
