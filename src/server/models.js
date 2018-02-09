@@ -1,5 +1,5 @@
 import shortid from 'shortid';
-import slug from 'slug';
+import slug from 'slug'; // TODO: Add more emojis with slug.multicharmap['🤔'] = 'thinking';
 import { protocol, host, port, apiPath } from '../config';
 import db from 'server/db';
 
