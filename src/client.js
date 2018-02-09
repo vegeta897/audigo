@@ -28,7 +28,7 @@ const serverState = window.__SERVER_STATE__;
 const initialState = window.__INITIAL_STATE__;
 const store = configureStore(initialState, {
     api: api.create(),
-    recorder
+    recorder: recorder.create()
 });
 
 const renderApp = () => (

@@ -5,10 +5,8 @@ import merge from 'lodash/merge';
 import { apiUrl, isServer } from 'config';
 import { models } from 'server/models';
 
-export const checkStatus = (response) => {
-    if(response.ok) {
-        return response;
-    }
+export const checkStatus = response => {
+    if(response.ok) return response;
     const error = new Error(`${response.status} ${response.statusText}`);
     error.response = response;
     throw error;
@@ -22,12 +20,11 @@ export const parseSettings = ({ method = 'get', data, locale, ...otherSettings }
         'Content-Type': 'application/json',
         'Accept-Language': locale
     };
-    const settings = merge({
+    return merge({
         body: data ? JSON.stringify(data) : undefined,
         method,
         headers
     }, otherSettings);
-    return settings;
 };
 
 export const serverRequest = (endpoint, { params, ...settings } = {}) =>

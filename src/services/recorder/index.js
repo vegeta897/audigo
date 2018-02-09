@@ -1,52 +1,66 @@
 // Records live microphone data
+const delayTime = 20;
+let stream, fileType;
 
-// TODO: recorder object can't be treated as a singleton, need to support multiple studios
-// Look at api service, use a create() method and have recorders share a .mediaRecorder
-// As long as one recorder is running, keep it active, and write chunks to whatever recorder is active
+export const initDevice = () => {
+    if(stream) return Promise.resolve(new MediaRecorder(stream));
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia
+        || !MediaRecorder || !AudioContext) {
+        return Promise.reject('Web Audio API not found');
+    }
+    return navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(_stream => {
+            fileType = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'weba';
+            let audioCtx = new AudioContext();
+            let source = audioCtx.createMediaStreamSource(_stream);
+            let delay = audioCtx.createDelay(delayTime / 1000);
+            let merger = audioCtx.createChannelMerger();
+            let destination = audioCtx.createMediaStreamDestination();
+            stream = destination.stream;
+            source.connect(delay);
+            delay.connect(merger, 0, 0); // Mono to stereo
+            delay.connect(merger, 0, 1);
+            merger.connect(destination);
+            return new MediaRecorder(stream);
+        });
+};
 
-const recorder = {
+const recorder = {};
+
+recorder.create = () => ({
     start() {
-        if(this.mediaRecorder) return Promise.reject('Recorder already started!');
-        if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia
-            || !MediaRecorder || !AudioContext) {
-            return Promise.reject('Web Audio API not found');
-        }
-        return navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-                this.fileType = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'weba';
-                this.startTime = Date.now();
-                let audioCtx = new AudioContext();
-                let source = audioCtx.createMediaStreamSource(stream);
-                let merger = audioCtx.createChannelMerger();
-                let destination = audioCtx.createMediaStreamDestination();
-                source.connect(merger, 0, 0); // Mono to stereo
-                source.connect(merger, 0, 1);
-                merger.connect(destination);
+        return initDevice()
+            .then((mediaRecorder) => {
+                this.mediaRecorder = mediaRecorder;
                 this.chunks = [];
-                this.mediaRecorder = new MediaRecorder(destination.stream);
-                this.mediaRecorder.start();
-                this.mediaRecorder.ondataavailable = e => this.chunks.push(e.data);
-                return {
-                    fileType: this.fileType,
-                    startTime: this.startTime
+                this.mediaRecorder.ondataavailable = e => {
+                    this.chunks.push(e.data);
                 };
+                return new Promise(resolve => {
+                    setTimeout(() => { // Delay start to avoid click sound
+                        this.mediaRecorder.start();
+                        this.startTime = Date.now();
+                        resolve({
+                            startTime: this.startTime
+                        });
+                    }, delayTime * 2) // Double delay to compensate for already-delayed signal
+                })
             });
     },
 
     stop() {
         return new Promise((resolve, reject) => {
-            if(!this.mediaRecorder) reject('Recorder was not started!');
+            if(!this.chunks) reject('Recorder was not started!');
+            this.mediaRecorder.removeEventListener('dataavailable', this.chunker);
             this.mediaRecorder.onstop = e => {
-                let file = new Blob(this.chunks, { type: `audio/${this.fileType}; codecs=opus`});
+                let file = new Blob(this.chunks, { type: `audio/${fileType}; codecs=opus`});
                 resolve({
                     file,
                     duration: Date.now() - this.startTime,
                     fileUrl: URL.createObjectURL(file)
                 });
             };
-            this.mediaRecorder.onerror = e => {
-                reject(e);
-            };
+            this.mediaRecorder.onerror = e => reject(e);
             this.mediaRecorder.stop();
         });
     },
@@ -58,6 +72,6 @@ const recorder = {
     resume() {
         this.mediaRecorder && this.mediaRecorder.resume();
     }
-};
+});
 
 export default recorder;
