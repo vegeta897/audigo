@@ -2,7 +2,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
 import { Audio } from 'components';
-import { Link } from 'react-router-dom';
 
 const Player = ({ detail, loading, failed, ...props }) => {
     return (
@@ -17,7 +16,6 @@ const Player = ({ detail, loading, failed, ...props }) => {
                     </Helmet>
                     <h2>{detail.title}</h2>
                     <Audio src={detail.url} autoPlay />
-                    <Link to={`/clips`}>back 2 the clips</Link>
                 </div>
             }
         </div>

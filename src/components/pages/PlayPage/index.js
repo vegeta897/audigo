@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Player } from 'containers';
 import { PageTemplate } from 'components';
+import { Link } from 'react-router-dom';
 
 const PlayPage = ({match/*, location, history*/, ...props}) => {
     /*  Params: {
@@ -20,6 +21,12 @@ const PlayPage = ({match/*, location, history*/, ...props}) => {
     return (
         <PageTemplate {...props}>
             <Player id={match.params.id} />
+            <div>
+                <Link to={`/clips`}>view more clips</Link>
+            </div>
+            <div>
+                <Link to={`/`}>record your own</Link>
+            </div>
         </PageTemplate>
     );
 };

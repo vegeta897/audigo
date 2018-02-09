@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'query-string';
 import { ClipList } from 'containers';
 import { PageTemplate } from 'components';
+import { Link } from 'react-router-dom';
 
 const ClipsPage = ({ location, ...props }) => {
     const query = parse(location.search);
@@ -10,6 +11,9 @@ const ClipsPage = ({ location, ...props }) => {
     return (
         <PageTemplate {...props}>
             <ClipList limit={limit} />
+            <div>
+                <Link to={`/`}>record your own</Link>
+            </div>
         </PageTemplate>
     );
 };
