@@ -1,10 +1,11 @@
 import get from 'lodash/get';
-import { initialState, getRecorderState, getInfo, getRecording } from './selectors';
+import { initialState, getRecorderState, getInfo, getClip } from './selectors';
 import {
     RECORDER_START_REQUEST,
     RECORDER_START_SUCCESS,
     RECORDER_STOP_REQUEST,
-    RECORDER_STOP_SUCCESS
+    RECORDER_STOP_SUCCESS,
+    RECORDER_GET_INPUT
 } from './actions';
 
 export default (state = initialState, { type, payload, meta }) => {
@@ -36,7 +37,7 @@ export default (state = initialState, { type, payload, meta }) => {
                 ...state,
                 [studio]: {
                     ...getRecorderState(state, studio),
-                    recording: getRecording(initialState, studio)
+                    clip: getClip(initialState, studio)
                 }
             };
         case RECORDER_STOP_SUCCESS:
@@ -44,7 +45,19 @@ export default (state = initialState, { type, payload, meta }) => {
                 ...state,
                 [studio]: {
                     ...getRecorderState(state, studio),
-                    recording: payload
+                    clip: payload
+                }
+            };
+        case RECORDER_GET_INPUT:
+            let file = payload.files[0];
+            return {
+                ...state,
+                [studio]: {
+                    ...getRecorderState(state, studio),
+                    clip: {
+                        file,
+                        fileUrl: URL.createObjectURL(file)
+                    }
                 }
             };
         default:

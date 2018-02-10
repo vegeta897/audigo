@@ -1,26 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Audio } from 'components';
+import { Audio, AudioInput } from 'components';
 
-const Studio = ({ startRecording, stopRecording, info, recording, started, startFailed, stopped, stopFailed, ...props }) => {
+const Studio = ({ startRecording, stopRecording, info, recording, startFailed, stopFailed, clip, getInput, ...props }) => {
     return (
         <div {...props}>
-            In the stu-jo
-            {stopped || <button onClick={started ? stopRecording : startRecording}>
-                {started ? 'Stop' : 'Start'}
-            </button>}
-            {!stopped || <Audio src={recording.fileUrl} autoPlay />}
+            <h2>In the stu-jo</h2>
+            {!clip && <div>
+                <button onClick={recording ? stopRecording : startRecording}>
+                    {recording ? 'Stop' : 'Start'}
+                </button>
+                <AudioInput id='recorder' getInput={getInput} />
+            </div>}
+            {clip && <Audio src={clip.fileUrl} autoPlay />}
         </div>
     );
 };
 
 Studio.propTypes = {
     info: PropTypes.object,
-    recording: PropTypes.object,
+    clip: PropTypes.object,
     startFailed: PropTypes.bool,
     stopFailed: PropTypes.bool,
-    started: PropTypes.bool,
-    stopped: PropTypes.bool
+    recording: PropTypes.bool,
+    startRecording: PropTypes.func.isRequired,
+    stopRecording: PropTypes.func.isRequired
 };
 
 export default Studio;

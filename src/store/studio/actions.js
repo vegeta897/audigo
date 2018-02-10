@@ -64,4 +64,14 @@ export const recorderStopFailure = (studio, error, thunk) => ({
     }
 });
 
+export const RECORDER_GET_INPUT = 'RECORDER_GET_INPUT';
+
+export const recorderGetInput = (studio, input) => ({
+    type: RECORDER_GET_INPUT,
+    payload: input,
+    meta: {
+        studio
+    }
+});
+
 // TODO: Pause and resume actions, error action (any error while recording)

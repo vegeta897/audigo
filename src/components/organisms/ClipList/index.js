@@ -5,7 +5,7 @@ import { ClipListItem } from 'components';
 const ClipList = ({ list, loading, failed, ...props }) => {
     return (
         <div {...props}>
-            <h1>Clips!</h1>
+            <h2>Clips!</h2>
             {!list.length && loading && <p>Loading</p>}
             {failed && <p>Failed to load clip list, sorry!</p>}
             <ul>

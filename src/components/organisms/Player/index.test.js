@@ -1,7 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import Player from '.';
-import { Audio } from 'components';
 
 const wrap = (props = {}) => shallow(<Player {...props} />);
 
@@ -22,15 +21,10 @@ it('renders failed when passed in', () => {
 
 it('renders title when passed in', () => {
     const wrapper = wrap({ detail: { title: 'Title' } });
-    expect(wrapper.find('div').children().find('h2').contains('Title')).toBe(true);
+    expect(wrapper.find('h2').contains('Title')).toBe(true);
 });
 
 it('renders audio when detail passed in', () => {
     const wrapper = wrap({ detail: { title: 'Title', url: 'http://' } });
-    expect(wrapper.find('div').children().find('Audio')).toHaveLength(1);
-});
-
-it('renders link to clips route', () => {
-    const wrapper = wrap({ detail: { title: 'Title' } });
-    expect(wrapper.find('div').children().find({ to: '/clips' })).toHaveLength(1);
+    expect(wrapper.find('Audio')).toHaveLength(1);
 });

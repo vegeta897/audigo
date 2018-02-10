@@ -1,14 +1,14 @@
 export const initialState = {};
 
 export const initialStudioState = {
-    info: null,
-    recording: null
+    clip: null,
+    info: null
 };
 
 export const getRecorderState = (state = initialState, studio) => state[studio] || initialStudioState;
 
-export const getRecording = (state = initialState, studio) =>
-    getRecorderState(state, studio).recording;
+export const getClip = (state = initialState, studio) =>
+    getRecorderState(state, studio).clip;
 
 export const getInfo = (state = initialState, studio) =>
     getRecorderState(state, studio).info;

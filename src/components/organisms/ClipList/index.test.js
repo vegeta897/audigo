@@ -33,5 +33,5 @@ it('renders list', () => {
 
 it('renders clip list items', () => {
     const wrapper = wrap();
-    expect(wrapper.find('ul').children().find('ClipListItem')).toHaveLength(list.length);
+    expect(wrapper.find('ClipListItem')).toHaveLength(list.length);
 });
