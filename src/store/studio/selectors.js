@@ -2,13 +2,13 @@ export const initialState = {};
 
 export const initialStudioState = {
     clip: null,
-    info: null
+    info: {}
 };
 
-export const getRecorderState = (state = initialState, studio) => state[studio] || initialStudioState;
+export const getStudioState = (state = initialState, studio) => state[studio] || initialStudioState;
 
 export const getClip = (state = initialState, studio) =>
-    getRecorderState(state, studio).clip;
+    getStudioState(state, studio).clip;
 
 export const getInfo = (state = initialState, studio) =>
-    getRecorderState(state, studio).info;
+    getStudioState(state, studio).info;

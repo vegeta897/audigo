@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { font } from 'styled-theme';
 
 const Wrapper = styled.div`
   display: flex;
@@ -8,6 +9,7 @@ const Wrapper = styled.div`
   padding-top: 3.75rem;
   min-height: 100vh;
   box-sizing: border-box;
+  font-family: ${font('primary')};
 `;
 
 const Content = styled.section`

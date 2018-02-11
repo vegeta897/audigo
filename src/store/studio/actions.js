@@ -64,11 +64,19 @@ export const recorderStopFailure = (studio, error, thunk) => ({
     }
 });
 
-export const RECORDER_GET_INPUT = 'RECORDER_GET_INPUT';
+export const STUDIO_GET_INPUT = 'STUDIO_GET_INPUT';
+export const STUDIO_CLEAR = 'SUDIO_CLEAR';
 
 export const recorderGetInput = (studio, input) => ({
-    type: RECORDER_GET_INPUT,
+    type: STUDIO_GET_INPUT,
     payload: input,
+    meta: {
+        studio
+    }
+});
+
+export const studioClear = (studio) => ({
+    type: STUDIO_CLEAR,
     meta: {
         studio
     }

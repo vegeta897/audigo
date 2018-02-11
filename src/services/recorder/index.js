@@ -56,6 +56,8 @@ recorder.create = () => ({
                 let file = new Blob(this.chunks, { type: `audio/${fileType}; codecs=opus`});
                 resolve({
                     file,
+                    fileType,
+                    startTime: this.startTime,
                     duration: Date.now() - this.startTime,
                     fileUrl: URL.createObjectURL(file)
                 });

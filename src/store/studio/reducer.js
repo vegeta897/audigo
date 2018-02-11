@@ -1,11 +1,10 @@
 import get from 'lodash/get';
-import { initialState, getRecorderState, getInfo, getClip } from './selectors';
+import { initialState, initialStudioState, getStudioState, getInfo, getClip } from './selectors';
 import {
-    RECORDER_START_REQUEST,
     RECORDER_START_SUCCESS,
-    RECORDER_STOP_REQUEST,
     RECORDER_STOP_SUCCESS,
-    RECORDER_GET_INPUT
+    STUDIO_GET_INPUT,
+    STUDIO_CLEAR
 } from './actions';
 
 export default (state = initialState, { type, payload, meta }) => {
@@ -16,49 +15,50 @@ export default (state = initialState, { type, payload, meta }) => {
     }
 
     switch(type) {
-        case RECORDER_START_REQUEST:
-            return {
-                ...state,
-                [studio]: {
-                    ...getRecorderState(state, studio),
-                    info: getInfo(initialState, studio)
-                }
-            };
         case RECORDER_START_SUCCESS:
             return {
                 ...state,
                 [studio]: {
-                    ...getRecorderState(state, studio),
-                    info: payload
-                }
-            };
-        case RECORDER_STOP_REQUEST:
-            return {
-                ...state,
-                [studio]: {
-                    ...getRecorderState(state, studio),
-                    clip: getClip(initialState, studio)
+                    info: {
+                        status: 'recording'
+                    }
                 }
             };
         case RECORDER_STOP_SUCCESS:
+            let title = new Date(payload.startTime).toISOString().substr(0, 19).replace(/T/,' ');
             return {
                 ...state,
                 [studio]: {
-                    ...getRecorderState(state, studio),
-                    clip: payload
+                    info: {
+                        status: 'recorded'
+                    },
+                    clip: {
+                        ...payload,
+                        title,
+                        fileName: `recording-${title.replace(' ', '_')}.${payload.fileType}`
+                    }
                 }
             };
-        case RECORDER_GET_INPUT:
+        case STUDIO_GET_INPUT:
             let file = payload.files[0];
             return {
                 ...state,
                 [studio]: {
-                    ...getRecorderState(state, studio),
+                    info: {
+                        status: 'file'
+                    },
                     clip: {
                         file,
+                        fileName: file.name,
+                        title: file.name.split('.').slice(0, -1).join(' ').replace(/[-_]/g,' '),
                         fileUrl: URL.createObjectURL(file)
                     }
                 }
+            };
+        case STUDIO_CLEAR:
+            return {
+                ...state,
+                [studio]: initialStudioState
             };
         default:
             return state;

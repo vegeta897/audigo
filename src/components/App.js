@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { injectGlobal, ThemeProvider } from 'styled-components';
+import { font, palette } from 'styled-theme';
 import Helmet from 'react-helmet';
 
 import { HomePage, PlayPage, ClipsPage } from 'components';
