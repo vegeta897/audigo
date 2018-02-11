@@ -25,7 +25,7 @@ export default (state = initialState, { type, payload, meta }) => {
                 }
             };
         case RECORDER_STOP_SUCCESS:
-            let title = new Date(payload.startTime).toISOString().substr(0, 19).replace(/T/,' ');
+            let timestamp = new Date(payload.startTime).toISOString().substr(0, 19).replace(/T/,' ');
             return {
                 ...state,
                 [studio]: {
@@ -34,8 +34,8 @@ export default (state = initialState, { type, payload, meta }) => {
                     },
                     clip: {
                         ...payload,
-                        title,
-                        fileName: `recording-${title.replace(' ', '_')}.${payload.fileType}`
+                        title: '',
+                        fileName: `recording-${timestamp.replace(' ', '_')}.${payload.fileType}`
                     }
                 }
             };

@@ -5,15 +5,16 @@ import Link from 'react-router-dom/Link';
 import { font, palette } from 'styled-theme';
 import { ifProp } from 'styled-tools';
 
-const fontSize = ({ height }) => `${height / 40}rem`;
+const fontSize = ({ height, big }) => `${height / 40 * big ? 1.8 : 1}rem`;
 
-const backgroundColor = ({ transparent, disabled }) =>
-    transparent ? 'transparent' : palette(disabled ? 3 : 1);
+const backgroundColor = ({ transparent, disabled, success }) =>
+    transparent ? 'transparent' : success ? palette('success', 1) : palette(disabled ? 3 : 1);
 
 const foregroundColor = ({ transparent, disabled }) =>
     transparent ? palette(disabled ? 2 : 1) : palette('grayscale', 0, true);
 
-const hoverBackgroundColor = ({ disabled, transparent }) => !disabled && !transparent && palette(0);
+const hoverBackgroundColor = ({ disabled, transparent, success }) =>
+    !disabled && !transparent && success ? palette('success', 0) : palette(0);
 const hoverForegroundColor = ({ disabled, transparent }) => !disabled && transparent && palette(0);
 
 const styles = css`
@@ -71,12 +72,13 @@ Button.propTypes = {
     type: PropTypes.string,
     to: PropTypes.string,
     href: PropTypes.string,
+    big: PropTypes.bool
 };
 
 Button.defaultProps = {
     palette: 'primary',
     type: 'button',
-    height: 40,
+    height: 40
 };
 
 export default Button;

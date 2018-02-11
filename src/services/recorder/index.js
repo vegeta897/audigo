@@ -1,5 +1,6 @@
 // Records live microphone data
-const delayTime = 20;
+const startDelay = 20;
+const endDelay = 30;
 let stream, fileType;
 
 export const initDevice = () => {
@@ -13,7 +14,7 @@ export const initDevice = () => {
             fileType = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus') ? 'ogg' : 'weba';
             let audioCtx = new AudioContext();
             let source = audioCtx.createMediaStreamSource(_stream);
-            let delay = audioCtx.createDelay(delayTime / 1000);
+            let delay = audioCtx.createDelay(endDelay / 1000);
             let merger = audioCtx.createChannelMerger();
             let destination = audioCtx.createMediaStreamDestination();
             stream = destination.stream;
@@ -43,7 +44,7 @@ recorder.create = () => ({
                         resolve({
                             startTime: this.startTime
                         });
-                    }, delayTime * 2) // Double delay to compensate for already-delayed signal
+                    }, startDelay + endDelay)
                 })
             });
     },

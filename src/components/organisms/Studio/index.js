@@ -8,19 +8,19 @@ const Studio = ({ startRecording, stopRecording, info, startFailed, stopFailed, 
         <div {...props}>
             <h2>In the stu-jo</h2>
             {!clip && <div>
-                <Button onClick={recording ? stopRecording : startRecording}>
-                    {recording ? 'Stop' : 'Start'}
+                <Button big onClick={recording ? stopRecording : startRecording}>
+                    {recording ? 'Stop' : 'Record'}
                 </Button>
                 {!recording && <AudioInput id='recorder' getInput={getInput} />}
             </div>}
             {clip && <div>
                 <Audio src={clip.fileUrl} autoPlay />
                 <div>
-                    <Button>Upload</Button>
-                    <Input type='text' placeholder='Title' defaultValue={clip.title} />
+                    <Button big success type='submit'>Upload</Button>
+                    <Input big type='text' placeholder='Title' defaultValue={clip.title} />
                 </div>
                 {info.status !== 'file' && <div>
-                    <Button onClick={clear}>Try Again</Button>
+                    <Button onClick={clear} type='reset'>Try Again</Button>
                     <Button download={'audio.mp4'} href={clip.fileUrl}>Download</Button>
                 </div>}
             </div>}

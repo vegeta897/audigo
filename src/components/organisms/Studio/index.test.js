@@ -16,7 +16,7 @@ it('renders audio input when no clip', () => {
 
 it('changes record button text when recording', () => {
     const wrapper = wrap({ recording: false });
-    expect(wrapper.find('button').contains('Start')).toBe(true);
+    expect(wrapper.find('button').contains('Record')).toBe(true);
     wrapper.setProps({ recording: true });
     expect(wrapper.find('button').contains('Stop')).toBe(true);
 });
