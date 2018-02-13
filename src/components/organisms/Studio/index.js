@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Field as reduxField, reduxForm } from 'redux-form';
+import { Field as ReduxField, reduxForm } from 'redux-form';
 import { Audio, AudioInput, Button, Field, Block } from 'components';
 
 const maxLength = (max, field) => value => value && value.length > max ? `That ${field} is ${value.length - max} characters over the limit` : undefined;
@@ -12,8 +12,8 @@ let ClipSubmitForm = props => {
     const { handleSubmit, invalid, submitting } = props;
     return <form onSubmit={handleSubmit}>
         <Button big success type='submit' disabled={invalid || submitting}>Upload</Button>
-        <reduxField component={Field} big type='text' name='title' placeholder='Title' validate={titleMaxLength} />
-        <reduxField component={Field} big type='textarea' name='description' placeholder='Describe this clip...' validate={descriptionMaxLength} />
+        <ReduxField component={Field} big type='text' name='title' placeholder='Title' validate={titleMaxLength} />
+        <ReduxField component={Field} big type='textarea' name='description' placeholder='Describe this clip...' validate={descriptionMaxLength} />
     </form>
 };
 

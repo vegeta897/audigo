@@ -23,6 +23,8 @@ const config = {
         dbUser: process.env.PGUSER || process.env.USER || 'postgres',
         dbName: process.env.PGDATABASE || process.env.USER || 'audigo',
         dbPass: process.env.PGPASSWORD,
+        clipFileType: '.mp3',
+        clipFileCodec: 'libmp3lame',
         maxUploadSize: 100 * 1024 * 1024 // 100mb
     },
     test: {

@@ -14,6 +14,18 @@ const knex = new Knex({
 
 const db = { knex };
 
+const selectClips = knex.select().from('clips');
+
+db.getClip = uid => selectClips.where('uid', uid)
+    .then(clips => {
+        if(clips.length === 0) throw 'clip not found';
+        return clips[0];
+    });
+
+db.getClips = limit => selectClips.limit(limit);
+
+db.insertClip = clip => knex('clips').insert({ ...clip }).returning('*').then(rows=> rows[0]);
+
 db.init = () => knex.schema // TODO: Create actual migrations
     .hasTable('clips').then(exists => {
         return exists || knex.schema.createTable('clips', table => {

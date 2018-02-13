@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
-import { Audio } from 'components';
+import { Audio, Block } from 'components';
 
 const Player = ({ detail, loading, failed, ...props }) => {
     return (
@@ -16,6 +16,7 @@ const Player = ({ detail, loading, failed, ...props }) => {
                     </Helmet>
                     <h2>{detail.title}</h2>
                     {loading || <Audio src={detail.url} autoPlay />}
+                    <Block>{detail.description}</Block>
                 </div>
             }
         </div>

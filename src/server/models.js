@@ -1,7 +1,7 @@
 import path from 'path';
 import generate from 'nanoid/generate';
 import slug from 'slug'; // TODO: Add more emojis with slug.multicharmap['🤔'] = 'thinking';
-import { protocol, host, port, apiPath, maxUploadSize } from '../config';
+import { protocol, host, port, apiPath, clipFileType, maxUploadSize } from '../config';
 import db from 'server/db';
 import encode from 'server/encoder';
 import multer from 'multer';
@@ -39,32 +39,20 @@ let upload = multer({
 
 export const endpoints = new Map();
 
+const normalizeClip = clip => ({
+    id: clip.uid,
+    url: `${downloadUrl}/${clip.uid}${clipFileType}`,
+    filename: slug(clip.title || clip.original_file_name) + clipFileType,
+    title: clip.title || clip.original_file_name,
+    description: clip.description
+});
+
 endpoints.set('/clips', new Map([
     ['get', ({ id, limit }) => {
-        if(id) {
-            return db.knex.select({ id: 'uid' }, 'title', 'description', 'original_file_name').from('clips').where('uid', id)
-                .then(rows => {
-                    if(rows.length === 0) throw new DataError('clip not found', 404);
-                    let clip = rows[0];
-                    return {
-                        ...clip,
-                        url: `${downloadUrl}/${clip.id}.mp3`,
-                        filename: `${slug(clip.title || clip.original_file_name)}.mp3`,
-                        title: clip.title || clip.original_file_name
-                    };
-                });
-        } else {
-            limit = parseInt(limit) > 0 ? parseInt(limit) : 20;
-            return db.knex.select({ id: 'uid' }, 'title', 'description', 'original_file_name').from('clips').limit(limit)
-                .then(rows =>{
-                    return rows.map(clip => ({
-                        ...clip,
-                        url: `${downloadUrl}/${clip.id}.mp3`,
-                        filename: `${slug(clip.title || clip.original_file_name)}.mp3`,
-                        title: clip.title || clip.original_file_name
-                    }));
-                });
-        }
+        if(id) return db.getClip(id).then(normalizeClip)
+            .catch(e => { throw new DataError(e.message, 404) });
+        else return db.getClips(parseInt(limit) > 0 ? parseInt(limit) : 20)
+            .then(clips => clips.map(normalizeClip));
     }],
     ['post', ({ file, body }) => {
         if(!file) return Promise.reject(new DataError('missing file', 400));
@@ -82,18 +70,7 @@ endpoints.set('/clips', new Map([
             .then(({ fileSize, duration }) => {
                 clip.file_size = fileSize;
                 clip.duration = duration;
-                return db.knex('clips').insert({ ...clip })
-                    .returning(['uid', 'title', 'description', 'original_file_name'])
-                    .then(rows => {
-                        let { uid, title, description, original_file_name } = rows[0];
-                        return {
-                            description,
-                            id: uid,
-                            url: `${downloadUrl}/${uid}.mp3`,
-                            filename: `${slug(title || original_file_name)}.mp3`,
-                            title: title || original_file_name
-                        };
-                    })
+                return db.insertClip(clip).then(normalizeClip)
                     .catch(err => { console.log(err); throw new DataError('error saving to database', 500); });
             })
             .catch(err => { console.log(err); throw new DataError('error converting file', 500); });
