@@ -29,6 +29,12 @@
         "transform-react-remove-prop-types",
         ["styled-components", {
           "displayName": false
+        }],
+        ["transform-imports", {
+          "redux-form": {
+            "transform": "redux-form/es/${member}",
+            "preventFullImport": true
+          }
         }]
       ]
     }
