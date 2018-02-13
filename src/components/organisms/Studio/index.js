@@ -1,8 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Field, reduxForm } from 'redux-form';
 import { Audio, AudioInput, Button, Input } from 'components';
 
-const Studio = ({ startRecording, stopRecording, info, startFailed, stopFailed, clip, getInput, getInputRef, clear, upload, ...props }) => {
+let ClipSubmitForm = props => {
+    const { handleSubmit } = props;
+    return <form onSubmit={handleSubmit}>
+        <Button big success type='submit'>Upload</Button>
+        <Field big type='text' name='title' placeholder='Title' component={Input} />
+        <Field big type='textarea' name='description' placeholder='Describe this clip...' component={Input} />
+    </form>
+};
+
+ClipSubmitForm = reduxForm({ form: 'clipSubmit' })(ClipSubmitForm);
+
+const Studio = ({ startRecording, stopRecording, info, clip, getInput, getInputRef, clear, handleSubmit, ...props }) => {
     const recording = info.status === 'recording';
     return (
         <div {...props}>
@@ -16,8 +28,7 @@ const Studio = ({ startRecording, stopRecording, info, startFailed, stopFailed, 
             {clip && <div>
                 <Audio src={clip.fileUrl} autoPlay />
                 <div>
-                    <Button onClick={() => upload(clip)} big success type='submit'>Upload</Button>
-                    <Input big type='text' placeholder='Title' defaultValue={clip.title} />
+                    <ClipSubmitForm onSubmit={handleSubmit} initialValues={{title: clip.title}} />
                 </div>
                 <div>
                     <Button secondary onClick={clear} type='reset'>{info.status !== 'file' ? 'Try Again' : 'Clear'}</Button>

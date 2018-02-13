@@ -19,9 +19,15 @@ class StudioContainer extends Component {
         upload: PropTypes.func.isRequired,
         clear: PropTypes.func.isRequired
     };
+    handleSubmit = data => {
+        this.props.upload({
+            ...this.props.clip,
+            ...data
+        });
+    };
     render() {
-        let { ...props } = this.props;
-        return <Studio {...props} />
+        let { startFailed, stopFailed, upload, ...props } = this.props;
+        return <Studio {...props} handleSubmit={this.handleSubmit} />
     }
 }
 

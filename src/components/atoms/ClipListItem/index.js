@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const ClipListItem = ({ id, title, ...props }) => {
+const ClipListItem = ({ id, title, description, ...props }) => {
     return (
         <li {...props}>
-            <Link to={`/play/${id}`} title={`Play "${title}"`}>{title}</Link>
+            <Link to={`/play/${id}`} title={description}>{title}</Link>
         </li>
     );
 };

@@ -75,6 +75,7 @@ endpoints.set('/clips', new Map([
         let clip = {
             uid: path.basename(file.filename, fileExt),
             title: body.title,
+            description: body.description,
             original_file_name: path.basename(body.fileName, origExt),
             original_file_type: origExt,
             recorded_at: new Date(+body.recordDate).toISOString()
