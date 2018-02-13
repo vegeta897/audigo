@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Field, reduxForm } from 'redux-form';
-import { Audio, AudioInput, Button, Input } from 'components';
+import { Field as reduxField, reduxForm } from 'redux-form';
+import { Audio, AudioInput, Button, Field, Block } from 'components';
 
 const maxLength = (max, field) => value => value && value.length > max ? `That ${field} is ${value.length - max} characters over the limit` : undefined;
 
@@ -12,8 +12,8 @@ let ClipSubmitForm = props => {
     const { handleSubmit, invalid, submitting } = props;
     return <form onSubmit={handleSubmit}>
         <Button big success type='submit' disabled={invalid || submitting}>Upload</Button>
-        <Field big type='text' name='title' placeholder='Title' validate={titleMaxLength} component={Input} />
-        <Field big type='textarea' name='description' placeholder='Describe this clip...' validate={descriptionMaxLength} component={Input} />
+        <reduxField component={Field} big type='text' name='title' placeholder='Title' validate={titleMaxLength} />
+        <reduxField component={Field} big type='textarea' name='description' placeholder='Describe this clip...' validate={descriptionMaxLength} />
     </form>
 };
 
@@ -29,6 +29,7 @@ const Studio = ({ startRecording, stopRecording, info, clip, getInput, getInputR
                     {recording ? 'Stop' : 'Record'}
                 </Button>
                 {!recording && <AudioInput id='recorder' getInput={getInput} getInputRef={getInputRef} />}
+                {info.error === 'size' && <Block role="alert" palette="danger">Sorry, you can't upload files over 100mb</Block>}
             </div>}
             {clip && <div>
                 <Audio src={clip.fileUrl} autoPlay />

@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { maxUploadSize } from 'config';
 import { initialState, getStudioState, getInfo, getClip } from './selectors';
 import {
     RECORDER_START_SUCCESS,
@@ -36,18 +36,25 @@ export default (state = initialState, { type, payload }) => {
             };
         case STUDIO_GET_INPUT:
             let file = payload.files[0];
-            return {
-                ...state,
-                info: {
-                    status: 'file'
-                },
-                clip: {
+            let info = {
+                status: 'file'
+            };
+            let clip = state.clip;
+            if(file.size > maxUploadSize) {
+                info.error = 'size';
+                clip = null;
+            } else {
+                clip = {
                     file,
                     title: file.name.split('.').slice(0, -1).join(' ').replace(/[-_]/g,' '),
                     fileName: file.name,
                     fileUrl: URL.createObjectURL(file),
                     startTime: Date.now()
                 }
+            }
+            return {
+                info,
+                clip
             };
         case STUDIO_CLEAR:
             return {

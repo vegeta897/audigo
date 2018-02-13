@@ -33,21 +33,14 @@ const styles = css`
 const StyledTextarea = styled.textarea`${styles}`;
 const StyledSelect = styled.select`${styles}`;
 const StyledInput = styled.input`${styles}`;
-const Error = styled.div`
-  color: ${palette('danger', 0)};
-  background-color: ${palette('danger', 3)};
-  margin-bottom: 1rem;
-  padding: 0.3rem 0.5rem;
-`;
 
-const Input = ({ input, meta: { error, warning } = {}, ...props }) => {
-    return <div>
-        {props.type === 'textarea' ? <StyledTextarea {...input} {...props} /> :
-            props.type === 'select' ? <StyledSelect {...input} {...props} /> :
-                <StyledInput {...input} {...props} />
-        }
-        {error && <Error>{error}</Error>}
-    </div>
+const Input = ({ ...props }) => {
+    if(props.type === 'textarea') {
+        return <StyledTextarea {...props} />
+    } else if(props.type === 'select') {
+        return <StyledSelect {...props} />
+    }
+    return <StyledInput {...props} />
 };
 
 Input.propTypes = {
@@ -55,6 +48,7 @@ Input.propTypes = {
     reverse: PropTypes.bool,
     height: PropTypes.number,
     invalid: PropTypes.bool,
+    input: PropTypes.object
 };
 
 Input.defaultProps = {

@@ -1,7 +1,7 @@
 import path from 'path';
 import generate from 'nanoid/generate';
 import slug from 'slug'; // TODO: Add more emojis with slug.multicharmap['🤔'] = 'thinking';
-import { protocol, host, port, apiPath } from '../config';
+import { protocol, host, port, apiPath, maxUploadSize } from '../config';
 import db from 'server/db';
 import encode from 'server/encoder';
 import multer from 'multer';
@@ -34,9 +34,7 @@ let upload = multer({
         if(validFileTypes.includes(fileType)) cb(null, true);
         else cb('Invalid file type ' + fileType);
     },
-    limits: {
-        fileSize: 100 * 1024 * 1024 // 100mb max
-    }
+    limits: { fileSize: maxUploadSize }
 });
 
 export const endpoints = new Map();

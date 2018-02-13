@@ -22,7 +22,8 @@ const config = {
         dbPort: process.env.PGPORT || 5432,
         dbUser: process.env.PGUSER || process.env.USER || 'postgres',
         dbName: process.env.PGDATABASE || process.env.USER || 'audigo',
-        dbPass: process.env.PGPASSWORD
+        dbPass: process.env.PGPASSWORD,
+        maxUploadSize: 100 * 1024 * 1024 // 100mb
     },
     test: {
         dbName: 'audigo_test'
