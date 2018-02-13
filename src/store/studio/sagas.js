@@ -1,21 +1,21 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
 import * as actions from './actions';
 
-export function* startRecording(recorder, { studio, thunk }) {
+export function* startRecording(recorder, { thunk }) {
     try {
         const info = yield call([recorder, recorder.start]);
-        yield put(actions.recorderStartSuccess(studio, info, thunk));
+        yield put(actions.recorderStartSuccess(info, thunk));
     } catch(e) {
-        yield put(actions.recorderStartFailure(studio, e, thunk));
+        yield put(actions.recorderStartFailure(e, thunk));
     }
 }
 
-export function* stopRecording(recorder, { studio, thunk }) {
+export function* stopRecording(recorder, { thunk }) {
     try {
         const recording = yield call([recorder, recorder.stop]);
-        yield put(actions.recorderStopSuccess(studio, recording, thunk));
+        yield put(actions.recorderStopSuccess(recording, thunk));
     } catch(e) {
-        yield put(actions.recorderStopFailure(studio, e, thunk));
+        yield put(actions.recorderStopFailure(e, thunk));
     }
 }
 

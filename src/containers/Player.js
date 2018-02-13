@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
-import { isPending, hasFailed } from 'redux-saga-thunk';
-import { fromResource } from 'store/selectors';
+import { isPending, hasFailed, isDone } from 'redux-saga-thunk';
+import { fromResource, fromStudio } from 'store/selectors';
 import { resourceDetailReadRequest } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
@@ -23,10 +23,9 @@ class PlayerContainer extends Component {
 
     componentWillMount() {
         const {
-            id, readDetail, hasServerState, setServerState, cleanServerState
+            id, readDetail, hasServerState, setServerState, cleanServerState, studio: { clip }
         } = this.props;
-
-        if(!hasServerState) {
+        if((!clip || clip.id !== id) && !hasServerState) { // Don't request if just uploaded
             if(isServer) {
                 readDetail(id).then(setServerState, setServerState);
             } else {
@@ -56,7 +55,8 @@ class PlayerContainer extends Component {
 const mapStateToProps = state => ({
     detail: fromResource.getDetail(state, 'clips'),
     loading: isPending(state, 'clipsDetailRead'),
-    failed: hasFailed(state, 'clipsDetailRead')
+    failed: hasFailed(state, 'clipsDetailRead'),
+    studio: fromStudio.getStudioState(state)
 });
 
 const mapDispatchToProps = dispatch => ({
