@@ -2,38 +2,30 @@
 import 'isomorphic-fetch';
 import { stringify } from 'query-string';
 import merge from 'lodash/merge';
-import { apiUrl, isServer } from 'config';
-import { request } from 'server/models';
+import { apiUrl } from 'config';
 
 export const checkStatus = response => {
     if(response.ok) return response;
     const error = new Error(`${response.status} ${response.statusText}`);
     error.response = response;
-    throw error;
+    return response.json().then(err => { throw { ...error, err }; });
 };
 
 export const parseJSON = response => response.json();
 
 export const parseSettings = ({ method = 'get', data, locale, ...otherSettings } = {}) => {
+    let body = data instanceof FormData ? data : JSON.stringify(data);
     const headers = {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        //'Content-Type': contentType, // Messes with multipart form data
         'Accept-Language': locale
     };
     return merge({
-        body: data ? JSON.stringify(data) : undefined,
+        body,
         method,
         headers
     }, otherSettings);
 };
-
-export const serverRequest = (endpoint, { params = {}, ...settings }) =>
-    request(endpoint, settings.method, params);
-
-export const clientRequest = (endpoint, { params, ...settings } = {}) =>
-    fetch(parseEndpoint(endpoint, params), parseSettings(settings))
-        .then(checkStatus)
-        .then(parseJSON);
 
 export const parseEndpoint = (endpoint, params) => {
     const url = endpoint.indexOf('http') === 0 ? endpoint : apiUrl + endpoint;
@@ -43,7 +35,14 @@ export const parseEndpoint = (endpoint, params) => {
 
 const api = {};
 
-api.request = (...args) => (isServer ? serverRequest : clientRequest)(...args);
+api.request =(endpoint, { params, ...settings } = {}) =>
+    fetch(parseEndpoint(endpoint, params), parseSettings(settings))
+        .then(checkStatus)
+        .then(parseJSON)
+        .catch(e => {
+            console.log(e);
+            throw e;
+        });
 
 ['delete', 'get'].forEach((method) => {
     api[method] = (endpoint, settings) => api.request(endpoint, { method, ...settings });

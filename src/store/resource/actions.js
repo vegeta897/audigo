@@ -69,3 +69,37 @@ export const resourceDetailReadFailure = (resource, error, request, thunk) => ({
         resource
     }
 });
+
+export const RESOURCE_UPLOAD_REQUEST = 'RESOURCE_UPLOAD_REQUEST';
+export const RESOURCE_UPLOAD_SUCCESS = 'RESOURCE_UPLOAD_SUCCESS';
+export const RESOURCE_UPLOAD_FAILURE = 'RESOURCE_UPLOAD_FAILURE';
+
+export const resourceUploadRequest = (resource, data) => ({
+    type: RESOURCE_UPLOAD_REQUEST,
+    payload: { data },
+    meta: {
+        resource,
+        thunk: `${resource}Upload`
+    }
+});
+
+export const resourceUploadSuccess = (resource, detail, request, thunk) => ({
+    type: RESOURCE_UPLOAD_SUCCESS,
+    payload: detail,
+    meta: {
+        request,
+        thunk,
+        resource
+    }
+});
+
+export const resourceUploadFailure = (resource, error, request, thunk) => ({
+    type: RESOURCE_UPLOAD_FAILURE,
+    error: true,
+    payload: error,
+    meta: {
+        request,
+        thunk,
+        resource
+    }
+});

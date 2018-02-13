@@ -18,7 +18,7 @@ db.init = () => knex.schema // TODO: Create actual migrations
     .hasTable('clips').then(exists => {
         return exists || knex.schema.createTable('clips', table => {
             table.increments();
-            table.string('uid', 5);
+            table.string('uid', 8);
             table.unique('uid');
             table.string('title', 100);
             table.string('description', 2000);
@@ -26,7 +26,7 @@ db.init = () => knex.schema // TODO: Create actual migrations
             table.string('original_file_type', 8);
             table.integer('duration').unsigned();
             table.integer('file_size').unsigned();
-            table.timestamps();
+            table.timestamps(true, true);
             table.dateTime('recorded_at');
             table.integer('uploader').unsigned();
             table.index(['uploader']);

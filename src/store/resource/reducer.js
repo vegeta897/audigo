@@ -5,7 +5,10 @@ import {
     RESOURCE_LIST_READ_REQUEST,
     RESOURCE_LIST_READ_SUCCESS,
     RESOURCE_DETAIL_READ_REQUEST,
-    RESOURCE_DETAIL_READ_SUCCESS
+    RESOURCE_DETAIL_READ_SUCCESS,
+    RESOURCE_UPLOAD_REQUEST,
+    RESOURCE_UPLOAD_SUCCESS,
+    RESOURCE_UPLOAD_FAILURE
 } from './actions';
 
 export default (state = initialState, { type, payload, meta }) => {
@@ -48,6 +51,22 @@ export default (state = initialState, { type, payload, meta }) => {
                     ...getResourceState(state, resource),
                     detail: payload
                 }
+            };
+        case RESOURCE_UPLOAD_SUCCESS:
+            return {
+                ...state,
+                [resource]: {
+                    ...getResourceState(state, resource),
+                    detail: payload
+                },
+            };
+        case RESOURCE_UPLOAD_FAILURE:
+            return {
+                ...state,
+                [resource]: {
+                    ...getResourceState(state, resource),
+                    detail: payload
+                },
             };
         default:
             return state;

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Audio, AudioInput, Button, Input } from 'components';
 
-const Studio = ({ startRecording, stopRecording, info, startFailed, stopFailed, clip, getInput, clear, ...props }) => {
+const Studio = ({ startRecording, stopRecording, info, startFailed, stopFailed, clip, getInput, getInputRef, clear, upload, ...props }) => {
     const recording = info.status === 'recording';
     return (
         <div {...props}>
@@ -11,18 +11,20 @@ const Studio = ({ startRecording, stopRecording, info, startFailed, stopFailed, 
                 <Button big onClick={recording ? stopRecording : startRecording}>
                     {recording ? 'Stop' : 'Record'}
                 </Button>
-                {!recording && <AudioInput id='recorder' getInput={getInput} />}
+                {!recording && <AudioInput id='recorder' getInput={getInput} getInputRef={getInputRef} />}
             </div>}
             {clip && <div>
                 <Audio src={clip.fileUrl} autoPlay />
                 <div>
-                    <Button big success type='submit'>Upload</Button>
+                    <Button onClick={() => upload(clip)} big success type='submit'>Upload</Button>
                     <Input big type='text' placeholder='Title' defaultValue={clip.title} />
                 </div>
-                {info.status !== 'file' && <div>
-                    <Button onClick={clear} type='reset'>Try Again</Button>
-                    <Button download={'audio.mp4'} href={clip.fileUrl}>Download</Button>
-                </div>}
+                <div>
+                    <Button secondary onClick={clear} type='reset'>{info.status !== 'file' ? 'Try Again' : 'Clear'}</Button>
+                    {info.status !== 'file' &&
+                        <Button secondary download={'audio.mp4'} href={clip.fileUrl}>Download</Button>
+                    }
+                </div>
             </div>}
         </div>
     );

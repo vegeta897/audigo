@@ -25,7 +25,10 @@ export default (state = initialState, { type, payload, meta }) => {
                 }
             };
         case RECORDER_STOP_SUCCESS:
-            let timestamp = new Date(payload.startTime).toISOString().substr(0, 19).replace(/T/,' ');
+            let timestamp = new Date(payload.startTime).toISOString()
+                .substr(0, 19)
+                .replace('T', '_')
+                .replace(/:/g, '-');
             return {
                 ...state,
                 [studio]: {
@@ -35,7 +38,8 @@ export default (state = initialState, { type, payload, meta }) => {
                     clip: {
                         ...payload,
                         title: '',
-                        fileName: `recording-${timestamp.replace(' ', '_')}.${payload.fileType}`
+                        fileName: `recording-${timestamp}.${payload.fileType}`,
+                        fileUrl: URL.createObjectURL(payload.file)
                     }
                 }
             };
@@ -49,9 +53,10 @@ export default (state = initialState, { type, payload, meta }) => {
                     },
                     clip: {
                         file,
-                        fileName: file.name,
                         title: file.name.split('.').slice(0, -1).join(' ').replace(/[-_]/g,' '),
-                        fileUrl: URL.createObjectURL(file)
+                        fileName: file.name,
+                        fileUrl: URL.createObjectURL(file),
+                        startTime: Date.now()
                     }
                 }
             };

@@ -15,7 +15,7 @@ const Player = ({ detail, loading, failed, ...props }) => {
                         <meta property='og:title' content={detail.title} />
                     </Helmet>
                     <h2>{detail.title}</h2>
-                    <Audio src={detail.url} autoPlay />
+                    {loading || <Audio src={detail.url} autoPlay />}
                 </div>
             }
         </div>

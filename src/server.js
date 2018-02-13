@@ -15,35 +15,10 @@ import { renderToString } from 'react-router-server';
 import { protocol, host, port, basename, apiPath, isDev } from 'config';
 import { downloadPath, bindExpress } from 'server/models';
 import configureStore from 'store/configure';
-import api from 'services/api';
+import api from 'services/api-server';
 import App from 'components/App';
 import Html from 'components/Html';
 import Error from 'components/Error';
-
-const renderApp = ({ store, context, location, sheet }) => {
-    const app = sheet.collectStyles((
-        <Provider store={store}>
-            <StaticRouter basename={basename} context={context} location={location}>
-                <App/>
-            </StaticRouter>
-        </Provider>
-    ));
-    return renderToString(app);
-};
-
-const renderHtml = ({ serverState, initialState, content, sheet }) => {
-    const styles = sheet.getStyleElement();
-    const { assets } = global;
-    const state = `
-    window.__SERVER_STATE__ = ${serialize(serverState)};
-    window.__INITIAL_STATE__ = ${serialize(initialState)};
-  `;
-    const props = {
-        styles, assets, state, content,
-    };
-    const html = <Html {...props} />;
-    return `<!doctype html>\n${renderToStaticMarkup(html)}`;
-};
 
 const app = express();
 app.use(helmet());
@@ -72,6 +47,31 @@ app.use(downloadPath, express.static(path.resolve(process.cwd(), 'storage/clips'
 
 // Serve static assets
 app.use(basename, express.static(path.resolve(process.cwd(), 'dist/public')));
+
+const renderApp = ({ store, context, location, sheet }) => {
+    const app = sheet.collectStyles((
+        <Provider store={store}>
+            <StaticRouter basename={basename} context={context} location={location}>
+                <App/>
+            </StaticRouter>
+        </Provider>
+    ));
+    return renderToString(app);
+};
+
+const renderHtml = ({ serverState, initialState, content, sheet }) => {
+    const styles = sheet.getStyleElement();
+    const { assets } = global;
+    const state = `
+    window.__SERVER_STATE__ = ${serialize(serverState)};
+    window.__INITIAL_STATE__ = ${serialize(initialState)};
+  `;
+    const props = {
+        styles, assets, state, content,
+    };
+    const html = <Html {...props} />;
+    return `<!doctype html>\n${renderToStaticMarkup(html)}`;
+};
 
 // Serve rendered index.html
 app.use((req, res, next) => {

@@ -1,7 +1,7 @@
 import 'react-hot-loader/patch';
 // import 'babel-polyfill'; // Don't use this whole thing
 // Add below imports as necessary
-import 'regenerator-runtime/runtime'; // For redux
+import 'regenerator-runtime/runtime'; // For sagas
 // import 'core-js/es6/array';
 // import 'core-js/es6/function';
 // import 'core-js/es6/map';

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { hasFailed, isDone } from 'redux-saga-thunk';
 import { fromStudio } from 'store/selectors';
-import { recorderStartRequest, recorderStopRequest, recorderGetInput, studioClear } from 'store/actions';
+import { recorderStartRequest, recorderStopRequest, recorderGetInput, studioClear, resourceUploadRequest } from 'store/actions';
 
 import { Studio } from 'components';
 
@@ -16,6 +16,7 @@ class StudioContainer extends Component {
         getInput: PropTypes.func.isRequired,
         startRecording: PropTypes.func.isRequired,
         stopRecording: PropTypes.func.isRequired,
+        upload: PropTypes.func.isRequired,
         clear: PropTypes.func.isRequired
     };
     render() {
@@ -34,7 +35,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
     startRecording: () => dispatch(recorderStartRequest('main')),
     stopRecording: () => dispatch(recorderStopRequest('main')),
-    getInput: e => dispatch(recorderGetInput('main', e.target)),
+    getInput: input => dispatch(recorderGetInput('main', input)),
+    upload: data => dispatch(resourceUploadRequest('clips', data)),
     clear: () => dispatch(studioClear('main'))
 });
 

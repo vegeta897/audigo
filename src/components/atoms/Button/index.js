@@ -7,14 +7,8 @@ import { ifProp } from 'styled-tools';
 
 const fontSize = ({ height, big }) => `${height / 40 * big ? 1.8 : 1}rem`;
 
-const backgroundColor = ({ transparent, disabled, success }) =>
-    transparent ? 'transparent' : success ? palette('success', 1) : palette(disabled ? 3 : 1);
-
 const foregroundColor = ({ transparent, disabled }) =>
     transparent ? palette(disabled ? 2 : 1) : palette('grayscale', 0, true);
-
-const hoverBackgroundColor = ({ disabled, transparent, success }) =>
-    !disabled && !transparent && success ? palette('success', 0) : palette(0);
 const hoverForegroundColor = ({ disabled, transparent }) => !disabled && transparent && palette(0);
 
 const styles = css`
@@ -33,13 +27,22 @@ const styles = css`
   border-radius: 0.125em;
   box-sizing: border-box;
   pointer-events: ${ifProp('disabled', 'none', 'auto')};
-  transition: background-color 250ms ease-out, color 250ms ease-out, border-color 250ms ease-out;
-  background-color: ${backgroundColor};
+  transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
+  background-color: ${
+    ifProp('success', palette('success', 1),
+    ifProp('secondary', palette('grayscale', 6),
+        palette(1))
+    )};
   color: ${foregroundColor};
 
   &:hover, &:focus, &:active {
-    background-color: ${hoverBackgroundColor};
+    background-color: ${
+    ifProp('success', palette('success', 0),
+        ifProp('secondary', palette('grayscale', 7),
+            palette(0))
+    )};
     color: ${hoverForegroundColor};
+    transition: background-color 100ms ease-out, color 100ms ease-out, border-color 100ms ease-out;
   }
 
   &:focus {

@@ -34,6 +34,7 @@ export const recorderStartFailure = (studio, error, thunk) => ({
 export const RECORDER_STOP_REQUEST = 'RECORDER_STOP_REQUEST';
 export const RECORDER_STOP_SUCCESS = 'RECORDER_STOP_SUCCESS';
 export const RECORDER_STOP_FAILURE = 'RECORDER_STOP_FAILURE';
+// TODO: Pause and resume actions, error action (any error while recording)
 
 export const recorderStopRequest = (studio) => ({
     type: RECORDER_STOP_REQUEST,
@@ -65,7 +66,7 @@ export const recorderStopFailure = (studio, error, thunk) => ({
 });
 
 export const STUDIO_GET_INPUT = 'STUDIO_GET_INPUT';
-export const STUDIO_CLEAR = 'SUDIO_CLEAR';
+export const STUDIO_CLEAR = 'STUDIO_CLEAR';
 
 export const recorderGetInput = (studio, input) => ({
     type: STUDIO_GET_INPUT,
@@ -81,5 +82,3 @@ export const studioClear = (studio) => ({
         studio
     }
 });
-
-// TODO: Pause and resume actions, error action (any error while recording)

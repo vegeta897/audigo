@@ -54,13 +54,11 @@ recorder.create = () => ({
             if(!this.chunks) reject('Recorder was not started!');
             this.mediaRecorder.removeEventListener('dataavailable', this.chunker);
             this.mediaRecorder.onstop = e => {
-                let file = new Blob(this.chunks, { type: `audio/${fileType}; codecs=opus`});
+                this.file = new Blob(this.chunks, { type: `audio/${fileType}; codecs=opus`});
                 resolve({
-                    file,
+                    file: this.file,
                     fileType,
-                    startTime: this.startTime,
-                    duration: Date.now() - this.startTime,
-                    fileUrl: URL.createObjectURL(file)
+                    startTime: this.startTime
                 });
             };
             this.mediaRecorder.onerror = e => reject(e);
