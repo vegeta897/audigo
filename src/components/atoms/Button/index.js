@@ -29,10 +29,11 @@ const styles = css`
   pointer-events: ${ifProp('disabled', 'none', 'auto')};
   transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
   background-color: ${
+    ifProp('disabled', palette('grayscale', 7),
     ifProp('success', palette('success', 1),
     ifProp('secondary', palette('grayscale', 6),
-        palette(1))
-    )};
+        palette(1)
+    )))};
   color: ${foregroundColor};
 
   &:hover, &:focus, &:active {
