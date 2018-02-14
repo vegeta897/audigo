@@ -44,54 +44,37 @@ api.request =(endpoint, { params, ...settings } = {}) =>
             throw e;
         });
 
-['delete', 'get'].forEach((method) => {
-    api[method] = (endpoint, settings) => api.request(endpoint, { method, ...settings });
-});
+api.create = (settings = {}) => {
+    let createdApi = {
+        settings,
 
-['post', 'put', 'patch'].forEach((method) => {
-    api[method] = (endpoint, data, settings) => api.request(endpoint, { method, data, ...settings });
-});
+        setToken(token) {
+            settings.headers = {
+                ...settings.headers,
+                Authorization: `Bearer ${token}`
+            };
+        },
 
-api.create = (settings = {}) => ({
-    settings,
+        unsetToken() {
+            settings.headers = {
+                ...settings.headers,
+                Authorization: undefined
+            };
+        },
 
-    setToken(token) {
-        this.settings.headers = {
-            ...this.settings.headers,
-            Authorization: `Bearer ${token}`
-        };
-    },
+        request(endpoint, settings) {
+            return api.request(endpoint, merge({}, createdApi.settings, settings));
+        }
+    };
 
-    unsetToken() {
-        this.settings.headers = {
-            ...this.settings.headers,
-            Authorization: undefined
-        };
-    },
+    ['delete', 'get'].forEach((method) => {
+        createdApi[method] = (endpoint, settings) => createdApi.request(endpoint, { method, ...settings });
+    });
 
-    request(endpoint, settings) {
-        return api.request(endpoint, merge({}, this.settings, settings));
-    },
-
-    post(endpoint, data, settings) {
-        return this.request(endpoint, { method: 'post', data, ...settings });
-    },
-
-    get(endpoint, settings) {
-        return this.request(endpoint, { method: 'get', ...settings });
-    },
-
-    put(endpoint, data, settings) {
-        return this.request(endpoint, { method: 'put', data, ...settings });
-    },
-
-    patch(endpoint, data, settings) {
-        return this.request(endpoint, { method: 'patch', data, ...settings });
-    },
-
-    delete(endpoint, settings) {
-        return this.request(endpoint, { method: 'delete', ...settings });
-    }
-});
+    ['post', 'put', 'patch'].forEach((method) => {
+        createdApi[method] = (endpoint, data, settings) => createdApi.request(endpoint, { method, data, ...settings });
+    });
+    return createdApi;
+};
 
 export default api;
