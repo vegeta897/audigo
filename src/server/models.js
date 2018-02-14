@@ -48,7 +48,7 @@ const normalizeClip = clip => ({
 });
 
 endpoints.set('/clips', new Map([
-    ['get', ({ id, limit }) => {
+    ['get', ({ query: { id, limit }}) => {
         if(id) return db.getClip(id).then(normalizeClip)
             .catch(e => { throw new DataError(e.message, 404) });
         else return db.getClips(parseInt(limit) > 0 ? parseInt(limit) : 20)
@@ -78,27 +78,18 @@ endpoints.set('/clips', new Map([
     }]
 ]));
 
-export const request = (endpoint, method, params) => endpoints.get(endpoint).get(method)(params);
+export const request = (endpoint, method, params) => endpoints.get(endpoint).get(method)({ query: params });
 
 export const bindExpress = app => {
     endpoints.forEach((endpoint, path) => {
-        endpoint.forEach((cb, method) => { // TODO: DRY this up
-            if(method === 'post') {
-                app.post(apiPath + path, upload.single('audio'), (req, res) => {
-                    cb(req)
-                        .then(data => res.send(data))
-                        .catch(err => {
-                            console.log('post reject', err.status, err.message);
-                            res.status(err.status || 500).send({ message: err.message })
-                        });
-                });
-            } else {
-                app[method](apiPath + path, (req, res) => {
-                    cb(req.query)
-                        .then(data => res.send(data))
-                        .catch(err => res.status(err.status || 500).send(err.message))
-                });
-            }
+        endpoint.forEach((cb, method) => {
+            let args = [apiPath + path];
+            if(method === 'post') args.push(upload.single('audio'));
+            args.push((req, res) => {
+                cb(req).then(data => res.send(data))
+                    .catch(err => res.status(err.status || 500).send(err.message))
+            });
+            app[method](...args);
         });
     });
     return db.init();

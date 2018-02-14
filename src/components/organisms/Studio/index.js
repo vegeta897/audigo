@@ -25,7 +25,7 @@ const Studio = ({ startRecording, stopRecording, info, clip, getInput, getInputR
         <div {...props}>
             <h2>In the stu-jo</h2>
             {!clip && <div>
-                <Button big onClick={recording ? stopRecording : startRecording}>
+                <Button big onClick={recording ? stopRecording : startRecording} palette={recording ? 'danger' : 'primary'}>
                     {recording ? 'Stop' : 'Record'}
                 </Button>
                 {!recording && <AudioInput id='recorder' getInput={getInput} getInputRef={getInputRef} />}

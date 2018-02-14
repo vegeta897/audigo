@@ -6,7 +6,8 @@ import { font } from 'styled-theme';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 3.75rem;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
   box-sizing: border-box;
   font-family: ${font('primary')};
@@ -15,7 +16,6 @@ const Wrapper = styled.div`
 const Content = styled.section`
   width: 100%;
   box-sizing: border-box;
-  margin: 2rem auto;
   max-width: 480px;
 `;
 
