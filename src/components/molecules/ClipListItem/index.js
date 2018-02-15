@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import formatRelative from 'date-fns/formatRelative';
 import formatDistance from 'date-fns/formatDistance';
-import { Tooltip, Icon/*, IconButton*/ } from 'components'; // For some reason IconButton is undefined this way
+import { Tooltip, Icon, Link/*, IconButton*/ } from 'components'; // For some reason IconButton is undefined this way
 import IconButton from 'components/molecules/IconButton';
 
 const relDate = date => formatRelative(date, new Date());
-const distDate = date => formatDistance(date, new Date(), { addSuffix: true });
+const distDate = date => formatDistance(date, new Date(), { addSuffix: true }).replace('about ', '');
 
 const ListItem = styled.li`
   display: flex;
@@ -17,19 +16,14 @@ const ListItem = styled.li`
   flex-direction: row;
   box-sizing: border-box;
   width: 100%;
-  padding: 0.3rem 0.8rem 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
   &:hover, &:focus, &:active {
     background: ${palette('grayscale', 10)};
     transition: background 100ms ease-out;
   }
   transition: background 200ms ease-in;
 `;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
-
-//console.log(IconButton);
 
 const PlayButton = styled(IconButton)`
   margin-right: 1rem;
@@ -50,15 +44,13 @@ const ClipTime = styled.div`
 
 const ClipListItem = ({ id, title, description, recordDate, uploadDate, hovered, ...props }) => {
     return (
-        <StyledLink to={`/play/${id}`}>
             <ListItem {...props}>
-                <PlayButton icon='play' go circle />
+                <PlayButton icon='play' go circle outline />
                 <div>
                     <ClipTitle>{title}</ClipTitle>
-                    <ClipTime>{distDate(uploadDate)}</ClipTime>
+                    <ClipTime><Link to={`/play/${id}`} palette='grayscale' light>{distDate(uploadDate)}</Link></ClipTime>
                 </div>
             </ListItem>
-        </StyledLink>
     );
 };
 
@@ -66,8 +58,8 @@ ClipListItem.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
-    recordDate: PropTypes.instanceOf(Date),
-    uploadDate: PropTypes.instanceOf(Date),
+    recordDate: PropTypes.string,
+    uploadDate: PropTypes.string,
     hovered: PropTypes.bool
 };
 

@@ -7,6 +7,10 @@ import { ifProp } from 'styled-tools';
 
 const fontSize = ({ height, big }) => `${height / 40 * big ? 1.8 : 1}rem`;
 
+const backgroundColor = ({ disabled, go, secondary }) =>
+    disabled ? palette('grayscale', 7) : go ? palette('go', 1) : secondary ? palette('grayscale', 6) : palette(1);
+const hoverBackgroundColor = ({ go, secondary, outline }) =>
+    go ? palette('go', outline ? 1 : 0) : secondary ? palette('grayscale', 7) : palette(0);
 const foregroundColor = ({ transparent, disabled }) =>
     transparent ? palette(disabled ? 2 : 1) : palette('grayscale', 0, true);
 const hoverForegroundColor = ({ disabled, transparent }) => !disabled && transparent && palette(0);
@@ -17,7 +21,7 @@ const styles = css`
   align-items: center;
   white-space: nowrap;
   font-size: ${fontSize};
-  border: 0.0625em solid ${ifProp('transparent', 'currentcolor', 'transparent')};
+  border: 0.0625em solid ${ifProp('outline', 'currentcolor', 'transparent')};
   height: 2.5em;
   justify-content: center;
   text-decoration: none;
@@ -28,21 +32,13 @@ const styles = css`
   box-sizing: border-box;
   pointer-events: ${ifProp('disabled', 'none', 'auto')};
   transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
-  background-color: ${
-    ifProp('disabled', palette('grayscale', 7),
-    ifProp('go', palette('success', 1),
-    ifProp('secondary', palette('grayscale', 6),
-        palette(1)
-    )))};
-  color: ${foregroundColor};
-
-  &:hover, &:focus, &:active {
-    background-color: ${
-    ifProp('go', palette('success', 0),
-        ifProp('secondary', palette('grayscale', 7),
-            palette(0))
-    )};
-    color: ${hoverForegroundColor};
+  background-color: ${ifProp('outline', 'transparent', backgroundColor)};
+  color: ${ifProp('outline', backgroundColor, foregroundColor)};
+  
+  &:hover {
+    background-color: ${hoverBackgroundColor};
+    color: ${ifProp('outline', palette('grayscale', 0, true), hoverForegroundColor)};
+    border-color: transparent;
     transition: background-color 100ms ease-out, color 100ms ease-out, border-color 100ms ease-out;
   }
 

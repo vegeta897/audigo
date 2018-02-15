@@ -45,8 +45,8 @@ const normalizeClip = clip => ({
     filename: slug(clip.title || clip.original_file_name) + clipFileType,
     title: clip.title || clip.original_file_name,
     description: clip.description,
-    recordDate: clip.recorded_at,
-    uploadDate: clip.created_at
+    recordDate: clip.recorded_at.toString(), // Redux doesn't like date objects
+    uploadDate: clip.created_at.toString()
 });
 
 endpoints.set('/clips', new Map([
