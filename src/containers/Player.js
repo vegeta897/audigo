@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed, isDone } from 'redux-saga-thunk';
-import { fromResource, fromStudio } from 'store/selectors';
+import { fromEntities, fromResource, fromStudio } from 'store/selectors';
 import { resourceDetailReadRequest } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
@@ -53,7 +53,7 @@ class PlayerContainer extends Component {
 }
 
 const mapStateToProps = state => ({
-    detail: fromResource.getDetail(state, 'clips'),
+    detail: fromEntities.getDetail(state, 'clips', fromResource.getDetail(state, 'clips')),
     loading: isPending(state, 'clipsDetailRead'),
     failed: hasFailed(state, 'clipsDetailRead'),
     studio: fromStudio.getStudioState(state)

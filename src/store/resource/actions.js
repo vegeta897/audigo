@@ -18,7 +18,8 @@ export const resourceListReadSuccess = (resource, list, request, thunk) => ({
     meta: {
         request,
         thunk,
-        resource
+        resource,
+        entities: resource
     }
 });
 
@@ -54,7 +55,8 @@ export const resourceDetailReadSuccess = (resource, detail, request, thunk) => (
     meta: {
         request,
         thunk,
-        resource
+        resource,
+        entities: resource
     }
 });
 
@@ -89,7 +91,8 @@ export const resourceUploadSuccess = (resource, detail, request, thunk) => ({
     meta: {
         request,
         thunk,
-        resource
+        resource,
+        entities: resource
     }
 });
 

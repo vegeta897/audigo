@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed } from 'redux-saga-thunk';
-import { fromResource } from 'store/selectors';
+import { fromEntities, fromResource } from 'store/selectors';
 import { resourceListReadRequest } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
@@ -59,7 +59,7 @@ class ClipListContainer extends Component {
 }
 
 const mapStateToProps = state => ({
-    list: fromResource.getList(state, 'clips'),
+    list: fromEntities.getList(state, 'clips', fromResource.getList(state, 'clips')),
     loading: isPending(state, 'clipsListRead'),
     failed: hasFailed(state, 'clipsListRead')
 });

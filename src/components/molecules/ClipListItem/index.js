@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import formatRelative from 'date-fns/formatRelative';
 import formatDistance from 'date-fns/formatDistance';
-import { Tooltip, Icon, Link/*, IconButton*/ } from 'components'; // For some reason IconButton is undefined this way
-import IconButton from 'components/molecules/IconButton';
+import { Tooltip, Icon, Link, IconButton } from 'components';
 
 const relDate = date => formatRelative(date, new Date());
 const distDate = date => formatDistance(date, new Date(), { addSuffix: true }).replace('about ', '');
@@ -25,7 +24,8 @@ const ListItem = styled.li`
   transition: background 200ms ease-in;
 `;
 
-const PlayButton = styled(IconButton)`
+// https://github.com/diegohaz/arc/issues/131#issuecomment-283296269
+const PlayButton = styled(props => <IconButton {...props} />)`
   margin-right: 1rem;
 `;
 
