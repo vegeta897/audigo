@@ -12,7 +12,7 @@ import { ClipList } from 'components';
 class ClipListContainer extends Component {
     constructor(props) {
         super(props);
-        this.state = { hover: null };
+        this.state = { hover: null, select: null };
     }
 
     static propTypes = {
@@ -47,6 +47,7 @@ class ClipListContainer extends Component {
     }
 
     hoverClip = (id) => this.setState({ hover: id });
+    selectClip = (id) => this.setState({ select: id });
 
     render() {
         const { list, loading, failed } = this.props;
@@ -54,7 +55,11 @@ class ClipListContainer extends Component {
             do: this.hoverClip,
             id: this.state.hover
         };
-        return <ClipList {...{ list, loading, failed }} hover={hover} />
+        const select = {
+            do: this.selectClip,
+            id: this.state.select
+        };
+        return <ClipList {...{ list, loading, failed }} hover={hover} select={select} />
     }
 }
 

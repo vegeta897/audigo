@@ -18,19 +18,19 @@ const HRule = styled.hr`
   border: none;
 `;
 
-const ClipList = ({ list, loading, failed, hover, ...props }) => {
+const ClipList = ({ list, loading, failed, hover, select, ...props }) => {
+    const clipList = list.map(clip => ([
+        <ClipListItem key={clip.id} clip={clip}
+                      onClick={() => select.do(clip.id)} selected={clip.id === select.id}
+                      onMouseEnter={() => hover.do(clip.id)} hovered={clip.id === hover.id} />,
+        <HRule key={clip.id + 'hr'} />
+    ]));
     return (
         <div {...props}>
             <h2>Clips!</h2>
             {!list.length && loading && <p>Loading</p>}
             {failed && <p>Failed to load clip list, sorry!</p>}
-            <OrderedList>
-                {list.map(clip => ([
-                    <ClipListItem key={clip.id} { ...clip} onMouseEnter={() => hover.do(clip.id)}
-                                  onMouseLeave={() => hover.do()} hovered={clip.id === hover.id} />,
-                    <HRule key={clip.id + 'hr'} />
-                ]))}
-            </OrderedList>
+            <OrderedList onMouseLeave={() => hover.do()}>{clipList}</OrderedList>
         </div>
     )
 };
@@ -39,7 +39,8 @@ ClipList.propTypes = {
     list: PropTypes.array.isRequired,
     loading: PropTypes.bool,
     failed: PropTypes.bool,
-    hover: PropTypes.object.isRequired
+    hover: PropTypes.object.isRequired,
+    select: PropTypes.object.isRequired
 };
 
 export default ClipList;
