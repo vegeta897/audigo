@@ -1,5 +1,4 @@
 import React from 'react';
-import { Field as ReduxFormField } from 'redux-form';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Label, Input, Block } from 'components';

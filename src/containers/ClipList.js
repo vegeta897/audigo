@@ -10,6 +10,11 @@ import { isBrowser, isServer } from 'config';
 import { ClipList } from 'components';
 
 class ClipListContainer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { hover: null };
+    }
+
     static propTypes = {
         list: PropTypes.array.isRequired,
         limit: PropTypes.number,
@@ -41,9 +46,15 @@ class ClipListContainer extends Component {
         }
     }
 
+    hoverClip = (id) => this.setState({ hover: id });
+
     render() {
         const { list, loading, failed } = this.props;
-        return <ClipList {...{ list, loading, failed }} />
+        const hover = {
+            do: this.hoverClip,
+            id: this.state.hover
+        };
+        return <ClipList {...{ list, loading, failed }} hover={hover} />
     }
 }
 

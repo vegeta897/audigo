@@ -22,7 +22,7 @@ db.getClip = uid => selectClips().where('uid', uid)
         return clips[0];
     });
 
-db.getClips = limit => selectClips().limit(limit);
+db.getClips = limit => selectClips().orderBy('created_at', 'desc').limit(limit);
 
 db.insertClip = clip => knex('clips').insert({ ...clip }).returning('*').then(rows=> rows[0]);
 

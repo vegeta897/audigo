@@ -44,7 +44,9 @@ const normalizeClip = clip => ({
     url: `${downloadUrl}/${clip.uid}${clipFileType}`,
     filename: slug(clip.title || clip.original_file_name) + clipFileType,
     title: clip.title || clip.original_file_name,
-    description: clip.description
+    description: clip.description,
+    recordDate: clip.recorded_at,
+    uploadDate: clip.created_at
 });
 
 endpoints.set('/clips', new Map([

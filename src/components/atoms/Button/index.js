@@ -24,13 +24,13 @@ const styles = css`
   cursor: ${ifProp('disabled', 'default', 'pointer')};
   appearance: none;
   padding: 0 1em;
-  border-radius: 0.125em;
+  border-radius: ${ifProp('circle', '100%', '0.125em')};
   box-sizing: border-box;
   pointer-events: ${ifProp('disabled', 'none', 'auto')};
   transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
   background-color: ${
     ifProp('disabled', palette('grayscale', 7),
-    ifProp('success', palette('success', 1),
+    ifProp('go', palette('success', 1),
     ifProp('secondary', palette('grayscale', 6),
         palette(1)
     )))};
@@ -38,7 +38,7 @@ const styles = css`
 
   &:hover, &:focus, &:active {
     background-color: ${
-    ifProp('success', palette('success', 0),
+    ifProp('go', palette('success', 0),
         ifProp('secondary', palette('grayscale', 7),
             palette(0))
     )};
@@ -76,7 +76,9 @@ Button.propTypes = {
     type: PropTypes.string,
     to: PropTypes.string,
     href: PropTypes.string,
-    big: PropTypes.bool
+    big: PropTypes.bool,
+    circle: PropTypes.bool,
+    go: PropTypes.bool
 };
 
 Button.defaultProps = {

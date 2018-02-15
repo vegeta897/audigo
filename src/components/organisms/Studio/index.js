@@ -11,7 +11,7 @@ const descriptionMaxLength = maxLength(2000, 'description');
 let ClipSubmitForm = props => {
     const { handleSubmit, invalid, submitting } = props;
     return <form onSubmit={handleSubmit}>
-        <Button big success type='submit' disabled={invalid || submitting}>Upload</Button>
+        <Button big go type='submit' disabled={invalid || submitting}>Upload</Button>
         <ReduxField component={Field} big type='text' name='title' placeholder='Title' validate={titleMaxLength} />
         <ReduxField component={Field} big type='textarea' name='description' placeholder='Describe this clip...' validate={descriptionMaxLength} />
     </form>

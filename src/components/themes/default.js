@@ -32,11 +32,11 @@ theme.palette = {
         '#ffd761',
         '#ffecb3'
     ],
-    success: [
-        '#388e3c',
-        '#4caf50',
-        '#7cc47f',
-        '#c8e6c9'
+    go: [
+        '#529f0e',
+        '#6ec71f',
+        '#89d545',
+        '#a8e86f'
     ],
     white: [
         '#fff',
@@ -53,6 +53,8 @@ theme.palette = {
         '#7d7e7d',
         '#a2a3a2',
         '#c7c7c7',
+        '#dfdfdf',
+        '#eeeeee',
         '#ffffff'
     ]
 };

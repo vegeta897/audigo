@@ -97,6 +97,7 @@
     "babel-polyfill": "^6.20.0",
     "bluebird": "^3.5.1",
     "brute-knex": "^2.1.0",
+    "date-fns": "^2.0.0-alpha.7",
     "express": "^4.16.2",
     "express-brute": "^1.0.1",
     "fluent-ffmpeg": "^2.1.2",

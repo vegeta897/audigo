@@ -11,6 +11,7 @@ const Wrapper = styled.div`
   min-height: 100vh;
   box-sizing: border-box;
   font-family: ${font('primary')};
+  margin: 0 1rem;
 `;
 
 const Content = styled.section`
