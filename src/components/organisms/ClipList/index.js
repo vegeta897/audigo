@@ -11,26 +11,20 @@ const OrderedList = styled.ol`
   border: 1px solid ${palette('grayscale', 9)};
 `;
 
-const HRule = styled.hr`
-  background: ${palette('grayscale', 9)};
-  height: 1px;
-  margin: -1px 0 0 0;
-  border: none;
-`;
-
-const ClipList = ({ list, loading, failed, hover, select, ...props }) => {
-    const clipList = list.map(clip => ([
+const ClipList = ({ list, loading, failed, ui, playClip, player, ...props }) => {
+    const clipList = list.map(clip => (
         <ClipListItem key={clip.id} clip={clip}
-                      onClick={() => select.do(clip.id)} selected={clip.id === select.id}
-                      onMouseEnter={() => hover.do(clip.id)} hovered={clip.id === hover.id} />,
-        <HRule key={clip.id + 'hr'} />
-    ]));
+                      progress={player[clip.id] ? player[clip.id].progress : 0}
+                      onClick={() => ui.select = clip.id} selected={clip.id === ui.select}
+                      onMouseEnter={() => ui.hover = clip.id} hovered={clip.id === ui.hover}
+                      playClip={() => playClip(clip.id)} />
+    ));
     return (
         <div {...props}>
             <h2>Clips!</h2>
             {!list.length && loading && <p>Loading</p>}
             {failed && <p>Failed to load clip list, sorry!</p>}
-            <OrderedList onMouseLeave={() => hover.do()}>{clipList}</OrderedList>
+            <OrderedList onMouseLeave={() => ui.hover = null}>{clipList}</OrderedList>
         </div>
     )
 };
@@ -39,8 +33,7 @@ ClipList.propTypes = {
     list: PropTypes.array.isRequired,
     loading: PropTypes.bool,
     failed: PropTypes.bool,
-    hover: PropTypes.object.isRequired,
-    select: PropTypes.object.isRequired
+    ui: PropTypes.object.isRequired
 };
 
 export default ClipList;

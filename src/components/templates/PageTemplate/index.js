@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { font } from 'styled-theme';
+import { GlobalPlayer } from 'containers';
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,6 +25,7 @@ const PageTemplate = ({ children, staticContext, ...props }) => {
     return (
         <Wrapper {...props}>
             <Content>{children}</Content>
+            <GlobalPlayer />
         </Wrapper>
     )
 };

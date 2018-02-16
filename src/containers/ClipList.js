@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed } from 'redux-saga-thunk';
-import { fromEntities, fromResource } from 'store/selectors';
-import { resourceListReadRequest } from 'store/actions';
+import { fromEntities, fromResource, fromPlayer } from 'store/selectors';
+import { resourceListReadRequest, playerStatusSet, playerClipPlay } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
 import { ClipList } from 'components';
@@ -50,27 +50,29 @@ class ClipListContainer extends Component {
     selectClip = (id) => this.setState({ select: id });
 
     render() {
-        const { list, loading, failed } = this.props;
-        const hover = {
-            do: this.hoverClip,
-            id: this.state.hover
+        const { list, loading, failed, playClip, player } = this.props;
+        const { state: { hover, select }, hoverClip, selectClip } = this;
+        const ui = {
+            get hover() { return hover; },
+            set hover(id) { hoverClip(id); },
+            get select() { return select; },
+            set select(id) { selectClip(id); }
         };
-        const select = {
-            do: this.selectClip,
-            id: this.state.select
-        };
-        return <ClipList {...{ list, loading, failed }} hover={hover} select={select} />
+        return <ClipList {...{ list, loading, failed, ui, playClip, player }} />
     }
 }
 
 const mapStateToProps = state => ({
     list: fromEntities.getList(state, 'clips', fromResource.getList(state, 'clips')),
     loading: isPending(state, 'clipsListRead'),
-    failed: hasFailed(state, 'clipsListRead')
+    failed: hasFailed(state, 'clipsListRead'),
+    player: fromPlayer.getState(state)
 });
 
 const mapDispatchToProps = (dispatch, { limit }) => ({
-    readList: () => dispatch(resourceListReadRequest('clips', { limit }))
+    readList: () => dispatch(resourceListReadRequest('clips', { limit })),
+    playClip: id => dispatch(playerClipPlay(id)),
+    setClipStatus: (id, progress) => dispatch(playerStatusSet(id, progress))
 });
 
 const withServerState = fetchState(

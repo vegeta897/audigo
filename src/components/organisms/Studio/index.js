@@ -32,14 +32,14 @@ const Studio = ({ startRecording, stopRecording, info, clip, getInput, getInputR
                 {info.error === 'size' && <Block role="alert" palette="danger">Sorry, you can't upload files over 100mb</Block>}
             </div>}
             {clip && <div>
-                <Audio src={clip.fileUrl} autoPlay />
+                <Audio src={clip.url} autoPlay />
                 <div>
                     <ClipSubmitForm onSubmit={handleSubmit} initialValues={{title: clip.title}} />
                 </div>
                 <div>
                     <Button secondary onClick={clear} type='reset'>{info.status !== 'file' ? 'Try Again' : 'Clear'}</Button>
                     {info.status !== 'file' &&
-                        <Button secondary download={'audio.mp4'} href={clip.fileUrl}>Download</Button>
+                        <Button secondary download={'audio.mp4'} href={clip.url}>Download</Button>
                     }
                 </div>
             </div>}

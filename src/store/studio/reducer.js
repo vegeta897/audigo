@@ -31,7 +31,7 @@ export default (state = initialState, { type, payload }) => {
                     ...payload,
                     title: '',
                     fileName: `recording-${timestamp}.${payload.fileType}`,
-                    fileUrl: URL.createObjectURL(payload.file)
+                    url: URL.createObjectURL(payload.file)
                 }
             };
         case STUDIO_GET_INPUT:
@@ -48,7 +48,7 @@ export default (state = initialState, { type, payload }) => {
                     file,
                     title: file.name.split('.').slice(0, -1).join(' ').replace(/[-_]/g,' '),
                     fileName: file.name,
-                    fileUrl: URL.createObjectURL(file),
+                    url: URL.createObjectURL(file),
                     startTime: Date.now()
                 }
             }
