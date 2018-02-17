@@ -52,12 +52,17 @@ Start the dev server `npm run dev` and open `http://localhost:3000`
     * React
         * react-router
         * react-helmet
+        * + react-sound
+        * styled-components
     * Redux
         * redux-saga-thunk
-    * Express
+        * redux-form
+    * Express (+ Multer)
     * SSR
     * Webpack
         * webpack-dev-server
-* Knex
-* Multer
+    * Jest
+    * @storybook/react
+* Web Audio API
+* Knex w/ pgSQL
 * FFmpeg
