@@ -10,7 +10,7 @@ const Audio = ({ progress, hidden, playing, onProgress = () => {}, getRef, ...pr
     return (
         <div>
             <StyledAudio controls={!hidden} {...props} innerRef={getRef}
-                         onTimeUpdate={e => onProgress(e.target.currentTime/e.target.duration)} />
+                         onTimeUpdate={e => onProgress(e.target.currentTime, e.target.duration)} />
         </div>
     );
 };

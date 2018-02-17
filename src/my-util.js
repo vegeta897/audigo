@@ -1,6 +1,7 @@
 const padStart = require('lodash/padStart');
 
 export const msToHMS = ms => {
+    if(!ms) return '0:00';
     const s = Math.floor(ms / 1000) % 60;
     const m = Math.floor(ms / (60 * 1000)) % 60;
     const h = Math.floor(ms / (60 * 60 * 1000));

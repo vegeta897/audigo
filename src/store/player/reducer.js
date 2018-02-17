@@ -10,8 +10,8 @@ export default (state = initialState, { type, payload }) => {
             const { id, progress } = payload;
             return {
                 ...state,
-                [id]: { progress },
-                status: progress === 1 ? 'done' : getState(state).status
+                [id]: progress,
+                status: progress.percent === 1 ? 'done' : getState(state).status
             };
         case PLAYER_CLIP_PLAY:
             return {

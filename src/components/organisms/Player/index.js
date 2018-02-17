@@ -43,8 +43,9 @@ const ClipTime = styled.div`
   ${ifProp('right', css`text-align: right;`)}
 `;
 
-const Player = ({ detail = {}, loading, failed, player, playClip, playing, ...props }) => {
+const Player = ({ detail = {}, loading, failed, player, playClip, ...props }) => {
     const { id, title, description, recordDate, uploadDate, duration } = detail;
+    const { time, percent } = player[id] || {};
     return (
         <div {...props}>
             {!id && loading && <p>Loading...</p>}
@@ -55,13 +56,13 @@ const Player = ({ detail = {}, loading, failed, player, playClip, playing, ...pr
                         <title>{title}</title>
                         <meta property='og:title' content={title} />
                     </Helmet>
-                    <ProgressBar {...{ progress: player[id] && player[id].progress }} />
+                    <ProgressBar {...{ percent }} />
                     <h2>{title}</h2>
                     <FlexRow>
                         <PlayButton icon='play' disabled={loading} go circle outline onClick={playClip} />
                         <div style={{ width: '100%' }}>
                             {description && <ClipDescription>{description}</ClipDescription>}
-                            <ClipTime spaced>{msToHMS(duration)}</ClipTime>
+                            <ClipTime spaced>{msToHMS(time)} / {msToHMS(duration)}</ClipTime>
                         </div>
                     </FlexRow>
                 </div>

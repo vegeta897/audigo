@@ -75,8 +75,9 @@ const ClipTime = styled.div`
   ${ifProp('right', css`text-align: right;`)}
 `;
 
-const ClipListItem = ({ clip, hovered, selected, progress, playClip, playing, ...props }) => {
+const ClipListItem = ({ clip, hovered, selected, progress = {}, playClip, playing, ...props }) => {
     const { id, title, description, recordDate, uploadDate, duration } = clip;
+    const { time, percent } = progress;
     const header = <FlexRow justify style={{ marginBottom: selected ? '0.8rem' : 0 }}>
         <ClipTitle><Link to={`/play/${id}`} palette='grayscale'>{title}</Link></ClipTitle>
         <ClipTime right><Link to={`/play/${id}`} palette='grayscale' light>
@@ -85,14 +86,14 @@ const ClipListItem = ({ clip, hovered, selected, progress, playClip, playing, ..
         </FlexRow>;
     return (
         <ListItem selected={selected} {...props}>
-            {<ProgressBar inactive={!selected} {...{ progress, hovered }} />}
+            {<ProgressBar inactive={!selected} {...{ percent, hovered }} />}
             {selected && header}
             <FlexRow>
                 <PlayButton icon='play' go circle outline onClick={playClip} />
                 <div style={{ width: '100%' }}>
                     {!selected && header}
                     {selected && description && <ClipDescription>{description}</ClipDescription>}
-                    <ClipTime spaced>{msToHMS(duration)}</ClipTime>
+                    <ClipTime spaced>{(playing || percent > 0) && msToHMS(time) + ' / '}{msToHMS(duration)}</ClipTime>
                 </div>
             </FlexRow>
         </ListItem>
@@ -105,7 +106,7 @@ ClipListItem.propTypes = {
     }).isRequired,
     hovered: PropTypes.bool,
     selected: PropTypes.bool,
-    progress: PropTypes.number
+    progress: PropTypes.object
 };
 
 export default ClipListItem;

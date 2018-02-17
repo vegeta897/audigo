@@ -9,8 +9,10 @@ class PlayerContainer extends Component {
     static propTypes = {
         clip: PropTypes.object
     };
-    onProgress = progress => {
-        this.props.setClipStatus(this.props.clip.id, { progress });
+    onProgress = (time, total) => {
+        this.props.setClipStatus(this.props.clip.id, { progress: {
+            time: time * 1000, percent: time / total
+        } });
     };
 
     render() {

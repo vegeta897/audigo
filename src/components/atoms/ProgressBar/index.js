@@ -17,15 +17,15 @@ const Bar = styled.div`
   z-index: -1;
 `;
 
-const ProgressBar = ({ progress, ...props }) => {
-    progress = progress || 0;
+const ProgressBar = ({ percent, ...props }) => {
+    percent = percent || 0;
     return (
-        <Bar width={progress * 100} {...props} />
+        <Bar width={percent * 100} {...props} />
     )
 };
 
 ProgressBar.propTypes = {
-    progress: PropTypes.number,
+    percent: PropTypes.number,
     inactive: PropTypes.bool,
     selected: PropTypes.bool
 };
