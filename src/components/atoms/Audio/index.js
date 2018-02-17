@@ -6,7 +6,7 @@ const StyledAudio = styled.audio.attrs({ controlsList: 'nodownload' })`
   width: 100%;
 `;
 
-const Audio = ({ progress, hidden, playing, onProgress, getRef, ...props }) => {
+const Audio = ({ progress, hidden, playing, onProgress = () => {}, getRef, ...props }) => {
     return (
         <div>
             <StyledAudio controls={!hidden} {...props} innerRef={getRef}

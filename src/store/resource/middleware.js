@@ -1,7 +1,7 @@
-import { studioOnUpload } from 'store/actions';
+import { RESOURCE_UPLOAD_REQUEST, RESOURCE_UPLOAD_SUCCESS, studioOnUpload } from 'store/actions';
 const middleware = store => next => action => {
-    const { payload, meta = {} } = action;
-    if(meta.thunk === 'clipsUpload') {
+    const { type, payload } = action;
+    if(type === RESOURCE_UPLOAD_REQUEST) {
         // Prepare clip upload into multipart form data
         let { file, fileName, title, description, startTime } = payload.data;
         let data = new FormData();
@@ -12,9 +12,9 @@ const middleware = store => next => action => {
         if(fileName) data.append('fileName', fileName);
         return next({ ...action, payload: { data } });
     }
-    if(meta.thunk && meta.thunk.startsWith('clipsUpload') && payload.id) {
+    if(type === RESOURCE_UPLOAD_SUCCESS) {
         // Tell studio about uploaded clip
-        store.dispatch(studioOnUpload(payload.id));
+        store.dispatch(studioOnUpload(payload));
     }
     return next(action);
 };

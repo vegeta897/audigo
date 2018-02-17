@@ -3,18 +3,28 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { palette } from 'styled-theme';
 import { ifProp } from 'styled-tools';
-import formatRelative from 'date-fns/formatRelative';
+import format from 'date-fns/format';
+import isSameDay from 'date-fns/isSameDay';
+import isSameYear from 'date-fns/isSameYear';
 import formatDistance from 'date-fns/formatDistance';
+import { msToHMS } from 'my-util';
 import { Tooltip, Icon, Link, IconButton, ProgressBar } from 'components';
 
-const relDate = date => formatRelative(date, new Date()).toLowerCase();
-const distDate = date => formatDistance(date, new Date(), { addSuffix: true }).replace('about ', '');
+const timestamp = date => {
+    let f = 'h:mm a';
+    if(!isSameDay(date, new Date())) f += ' - D MMM';
+    if(!isSameYear(date, new Date())) f+= ' YYYY';
+    return format(date, f);
+};
+const distDate = date => formatDistance(date, new Date(), { addSuffix: true }).replace(/(about )/, '');
+
+// TODO: Use display: grid?
 
 const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  ${ifProp('justify', css`justify-content: space-between;`)}
+  //${ifProp('justify', css`justify-content: space-between;`)}
 `;
 
 const ListItem = styled.li`
@@ -44,41 +54,46 @@ const PlayButton = styled(props => <IconButton {...props} />)`
 `;
 
 const ClipTitle = styled.div`
-  color: ${palette('grayscale', 0)};
   position: relative;
   top: -0.1rem;
   font-size: 1.5rem;
+  flex-grow: 1;
 `;
 
 const ClipDescription = styled.div`
   color: ${palette('grayscale', 4)};
+  margin-bottom: 0.2rem;
+  position: relative;
+  top: -2px;
 `;
 
 const ClipTime = styled.div`
-  color: ${palette('grayscale', 5)};
+  color: ${palette('grayscale', 6)};
   font-size: 0.95rem;
+  flex-shrink: 1;
+  ${ifProp('spaced', css`letter-spacing: 0.05rem;`)}
+  ${ifProp('right', css`text-align: right;`)}
 `;
 
 const ClipListItem = ({ clip, hovered, selected, progress, playClip, playing, ...props }) => {
-    const { id, title, description, recordDate, uploadDate } = clip;
-    const clipTime = <ClipTime><Link to={`/play/${id}`} palette='grayscale' light>
-        {selected ? relDate(uploadDate) : distDate(uploadDate)}
-    </Link></ClipTime>;
-
+    const { id, title, description, recordDate, uploadDate, duration } = clip;
+    const header = <FlexRow justify>
+        <ClipTitle><Link to={`/play/${id}`} palette='grayscale'>{title}</Link></ClipTitle>
+        <ClipTime right><Link to={`/play/${id}`} palette='grayscale' light>
+            {selected ? timestamp(uploadDate) : distDate(uploadDate)}
+        </Link></ClipTime>
+        </FlexRow>;
     return (
         <ListItem selected={selected} {...props}>
-            {progress > 0 && <ProgressBar inactive={!selected} {...{ progress, hovered }} />}
+            {<ProgressBar inactive={!selected} {...{ progress, hovered }} />}
             <div style={{ zIndex: 1 }}>
-                {selected && <FlexRow justify>
-                    <ClipTitle>{title}</ClipTitle>
-                    {clipTime}
-                </FlexRow>}
+                {selected && header}
                 <FlexRow>
                     <PlayButton icon='play' go circle outline onClick={playClip} />
                     <div style={{ width: '100%' }}>
-                        {!selected && <ClipTitle>{title}</ClipTitle>}
+                        {!selected && header}
                         {selected && description && <ClipDescription>{description}</ClipDescription>}
-                        {!selected && clipTime}
+                        <ClipTime spaced>{msToHMS(duration)}</ClipTime>
                     </div>
                 </FlexRow>
             </div>

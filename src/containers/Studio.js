@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { hasFailed, isDone } from 'redux-saga-thunk';
-import { fromStudio, fromResource } from 'store/selectors';
+import { fromEntities, fromStudio, fromResource } from 'store/selectors';
 import { recorderStartRequest, recorderStopRequest, recorderGetInput, studioClear, resourceUploadRequest } from 'store/actions';
 
 import { Studio } from 'components';
@@ -28,18 +28,18 @@ class StudioContainer extends Component {
         this.props.clear();
     }
     componentWillReceiveProps(nextProps) {
-        let { info: { status }, clip } = nextProps;
-        if(status === 'uploaded') this.props.history.push(`/play/${clip.id}`);
+        if(nextProps.uploadedClip) this.props.history.push(`/play/${nextProps.uploadedClip.id}`);
     };
     render() {
-        let { upload, ...props } = this.props;
+        let { upload, uploadedClip, ...props } = this.props;
         return <Studio {...props} handleSubmit={this.handleSubmit} />
     }
 }
 
 const mapStateToProps = state => ({
     info: fromStudio.getInfo(state),
-    clip: fromStudio.getClip(state)
+    clip: fromStudio.getClip(state),
+    uploadedClip: fromEntities.getDetail(state, 'clips', fromStudio.getInfo(state).id)
 });
 
 const mapDispatchToProps = (dispatch) => ({

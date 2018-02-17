@@ -64,10 +64,7 @@ export default (state = initialState, { type, payload }) => {
             return {
                 ...state,
                 info: {
-                    status: 'uploaded'
-                },
-                clip: {
-                    ...getClip(state),
+                    status: 'uploaded',
                     id: payload
                 }
             };

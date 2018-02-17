@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed } from 'redux-saga-thunk';
-import { fromEntities, fromResource, fromPlayer } from 'store/selectors';
-import { resourceListReadRequest, playerStatusSet, playerClipPlay } from 'store/actions';
+import { fromEntities, fromResource, fromPlayer, fromStudio } from 'store/selectors';
+import { resourceDetailReadRequest, resourceListReadRequest, playerStatusSet, playerClipPlay } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
-import { ClipList } from 'components';
+import { ClipList, Player } from 'components';
 
 class ClipListContainer extends Component {
     constructor(props) {
@@ -16,10 +16,13 @@ class ClipListContainer extends Component {
     }
 
     static propTypes = {
-        list: PropTypes.array.isRequired,
+        detail: PropTypes.object,
+        id: PropTypes.string,
+        list: PropTypes.array,
         limit: PropTypes.number,
         loading: PropTypes.bool,
         failed: PropTypes.bool,
+        readDetail: PropTypes.func.isRequired,
         readList: PropTypes.func.isRequired,
         hasServerState: PropTypes.bool,
         setServerState: PropTypes.func.isRequired,
@@ -32,17 +35,25 @@ class ClipListContainer extends Component {
 
     componentWillMount() {
         const {
-            readList, hasServerState, setServerState, cleanServerState
+            view, id, readDetail, readList, hasServerState, setServerState, cleanServerState, studio: { clip }
         } = this.props;
-
-        if(!hasServerState) {
-            if(isServer) {
-                readList().then(setServerState, setServerState);
-            } else {
-                readList();
-            }
+        if((!clip || clip.id !== id) && !hasServerState) {
+            let readData = view === 'play' ? readDetail(id) : readList();
+            if(isServer) readData.then(setServerState, setServerState);
         } else if(isBrowser) {
             cleanServerState();
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // If the route has not changed (/play/1 to /play/2) the component will not re-mount
+        // Maybe that route change will never happen, but I'm keeping this here to show how to handle it
+        let { id: oldID, readDetail, readList, view: oldView } = this.props;
+        let { id: newID, view: newView } = nextProps;
+        if(newView === 'play' && newID !== oldID) {
+            readDetail(newID);
+        } else if(newView === 'clips' && newView !== oldView) {
+            readList();
         }
     }
 
@@ -50,7 +61,7 @@ class ClipListContainer extends Component {
     selectClip = (id) => this.setState({ select: id });
 
     render() {
-        const { list, loading, failed, playClip, player } = this.props;
+        const { id, detail, list, loading, failed, playClip, player } = this.props;
         const { state: { hover, select }, hoverClip, selectClip } = this;
         const ui = {
             get hover() { return hover; },
@@ -58,18 +69,22 @@ class ClipListContainer extends Component {
             get select() { return select; },
             set select(id) { selectClip(id); }
         };
+        if(id) return <Player {...{ detail, loading, failed }} />;
         return <ClipList {...{ list, loading, failed, ui, playClip, player }} />
     }
 }
 
 const mapStateToProps = state => ({
+    detail: fromEntities.getDetail(state, 'clips', fromResource.getDetail(state, 'clips')),
     list: fromEntities.getList(state, 'clips', fromResource.getList(state, 'clips')),
     loading: isPending(state, 'clipsListRead'),
     failed: hasFailed(state, 'clipsListRead'),
-    player: fromPlayer.getState(state)
+    player: fromPlayer.getState(state),
+    studio: fromStudio.getStudioState(state)
 });
 
 const mapDispatchToProps = (dispatch, { limit }) => ({
+    readDetail: id => dispatch(resourceDetailReadRequest('clips', { id })),
     readList: () => dispatch(resourceListReadRequest('clips', { limit })),
     playClip: id => dispatch(playerClipPlay(id)),
     setClipStatus: (id, progress) => dispatch(playerStatusSet(id, progress))

@@ -16,7 +16,8 @@ const Bar = styled.div`
   top: 0;
 `;
 
-const ProgressBar = ({ progress = 0, ...props }) => {
+const ProgressBar = ({ progress, ...props }) => {
+    progress = progress || 0;
     return (
         <Bar width={progress * 100} {...props} />
     )

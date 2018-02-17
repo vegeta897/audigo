@@ -37,7 +37,7 @@ theme.palette = {
         '#6ec71f',
         '#89d545',
         '#a8e86f',
-        '#ccf7a1'
+        '#ecf9df'
     ],
     white: [
         '#fff',

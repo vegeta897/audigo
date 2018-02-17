@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
-import { isPending, hasFailed, isDone } from 'redux-saga-thunk';
+import { isPending, hasFailed } from 'redux-saga-thunk';
 import { fromEntities, fromResource, fromStudio } from 'store/selectors';
 import { resourceDetailReadRequest } from 'store/actions';
 import { isBrowser, isServer } from 'config';
