@@ -12,13 +12,13 @@ const OrderedList = styled.ol`
   border-bottom: none;
 `;
 
-const ClipList = ({ list, loading, failed, ui, playClip, player, ...props }) => {
+const ClipList = ({ list, loading, failed, ui, playPause, player, ...props }) => {
     const clipList = list.map(clip => (
         <ClipListItem key={clip.id} clip={clip}
                       onClick={() => ui.select = clip.id} selected={clip.id === ui.select}
                       onMouseEnter={() => ui.hover = clip.id} hovered={clip.id === ui.hover}
-                      playClip={() => playClip(clip.id)} progress={player[clip.id]}
-                      playing={player.playing === clip.id}/>
+                      playPause={() => playPause(clip.id)} progress={player[clip.id]}
+                      playing={player.playing === clip.id && player.playStatus === 'PLAYING'}/>
     ));
     return (
         <div {...props}>

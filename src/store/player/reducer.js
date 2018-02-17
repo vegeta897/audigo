@@ -1,24 +1,29 @@
-import { initialState, getState } from './selectors';
+import { initialState, getState, getClip } from './selectors';
 import {
     PLAYER_CLIP_PLAY,
-    PLAYER_STATUS_SET
+    PLAYER_CLIP_PAUSE,
+    PLAYER_STATUS_UPDATE
 } from './actions';
 
 export default (state = initialState, { type, payload }) => {
     switch(type) {
-        case PLAYER_STATUS_SET:
-            const { id, progress } = payload;
+        case PLAYER_STATUS_UPDATE:
+            const { id, progress = {}, playStatus } = payload;
             return {
                 ...state,
-                [id]: progress,
-                status: progress.percent === 1 ? 'done' : getState(state).status
+                [id]: {
+                    position: progress.position || getClip(state, id).position,
+                    duration: progress.duration || getClip(state, id).duration
+                },
+                playing: id,
+                playStatus
             };
         case PLAYER_CLIP_PLAY:
+        case PLAYER_CLIP_PAUSE:
             return {
                 ...state,
-                playing: payload.id,
-                status: payload.status
-            }
+                command: payload.command
+            };
     }
     return state;
 };

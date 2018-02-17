@@ -8,7 +8,6 @@ const backgroundColor = ({ inactive, hovered }) => inactive ? palette('grayscale
 
 const Bar = styled.div`
   background: ${backgroundColor};
-  width: ${prop('width')}%;
   height: 100%;
   transition: width 500ms linear, background ${ifProp('hovered', '100ms ease-out', '200ms ease-in')};
   position: absolute;
@@ -20,7 +19,7 @@ const Bar = styled.div`
 const ProgressBar = ({ percent, ...props }) => {
     percent = percent || 0;
     return (
-        <Bar width={percent * 100} {...props} />
+        <Bar style={{ width: percent * 100 + '%' }} {...props} />
     )
 };
 

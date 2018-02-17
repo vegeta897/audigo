@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Input } from 'components';
 
-const AudioInput = ({ getInput, getInputRef, id }) => {
+const AudioInput = ({ getInput, id }) => {
     return (
         <div>
             <Input id={id} type='file' accept='audio/*' capture onChange={e => getInput(e.target)} />

@@ -21,11 +21,17 @@ const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  //${ifProp('justify', css`justify-content: space-between;`)}
+  ${ifProp('justify', css`justify-content: space-between;`)}
 `;
 
 const PlayButton = styled(props => <IconButton {...props} />)`
   margin-right: 1rem;
+`;
+
+const ClipTitle = styled.div`
+  font-size: 1.5rem;
+  margin-bottom: 0.2rem;
+  flex-grow: 1;
 `;
 
 const ClipDescription = styled.div`
@@ -43,9 +49,11 @@ const ClipTime = styled.div`
   ${ifProp('right', css`text-align: right;`)}
 `;
 
-const Player = ({ detail = {}, loading, failed, player, playClip, ...props }) => {
+const Player = ({ detail = {}, loading, failed, player, playPause, ...props }) => {
     const { id, title, description, recordDate, uploadDate, duration } = detail;
-    const { time, percent } = player[id] || {};
+    const { position, duration: realDuration } = player[id] || {};
+    const clipDur = realDuration || duration;
+    const playing = player.playStatus === 'PLAYING';
     return (
         <div {...props}>
             {!id && loading && <p>Loading...</p>}
@@ -56,13 +64,17 @@ const Player = ({ detail = {}, loading, failed, player, playClip, ...props }) =>
                         <title>{title}</title>
                         <meta property='og:title' content={title} />
                     </Helmet>
-                    <ProgressBar {...{ percent }} />
-                    <h2>{title}</h2>
+                    <ProgressBar {...{ percent: position / clipDur }} />
                     <FlexRow>
-                        <PlayButton icon='play' disabled={loading} go circle outline onClick={playClip} />
+                        <ClipTitle>{title}</ClipTitle>
+                        <ClipTime right>{timestamp(uploadDate)}</ClipTime>
+                    </FlexRow>
+                    <FlexRow>
+                        <PlayButton icon={playing ? 'pause' : 'play'} disabled={loading}
+                                    go circle outline onClick={playPause} />
                         <div style={{ width: '100%' }}>
                             {description && <ClipDescription>{description}</ClipDescription>}
-                            <ClipTime spaced>{msToHMS(time)} / {msToHMS(duration)}</ClipTime>
+                            <ClipTime spaced>{clipDur ? msToHMS(position) + ' / ' + msToHMS(clipDur) : 'loading...'}</ClipTime>
                         </div>
                     </FlexRow>
                 </div>

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed } from 'redux-saga-thunk';
 import { fromEntities, fromResource, fromPlayer, fromStudio } from 'store/selectors';
-import { resourceDetailReadRequest, resourceListReadRequest, playerStatusSet, playerClipPlay } from 'store/actions';
+import { resourceDetailReadRequest, resourceListReadRequest, playerStatusUpdate, playerClipPlay, playerClipPause } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
 import { ClipList, Player } from 'components';
@@ -43,28 +43,33 @@ class ClipsContainer extends Component {
         } else if(isBrowser) {
             cleanServerState();
         }
-        if(detail && detail.id !== player.playing) playClip(detail.id); // Autoplay
+        //if(isServer && view === 'play') playClip(detail.id);
+        //if(detail && detail.id !== player.playing) playClip(detail.id); // Autoplay
     }
 
     componentWillReceiveProps(nextProps) {
         // If the route has not changed (/play/1 to /play/2) the component will not re-mount
         // Maybe that route change will never happen, but I'm keeping this here to show how to handle it
-        let { id: oldID, readDetail, readList, view: oldView, playClip } = this.props;
-        let { id: newID, view: newView, player, detail } = nextProps;
+        const { id: oldID, readDetail, readList, view: oldView, updatePlayStatus } = this.props;
+        const { id: newID, view: newView, player, detail } = nextProps;
         if(newView === 'play') {
             if(newID !== oldID) readDetail(newID);
-            if(detail && detail.id !== player.playing) playClip(detail.id);
+            if(detail && detail.id !== player.playing) this.playPauseClip(detail.id);
         } else if(newView === 'clips' && newView !== oldView) {
             readList();
         }
     }
 
-    hoverClip = (id) => this.setState({ hover: id });
-    selectClip = (id) => this.setState({ select: id });
+    hoverClip = id => this.setState({ hover: id });
+    selectClip = id => this.setState({ select: id });
+    playPauseClip = id => {
+        const { player, play, pause } = this.props;
+        if(player.playStatus === 'PLAYING' && player.playing === id) pause(id); else play(id);
+    };
 
     render() {
-        const { view, detail, list, loading, failed, playClip, player } = this.props;
-        const { state: { hover, select }, hoverClip, selectClip } = this;
+        const { view, detail, list, loading, failed, player } = this.props;
+        const { state: { hover, select }, hoverClip, selectClip, playPauseClip: playPause } = this;
         const ui = {
             get hover() { return hover; },
             set hover(id) { hoverClip(id); },
@@ -72,8 +77,8 @@ class ClipsContainer extends Component {
             set select(id) { selectClip(id); }
         };
         if(view === 'play') return <Player {...{ detail, loading, failed,
-            playClip: () => playClip(detail.id), player }} />;
-        return <ClipList {...{ list, loading, failed, ui, playClip, player }} />
+            playPause: () => playPause(detail.id), player }} />;
+        return <ClipList {...{ list, loading, failed, ui, playPause, player }} />
     }
 }
 
@@ -89,8 +94,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, { limit }) => ({
     readDetail: id => dispatch(resourceDetailReadRequest('clips', { id })),
     readList: () => dispatch(resourceListReadRequest('clips', { limit })),
-    playClip: id => dispatch(playerClipPlay(id)),
-    setClipStatus: (id, progress) => dispatch(playerStatusSet(id, progress))
+    play: id => dispatch(playerStatusUpdate(id, { playStatus: 'PLAYING' })),
+    pause: id => dispatch(playerStatusUpdate(id, { playStatus: 'PAUSED' })),
+    updatePlayStatus: (id, payload) => dispatch(playerStatusUpdate(id, payload))
 });
 
 const withServerState = fetchState(

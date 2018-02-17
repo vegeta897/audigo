@@ -24,7 +24,7 @@ const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  //${ifProp('justify', css`justify-content: space-between;`)}
+  ${ifProp('justify', css`justify-content: space-between;`)}
 `;
 
 const ListItem = styled.li`
@@ -75,10 +75,11 @@ const ClipTime = styled.div`
   ${ifProp('right', css`text-align: right;`)}
 `;
 
-const ClipListItem = ({ clip, hovered, selected, progress = {}, playClip, playing, ...props }) => {
-    const { id, title, description, recordDate, uploadDate, duration } = clip;
-    const { time, percent } = progress;
-    const header = <FlexRow justify style={{ marginBottom: selected ? '0.8rem' : 0 }}>
+const ClipListItem = ({ clip, hovered, selected, progress = {}, playPause, playing, ...props }) => {
+    const { id, title, description, uploadDate, duration } = clip;
+    const { position, duration: realDuration } = progress;
+    const clipDur = realDuration || duration;
+    const header = <FlexRow style={{ marginBottom: selected ? '0.8rem' : 0 }}>
         <ClipTitle><Link to={`/play/${id}`} palette='grayscale'>{title}</Link></ClipTitle>
         <ClipTime right><Link to={`/play/${id}`} palette='grayscale' light>
             {selected ? timestamp(uploadDate) : distDate(uploadDate)}
@@ -86,14 +87,14 @@ const ClipListItem = ({ clip, hovered, selected, progress = {}, playClip, playin
         </FlexRow>;
     return (
         <ListItem selected={selected} {...props}>
-            {<ProgressBar inactive={!selected} {...{ percent, hovered }} />}
+            {<ProgressBar inactive={!selected} {...{ percent: position / clipDur, hovered }} />}
             {selected && header}
             <FlexRow>
-                <PlayButton icon='play' go circle outline onClick={playClip} />
+                <PlayButton icon={playing ? 'pause' : 'play'} go circle outline onClick={playPause} />
                 <div style={{ width: '100%' }}>
                     {!selected && header}
                     {selected && description && <ClipDescription>{description}</ClipDescription>}
-                    <ClipTime spaced>{(playing || percent > 0) && msToHMS(time) + ' / '}{msToHMS(duration)}</ClipTime>
+                    <ClipTime spaced>{(playing || position > 0) && msToHMS(position) + ' / '}{msToHMS(clipDur)}</ClipTime>
                 </div>
             </FlexRow>
         </ListItem>

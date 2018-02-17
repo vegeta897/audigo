@@ -19,7 +19,7 @@ let ClipSubmitForm = props => {
 
 ClipSubmitForm = reduxForm({ form: 'clipSubmit' })(ClipSubmitForm);
 
-const Studio = ({ startRecording, stopRecording, info, clip, getInput, getInputRef, clear, handleSubmit, ...props }) => {
+const Studio = ({ startRecording, stopRecording, info, clip, getInput, clear, handleSubmit, ...props }) => {
     const recording = info.status === 'recording';
     return (
         <div {...props}>
@@ -28,7 +28,7 @@ const Studio = ({ startRecording, stopRecording, info, clip, getInput, getInputR
                 <Button big onClick={recording ? stopRecording : startRecording} palette={recording ? 'danger' : 'primary'}>
                     {recording ? 'Stop' : 'Record'}
                 </Button>
-                {!recording && <AudioInput id='recorder' getInput={getInput} getInputRef={getInputRef} />}
+                {!recording && <AudioInput id='recorder' getInput={getInput} />}
                 {info.error === 'size' && <Block role="alert" palette="danger">Sorry, you can't upload files over 100mb</Block>}
             </div>}
             {clip && <div>
