@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { font } from 'styled-theme';
-import { GlobalPlayer } from 'containers';
+import { Player } from 'containers';
 
 const Wrapper = styled.div`
   display: flex;
@@ -21,11 +21,16 @@ const Content = styled.section`
   max-width: 480px;
 `;
 
-const PageTemplate = ({ children, staticContext, ...props }) => {
+const Footer = styled.footer`
+  margin: 2rem 0 1rem;
+`;
+
+const PageTemplate = ({ children, footer, staticContext, ...props }) => {
     return (
         <Wrapper {...props}>
             <Content>{children}</Content>
-            <GlobalPlayer />
+            <Player />
+            <Footer>{footer}</Footer>
         </Wrapper>
     )
 };

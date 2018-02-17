@@ -9,7 +9,7 @@ import { isBrowser, isServer } from 'config';
 
 import { ClipList, Player } from 'components';
 
-class ClipListContainer extends Component {
+class ClipsContainer extends Component {
     constructor(props) {
         super(props);
         this.state = { hover: null, select: null };
@@ -35,7 +35,7 @@ class ClipListContainer extends Component {
 
     componentWillMount() {
         const {
-            view, id, readDetail, readList, hasServerState, setServerState, cleanServerState, studio: { clip }
+            view, id, detail, player, playClip, readDetail, readList, hasServerState, setServerState, cleanServerState, studio: { clip }
         } = this.props;
         if((!clip || clip.id !== id) && !hasServerState) {
             let readData = view === 'play' ? readDetail(id) : readList();
@@ -43,15 +43,17 @@ class ClipListContainer extends Component {
         } else if(isBrowser) {
             cleanServerState();
         }
+        if(detail && detail.id !== player.playing) playClip(detail.id); // Autoplay
     }
 
     componentWillReceiveProps(nextProps) {
         // If the route has not changed (/play/1 to /play/2) the component will not re-mount
         // Maybe that route change will never happen, but I'm keeping this here to show how to handle it
-        let { id: oldID, readDetail, readList, view: oldView } = this.props;
-        let { id: newID, view: newView } = nextProps;
-        if(newView === 'play' && newID !== oldID) {
-            readDetail(newID);
+        let { id: oldID, readDetail, readList, view: oldView, playClip } = this.props;
+        let { id: newID, view: newView, player, detail } = nextProps;
+        if(newView === 'play') {
+            if(newID !== oldID) readDetail(newID);
+            if(detail && detail.id !== player.playing) playClip(detail.id);
         } else if(newView === 'clips' && newView !== oldView) {
             readList();
         }
@@ -61,7 +63,7 @@ class ClipListContainer extends Component {
     selectClip = (id) => this.setState({ select: id });
 
     render() {
-        const { id, detail, list, loading, failed, playClip, player } = this.props;
+        const { view, detail, list, loading, failed, playClip, player } = this.props;
         const { state: { hover, select }, hoverClip, selectClip } = this;
         const ui = {
             get hover() { return hover; },
@@ -69,7 +71,8 @@ class ClipListContainer extends Component {
             get select() { return select; },
             set select(id) { selectClip(id); }
         };
-        if(id) return <Player {...{ detail, loading, failed }} />;
+        if(view === 'play') return <Player {...{ detail, loading, failed,
+            playClip: () => playClip(detail.id), player }} />;
         return <ClipList {...{ list, loading, failed, ui, playClip, player }} />
     }
 }
@@ -100,4 +103,4 @@ const withServerState = fetchState(
     })
 );
 
-export default withServerState(connect(mapStateToProps, mapDispatchToProps)(ClipListContainer));
+export default withServerState(connect(mapStateToProps, mapDispatchToProps)(ClipsContainer));

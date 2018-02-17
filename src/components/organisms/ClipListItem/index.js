@@ -77,7 +77,7 @@ const ClipTime = styled.div`
 
 const ClipListItem = ({ clip, hovered, selected, progress, playClip, playing, ...props }) => {
     const { id, title, description, recordDate, uploadDate, duration } = clip;
-    const header = <FlexRow justify>
+    const header = <FlexRow justify style={{ marginBottom: selected ? '0.8rem' : 0 }}>
         <ClipTitle><Link to={`/play/${id}`} palette='grayscale'>{title}</Link></ClipTitle>
         <ClipTime right><Link to={`/play/${id}`} palette='grayscale' light>
             {selected ? timestamp(uploadDate) : distDate(uploadDate)}
@@ -86,17 +86,15 @@ const ClipListItem = ({ clip, hovered, selected, progress, playClip, playing, ..
     return (
         <ListItem selected={selected} {...props}>
             {<ProgressBar inactive={!selected} {...{ progress, hovered }} />}
-            <div style={{ zIndex: 1 }}>
-                {selected && header}
-                <FlexRow>
-                    <PlayButton icon='play' go circle outline onClick={playClip} />
-                    <div style={{ width: '100%' }}>
-                        {!selected && header}
-                        {selected && description && <ClipDescription>{description}</ClipDescription>}
-                        <ClipTime spaced>{msToHMS(duration)}</ClipTime>
-                    </div>
-                </FlexRow>
-            </div>
+            {selected && header}
+            <FlexRow>
+                <PlayButton icon='play' go circle outline onClick={playClip} />
+                <div style={{ width: '100%' }}>
+                    {!selected && header}
+                    {selected && description && <ClipDescription>{description}</ClipDescription>}
+                    <ClipTime spaced>{msToHMS(duration)}</ClipTime>
+                </div>
+            </FlexRow>
         </ListItem>
     );
 };

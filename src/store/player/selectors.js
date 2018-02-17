@@ -1,5 +1,6 @@
 export const initialState = {
-    playing: null
+    playing: null,
+    status: null
 };
 
 export const getState = (state = initialState) => state;

@@ -35,13 +35,12 @@ export default (state = initialState, { type, payload, meta }) => {
                     list: payload
                 }
             };
-
         case RESOURCE_DETAIL_READ_REQUEST:
             return {
                 ...state,
                 [resource]: {
                     ...getResourceState(state, resource),
-                    detail: getDetail(initialState, resource) // Don't show previously loaded clip while loading
+                    detail: payload.params.id // Will grab clip from list if exists
                 }
             };
         case RESOURCE_DETAIL_READ_SUCCESS:

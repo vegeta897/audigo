@@ -16,7 +16,7 @@ const Audio = ({ progress, hidden, playing, onProgress = () => {}, getRef, ...pr
 };
 
 Audio.propTypes = {
-    src: PropTypes.string.isRequired,
+    src: PropTypes.string,
     autoPlay: PropTypes.bool,
     hidden: PropTypes.bool,
     progress: PropTypes.object
