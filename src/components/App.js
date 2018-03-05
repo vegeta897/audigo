@@ -29,6 +29,7 @@ const App = () => {
                 <meta property='og:image:type' content='image/png'/>
                 <meta property='og:image:width' content='1200'/>
                 <meta property='og:image:height' content='630'/>
+                <meta name='theme-color' content='#f55742'/>
                 <link rel='icon' href='https://arc.js.org/icon.png'/>
             </Helmet>
             <ThemeProvider theme={theme}>
