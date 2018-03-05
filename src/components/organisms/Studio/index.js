@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Field as ReduxField, reduxForm } from 'redux-form';
 import { Audio, AudioInput, Button, Field, Block } from 'components';
 
-const maxLength = (max, field) => value => value && value.length > max ? `That ${field} is ${value.length - max} characters over the limit` : undefined;
+const maxLength = (max, field) => value =>
+    value && value.length > max ? `That ${field} is ${value.length - max} characters over the limit` : undefined;
 
 const titleMaxLength = maxLength(100, 'title');
 const descriptionMaxLength = maxLength(2000, 'description');

@@ -1,27 +1,67 @@
 export const PLAYER_STATUS_UPDATE = 'PLAYER_STATUS_UPDATE';
-export const PLAYER_CLIP_PLAY = 'PLAYER_CLIP_PLAY';
-export const PLAYER_CLIP_PAUSE = 'PLAYER_CLIP_PAUSE';
+export const PLAYER_PLAY_REQUEST = 'PLAYER_PLAY_REQUEST';
+export const PLAYER_PLAY_SUCCESS = 'PLAYER_PLAY_SUCCESS';
+export const PLAYER_PLAY_FAILURE = 'PLAYER_PLAY_FAILURE';
+export const PLAYER_POSITION_UPDATE = 'PLAYER_POSITION_UPDATE';
+export const PLAYER_PAUSE_REQUEST = 'PLAYER_PAUSE_REQUEST';
+export const PLAYER_SEEK_REQUEST = 'PLAYER_SEEK_REQUEST';
 
-export const playerStatusUpdate = (id, { playStatus, progress }) => ({
+export const playerStatusUpdate = (id, { playStatus, position, duration }) => ({
     type: PLAYER_STATUS_UPDATE,
     payload: {
         id,
         playStatus,
-        progress
+        position,
+        duration,
+        updatedAt: Date.now()
     }
 });
 
-export const playerClipPlay = () => ({
-    type: PLAYER_CLIP_PLAY,
+export const playerPlayRequest = ({ url, position }) => ({
+    type: PLAYER_PLAY_REQUEST,
     payload: {
-        command: 'play'
+        url,
+        position
+    },
+    meta: {
+        thunk: `playerPlay`
     }
 });
 
-export const playerClipPause = id => ({
-    type: PLAYER_CLIP_PAUSE,
+export const playerPlaySuccess = (thunk) => ({
+    type: PLAYER_PLAY_SUCCESS,
+    meta: {
+        thunk
+    }
+});
+
+export const playerPlayFailure = (error, thunk) => ({
+    type: PLAYER_PLAY_FAILURE,
+    error: true,
+    payload: error,
+    meta: {
+        thunk
+    }
+});
+
+export const playerPositionUpdate = (position) => ({
+    type: PLAYER_POSITION_UPDATE,
+    payload: {
+        position
+    }
+});
+
+export const playerPauseRequest = (id) => ({
+    type: PLAYER_PAUSE_REQUEST,
+    payload: {
+        id
+    }
+});
+
+export const playerSeekRequest = (id, { position }) => ({
+    type: PLAYER_SEEK_REQUEST,
     payload: {
         id,
-        status: 'paused'
+        position
     }
 });

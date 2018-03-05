@@ -28,6 +28,7 @@ const FlexRow = styled.div`
 `;
 
 const ListItem = styled.li`
+  z-index: 0; // Creates stacking context
   position: relative;
   display: flex;
   flex-direction: column;
@@ -87,7 +88,7 @@ const ClipListItem = ({ clip, hovered, selected, progress = {}, playPause, playi
         </FlexRow>;
     return (
         <ListItem selected={selected} {...props}>
-            {<ProgressBar inactive={!selected} {...{ percent: position / clipDur, hovered }} />}
+            <ProgressBar {...{ percent: position / clipDur, inactive: !selected, instant: !playing, hovered }} />
             {selected && header}
             <FlexRow>
                 <PlayButton icon={playing ? 'pause' : 'play'} go circle outline onClick={playPause} />

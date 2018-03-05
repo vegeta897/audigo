@@ -1,17 +1,22 @@
 export const initialState = {
     playing: null,
     playStatus: 'STOPPED', // Audio.status.STOPPED
-    volume: 100
+    position: 0,
+    duration: null,
+    volume: 100,
+    command: {}
 };
 
 export const initialClipState = {
-    position: null,
+    position: 0,
     duration: null
 };
 
 export const getState = (state = initialState) => state;
 
 export const getPlaying = (state = initialState) => state.playing;
+
+export const getCommand = (state = initialState) => state.command;
 
 export const getClip = (state = initialState, clip) => state[clip] || initialClipState;
 

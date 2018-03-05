@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import { fetchState } from 'react-router-server';
 import { isPending, hasFailed } from 'redux-saga-thunk';
 import { fromEntities, fromResource, fromPlayer, fromStudio } from 'store/selectors';
-import { resourceDetailReadRequest, resourceListReadRequest, playerStatusUpdate, playerClipPlay, playerClipPause } from 'store/actions';
+import { resourceDetailReadRequest, resourceListReadRequest, playerStatusUpdate, playerPlayRequest, playerPauseRequest, playerSeekRequest } from 'store/actions';
 import { isBrowser, isServer } from 'config';
 
-import { ClipList, Player } from 'components';
+import { ClipList, Player, Clip } from 'components';
+
+let started = false;
 
 class ClipsContainer extends Component {
     constructor(props) {
@@ -54,7 +56,7 @@ class ClipsContainer extends Component {
         const { id: newID, view: newView, player, detail } = nextProps;
         if(newView === 'play') {
             if(newID !== oldID) readDetail(newID);
-            if(detail && detail.id !== player.playing) this.playPauseClip(detail.id);
+            if(detail && detail.id !== player.playing) this.playPauseClip(detail.url);
         } else if(newView === 'clips' && newView !== oldView) {
             readList();
         }
@@ -63,12 +65,14 @@ class ClipsContainer extends Component {
     hoverClip = id => this.setState({ hover: id });
     selectClip = id => this.setState({ select: id });
     playPauseClip = id => {
+        if(started) return;
+        started = true;
         const { player, play, pause } = this.props;
         if(player.playStatus === 'PLAYING' && player.playing === id) pause(id); else play(id);
     };
 
     render() {
-        const { view, detail, list, loading, failed, player } = this.props;
+        const { view, detail, list, loading, failed, player, seek } = this.props;
         const { state: { hover, select }, hoverClip, selectClip, playPauseClip: playPause } = this;
         const ui = {
             get hover() { return hover; },
@@ -76,8 +80,8 @@ class ClipsContainer extends Component {
             get select() { return select; },
             set select(id) { selectClip(id); }
         };
-        if(view === 'play') return <Player {...{ detail, loading, failed,
-            playPause: () => playPause(detail.id), player }} />;
+        if(view === 'play') return <Clip solo {...{ detail, loading, failed,
+            playPause: () => playPause(detail.id), player, seek }} />;
         return <ClipList {...{ list, loading, failed, ui, playPause, player }} />
     }
 }
@@ -94,8 +98,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, { limit }) => ({
     readDetail: id => dispatch(resourceDetailReadRequest('clips', { id })),
     readList: () => dispatch(resourceListReadRequest('clips', { limit })),
-    play: id => dispatch(playerStatusUpdate(id, { playStatus: 'PLAYING' })),
-    pause: id => dispatch(playerStatusUpdate(id, { playStatus: 'PAUSED' })),
+    play: url => dispatch(playerPlayRequest({ url })),
+    pause: id => dispatch(playerPauseRequest(id)),
+    seek: (id, position) => dispatch(playerSeekRequest(id, { position })),
     updatePlayStatus: (id, payload) => dispatch(playerStatusUpdate(id, payload))
 });
 

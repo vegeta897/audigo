@@ -8,7 +8,7 @@ import format from 'date-fns/format';
 import isSameDay from 'date-fns/isSameDay';
 import isSameYear from 'date-fns/isSameYear';
 import { IconButton, ProgressBar } from 'components';
-import { msToHMS } from '../../../my-util';
+import { msToHMS } from 'my-util';
 
 const timestamp = date => {
     let f = 'h:mm a';
@@ -59,12 +59,12 @@ const Player = ({ detail = {}, loading, failed, player, playPause, ...props }) =
             {!id && loading && <p>Loading...</p>}
             {failed && <p>Failed to load clip, sorry!</p>}
             {id &&
-                <div style={{position: 'relative'}}>
+                <div style={{position: 'relative', zIndex: 0, background: 'gray'}}>
                     <Helmet titleTemplate='%s - Audigo'>
                         <title>{title}</title>
                         <meta property='og:title' content={title} />
                     </Helmet>
-                    <ProgressBar {...{ percent: position / clipDur }} />
+                    {clipDur - position > 0 && <ProgressBar {...{ percent: position / clipDur, paused: !playing, timeLeft: clipDur - position }} />}
                     <FlexRow>
                         <ClipTitle>{title}</ClipTitle>
                         <ClipTime right>{timestamp(uploadDate)}</ClipTime>

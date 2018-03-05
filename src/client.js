@@ -22,13 +22,15 @@ import { basename } from 'config';
 import configureStore from 'store/configure';
 import api from 'services/api';
 import recorder from 'services/recorder';
+import audio from 'services/audio';
 import App from 'components/App';
 
 const serverState = window.__SERVER_STATE__;
 const initialState = window.__INITIAL_STATE__;
 const store = configureStore(initialState, {
     api: api.create(),
-    recorder: recorder.create()
+    recorder: recorder.create(),
+    audio: audio.create()
 });
 
 const renderApp = () => (
