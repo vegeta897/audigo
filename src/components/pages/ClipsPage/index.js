@@ -4,12 +4,6 @@ import { parse } from 'query-string';
 import { Clips } from 'containers';
 import { PageTemplate } from 'components';
 import { Link } from 'react-router-dom';
-import audio from 'services/audio';
-
-function pl(e) {
-    console.log('click');
-    audio.play();
-}
 
 const ClipsPage = ({ match, location, ...props }) => {
     const query = parse(location.search);
@@ -22,8 +16,7 @@ const ClipsPage = ({ match, location, ...props }) => {
     return (
         <PageTemplate {...props} footer={footer}>
             <Clips {...{ view, limit, id: match.params.id }} />
-            <button onClick={pl}>playyy sm2</button>
-            <div id='soundmanager-debug'></div>
+            {/*<div id='soundmanager-debug'></div>*/}
         </PageTemplate>
     );
 };

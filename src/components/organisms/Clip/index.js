@@ -79,7 +79,7 @@ class Clip extends Component { // Yeah, I'm using a component below a container,
     };
 
     componentDidMount() {
-        this.interval = setInterval(() => this.setState({ time: Date.now() }), 250);
+        // this.interval = setInterval(() => this.setState({ time: Date.now() }), 250);
     }
 
     componentWillUnmount() {
@@ -89,14 +89,14 @@ class Clip extends Component { // Yeah, I'm using a component below a container,
     render() {
         const { detail = {}, player, solo, loading, failed, playPause } = this.props;
         const { id, title, description, recordDate, uploadDate, duration } = detail;
-        const { position, duration: realDuration } = player[id] || {};
+        const { position, duration: realDuration } = player;
         const clipDur = realDuration || duration;
-        const playing = player.playing === id && player.playStatus === 'PLAYING';
-        const positionNow = position + (playing ? Date.now() - player.updatedAt : 0);
+        const playing = !player.paused && player.playing && player.id === id;
+        const positionNow = position + (playing ? Date.now() - player.timestamp : 0);
         return (
             <div>
                 <PlayBar innerRef={this.getRef} onClick={this.playBarClick}>
-                    <div style={{height: '100px', background: 'red', width: 100*positionNow / clipDur+'%'}}></div>
+                    <div style={{height: '100px', background: 'red', width: 100*positionNow/clipDur+'%'}}></div>
                     {/*<ProgressBar {...{ percent: positionNow / clipDur, paused: !playing, timeLeft: clipDur - positionNow }} />*/}
                 </PlayBar>
                 {solo && <Helmet titleTemplate='%s - Audigo'>

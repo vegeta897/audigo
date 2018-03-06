@@ -54,7 +54,7 @@ class ClipsContainer extends Component {
         const { id: newID, view: newView, player, detail } = nextProps;
         if(newView === 'play') {
             if(newID !== oldID) readDetail(newID);
-            if(detail && detail.id !== player.playing) this.playPauseClip(detail);
+            if(detail && detail.id !== player.id) this.playPauseClip(detail);
         } else if(newView === 'clips' && newView !== oldView) {
             readList();
         }
@@ -64,7 +64,7 @@ class ClipsContainer extends Component {
     selectClip = id => this.setState({ select: id });
     playPauseClip = clip => {
         const { player, play, pause } = this.props;
-        if(player.playStatus === 'PLAYING' && player.playing === clip) pause(clip); else play(clip);
+        if(player.playing && !player.paused && player.id === clip.id) pause(clip); else play(clip);
     };
 
     render() {
@@ -77,7 +77,7 @@ class ClipsContainer extends Component {
             set select(id) { selectClip(id); }
         };
         if(view === 'play') return <Clip solo {...{ detail, loading, failed,
-            playPause: () => playPause(detail.id), player, seek }} />;
+            playPause: () => playPause(detail), player, seek }} />;
         return <ClipList {...{ list, loading, failed, ui, playPause, player }} />
     }
 }

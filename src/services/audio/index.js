@@ -9,11 +9,12 @@ audioService.create = () => audio;
 const audio = new Audio();
 
 audio.init = () => new Promise((resolve, reject) => {
+    window.audio = audio;
     audio.soundManager = require('soundmanager2').soundManager;
     audio.soundManager.setup({
         preferFlash: false,
         consoleOnly: false,
-        //html5PollingInterval: 500,
+        html5PollingInterval: 50,
         onready() {
             audio.ready = true;
             resolve(audio.soundManager);
@@ -29,9 +30,6 @@ audio.init = () => new Promise((resolve, reject) => {
 });
 
 audio.load = url => new Promise((resolve, reject) => {
-    if(audio.sound) {
-        console.log('loading new sound');
-    }
     const options = {
         url,
         autoLoad: !audio.sound,
@@ -61,15 +59,27 @@ audio.load = url => new Promise((resolve, reject) => {
 
 audio.play = ({ url = null, position = null }) => new Promise((resolve, reject) => {
     console.log('audio.play', url);
-    const onstop = () => audio.emit('stop');
+    const onstop = () => audio.emit('status', audio.getStatus());
     const options = {
         from: position,
         onplay: () => {
             console.log('onplay');
-            resolve(audio.sound);
+            resolve();
+            audio.emit('status', audio.getStatus());
+        },
+        onresume: () => {
+            console.log('onresume');
+            audio.emit('status', audio.getStatus());
+        },
+        onpause: () => {
+            console.log('onpause');
+            audio.emit('status', audio.getStatus());
         },
         whileplaying: () => {
-            audio.emit('progress', audio.sound.position);
+            //audio.emit('status', audio.getStatus());
+        },
+        onbufferchange: (isBuffering) => {
+            console.log('is buffering?', isBuffering);
         },
         onstop,
         onfinish: onstop,
@@ -84,7 +94,30 @@ audio.play = ({ url = null, position = null }) => new Promise((resolve, reject) 
     };
     if(!audio.sound || (url && audio.sound.url !== url)) audio.load(url)
         .then(() => audio.sound.play(options));
-    else audio.sound.play(options);
+    else {
+        if(audio.sound.paused) audio.sound.resume(options);
+        else audio.sound.play(options);
+        resolve();
+    }
 });
+
+audio.pause = () => new Promise((resolve, reject) => {
+    console.log('audio.pause');
+    if(!audio.sound) return reject(new Error('no sound loaded!'));
+    audio.sound.pause();
+    resolve();
+});
+
+audio.getStatus = () => {
+    const { position, durationEstimate: duration, paused, playState } = audio.sound;
+    //console.log('getStatus', position, playState);
+    return {
+        position: playState === 1 ? position : duration,
+        duration,
+        paused,
+        playing: playState === 1,
+        timestamp: Date.now()
+    };
+};
 
 export default audioService;

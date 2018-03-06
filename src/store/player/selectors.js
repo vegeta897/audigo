@@ -14,10 +14,10 @@ export const initialClipState = {
 
 export const getState = (state = initialState) => state;
 
-export const getPlaying = (state = initialState) => state.playing;
+export const getId = (state = initialState) => state.id;
 
 export const getCommand = (state = initialState) => state.command;
 
 export const getClip = (state = initialState, clip) => state[clip] || initialClipState;
 
-export const getPlayingClip = (state = initialState) => state[state.playing] || initialClipState;
+export const getPlayingClip = (state = initialState) => state[state.id] || initialClipState;
