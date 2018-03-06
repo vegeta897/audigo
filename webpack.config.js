@@ -132,7 +132,7 @@ const client = createConfig([
         splitVendor(),
         addPlugins([
             new webpack.IgnorePlugin(/^server\/models$/),
-            new LodashModuleReplacementPlugin,
+            new LodashModuleReplacementPlugin({ coercions: true }),
             new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
             new BundleAnalyzerPlugin()
         ]),

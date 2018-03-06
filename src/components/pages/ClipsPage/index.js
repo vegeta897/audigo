@@ -16,7 +16,7 @@ const ClipsPage = ({ match, location, ...props }) => {
     return (
         <PageTemplate {...props} footer={footer}>
             <Clips {...{ view, limit, id: match.params.id }} />
-            {/*<div id='soundmanager-debug'></div>*/}
+            <div id='soundmanager-debug'></div>
         </PageTemplate>
     );
 };

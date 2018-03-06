@@ -52,7 +52,6 @@ Start the dev server `npm run dev` and open `http://localhost:3000`
     * React
         * react-router
         * react-helmet
-        * + react-sound
         * styled-components
     * Redux
         * redux-saga-thunk
@@ -63,6 +62,6 @@ Start the dev server `npm run dev` and open `http://localhost:3000`
         * webpack-dev-server
     * Jest
     * @storybook/react
-* Web Audio API
+* Web Audio API + [SoundManager 2](http://www.schillmania.com/projects/soundmanager2/)
 * Knex w/ pgSQL
 * FFmpeg

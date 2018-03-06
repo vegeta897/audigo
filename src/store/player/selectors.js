@@ -1,10 +1,10 @@
 export const initialState = {
-    playing: null,
-    playStatus: 'STOPPED', // Audio.status.STOPPED
+    playing: false,
+    paused: false,
     position: 0,
     duration: null,
-    volume: 100,
-    command: {}
+    id: null,
+    volume: 100
 };
 
 export const initialClipState = {

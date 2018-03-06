@@ -44,8 +44,6 @@ audio.load = url => new Promise((resolve, reject) => {
                 reject(new Error('load fail'));
             }
         },
-        onerror(errorCode, description) {
-        },
         ontimeout() {
             console.log('load timed out');
             reject();

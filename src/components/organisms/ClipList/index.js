@@ -18,7 +18,7 @@ const ClipList = ({ list, loading, failed, ui, playPause, player, ...props }) =>
                       onClick={() => ui.select = clip.id} selected={clip.id === ui.select}
                       onMouseEnter={() => ui.hover = clip.id} hovered={clip.id === ui.hover}
                       playPause={() => playPause(clip.id)} progress={player[clip.id]}
-                      playing={player.playing === clip.id && player.playStatus === 'PLAYING'}/>
+                      playing={player.id === clip.id && player.playing && !player.paused}/>
     ));
     return (
         <div {...props}>

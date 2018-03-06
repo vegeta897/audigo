@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import { isBrowser, isServer } from 'config';
 import { initialState, getResourceState, getList, getDetail } from './selectors';
 import {
@@ -12,7 +11,7 @@ import {
 } from './actions';
 
 export default (state = initialState, { type, payload, meta }) => {
-    const resource = get(meta, 'resource');
+    const resource = meta && meta.resource;
 
     if(!resource) {
         return state;
