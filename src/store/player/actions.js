@@ -17,9 +17,10 @@ export const playerStatusUpdate = (id, { playStatus, position, duration }) => ({
     }
 });
 
-export const playerPlayRequest = ({ url, position }) => ({
+export const playerPlayRequest = ({ id, url, position }) => ({
     type: PLAYER_PLAY_REQUEST,
     payload: {
+        id,
         url,
         position
     },

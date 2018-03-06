@@ -3,8 +3,8 @@ import {
     PLAYER_PLAY_REQUEST,
     PLAYER_PAUSE_REQUEST,
     PLAYER_SEEK_REQUEST,
-    PLAYER_CONSUME_REQUEST,
-    PLAYER_STATUS_UPDATE
+    PLAYER_STATUS_UPDATE,
+    PLAYER_POSITION_UPDATE
 } from './actions';
 
 export default (state = initialState, { type, payload }) => {
@@ -23,28 +23,26 @@ export default (state = initialState, { type, payload }) => {
                 playStatus: playStatus || getState(state).playStatus,
                 updatedAt
             };
+        case PLAYER_POSITION_UPDATE:
+            return {
+                ...state,
+                position
+            };
         case PLAYER_PLAY_REQUEST:
             return {
                 ...state,
-                playing: id,
-                command: { play: true }
+                playing: id
             };
         case PLAYER_PAUSE_REQUEST:
             if(state.playing !== id) return state;
             return {
-                ...state,
-                command: { pause: true }
+                ...state
             };
         case PLAYER_SEEK_REQUEST:
             if(state.playing !== id) return state;
             return {
                 ...state,
                 command: { seek: position }
-            };
-        case PLAYER_CONSUME_REQUEST:
-            return {
-                ...state,
-                command: {}
             };
     }
     return state;

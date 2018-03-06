@@ -18,6 +18,7 @@ const config = {
         isServer: typeof window === 'undefined',
         apiPath: API_PATH,
         apiUrl: `${PROTOCOL + HOST}:${PORT}${API_PATH}`,
+        // Create separate server config to keep this info out of client bundle?
         dbHost: process.env.PGHOST || 'localhost',
         dbPort: process.env.PGPORT || 5432,
         dbUser: process.env.PGUSER || process.env.USER || 'postgres',

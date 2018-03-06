@@ -9,8 +9,6 @@ import { isBrowser, isServer } from 'config';
 
 import { ClipList, Player, Clip } from 'components';
 
-let started = false;
-
 class ClipsContainer extends Component {
     constructor(props) {
         super(props);
@@ -56,7 +54,7 @@ class ClipsContainer extends Component {
         const { id: newID, view: newView, player, detail } = nextProps;
         if(newView === 'play') {
             if(newID !== oldID) readDetail(newID);
-            if(detail && detail.id !== player.playing) this.playPauseClip(detail.url);
+            if(detail && detail.id !== player.playing) this.playPauseClip(detail);
         } else if(newView === 'clips' && newView !== oldView) {
             readList();
         }
@@ -64,11 +62,9 @@ class ClipsContainer extends Component {
 
     hoverClip = id => this.setState({ hover: id });
     selectClip = id => this.setState({ select: id });
-    playPauseClip = id => {
-        if(started) return;
-        started = true;
+    playPauseClip = clip => {
         const { player, play, pause } = this.props;
-        if(player.playStatus === 'PLAYING' && player.playing === id) pause(id); else play(id);
+        if(player.playStatus === 'PLAYING' && player.playing === clip) pause(clip); else play(clip);
     };
 
     render() {
@@ -98,7 +94,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, { limit }) => ({
     readDetail: id => dispatch(resourceDetailReadRequest('clips', { id })),
     readList: () => dispatch(resourceListReadRequest('clips', { limit })),
-    play: url => dispatch(playerPlayRequest({ url })),
+    play: ({ url, id }) => dispatch(playerPlayRequest({ url, id })),
     pause: id => dispatch(playerPauseRequest(id)),
     seek: (id, position) => dispatch(playerSeekRequest(id, { position })),
     updatePlayStatus: (id, payload) => dispatch(playerStatusUpdate(id, payload))

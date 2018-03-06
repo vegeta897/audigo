@@ -18,7 +18,7 @@ const configureStore = (initialState, services = {}) => {
             ...middlewares,
             sagaMiddleware
         ),
-        devtools({ latency: 0 })
+        devtools({ latency: 0, maxAge: 200/*, actionsBlacklist: ['PLAYER_POSITION_UPDATE']*/ })
     ];
 
     const store = createStore(reducer, initialState, compose(...enhancers));

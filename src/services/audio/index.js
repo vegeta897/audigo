@@ -4,31 +4,37 @@ class Audio extends EventEmitter {}
 
 const audioService = {};
 
-audioService.create = () => {
+audioService.create = () => audio;
+
+const audio = new Audio();
+
+audio.init = () => new Promise((resolve, reject) => {
     audio.soundManager = require('soundmanager2').soundManager;
     audio.soundManager.setup({
         preferFlash: false,
         consoleOnly: false,
-        //html5PollingInterval: 50,
+        //html5PollingInterval: 500,
         onready() {
+            audio.ready = true;
+            resolve(audio.soundManager);
             console.log('sm2 ready', audio.soundManager);
         },
         onerror(errorCode, description) {
-            console.log('sm2 init error', description);
+            reject(new Error(description));
         },
         ontimeout() {
-            console.log('sm2 failed to init');
+            reject(new Error('sm2 init timeout'));
         }
     });
-    return audio;
-};
-
-const audio = new Audio();
+});
 
 audio.load = url => new Promise((resolve, reject) => {
+    if(audio.sound) {
+        console.log('loading new sound');
+    }
     const options = {
         url,
-        autoLoad: true,
+        autoLoad: !audio.sound,
         whileloading() { console.log('loading',this.bytesLoaded,this.bytesTotal)}, // Does this work in production?
         //autoPlay: true,
         onload(success) { // "success" can be false if loaded from cache, so we use readyState
@@ -48,10 +54,14 @@ audio.load = url => new Promise((resolve, reject) => {
         }
     };
     if(audio.sound) audio.sound.load(options);
-    else audio.sound = audio.soundManager.createSound(options);
+    else if(!audio.ready) {
+        audio.init().then(() => audio.sound = audio.soundManager.createSound(options));
+    } else audio.sound = audio.soundManager.createSound(options);
 });
 
 audio.play = ({ url = null, position = null }) => new Promise((resolve, reject) => {
+    console.log('audio.play', url);
+    const onstop = () => audio.emit('stop');
     const options = {
         from: position,
         onplay: () => {
@@ -61,6 +71,8 @@ audio.play = ({ url = null, position = null }) => new Promise((resolve, reject) 
         whileplaying: () => {
             audio.emit('progress', audio.sound.position);
         },
+        onstop,
+        onfinish: onstop,
         onerror: (errorCode, description) => {
             console.log('play error');
             reject(description);
@@ -70,7 +82,8 @@ audio.play = ({ url = null, position = null }) => new Promise((resolve, reject) 
             reject();
         }
     };
-    if(url || !audio.sound) audio.load(url).then(audio.sound.play(options));
+    if(!audio.sound || (url && audio.sound.url !== url)) audio.load(url)
+        .then(() => audio.sound.play(options));
     else audio.sound.play(options);
 });
 
